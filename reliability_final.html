@@ -768,7 +768,7 @@
 
     <div class="slider-row">
       <div class="slider-label">Cut point (percentile): <span id="cut-val">50</span>th</div>
-      <input type="range" id="cutSlider" min="5" max="45" step="5" value="50">
+    <input type="range" id="cutSlider" min="5" max="50" step="5" value="50">
     </div>
     <div class="slider-row">
       <div class="slider-label">Reliability (ICC): <span id="dichIcc-val">0.70</span></div>
@@ -1552,4 +1552,7 @@ function drawAttPanel(icc, rtrue, robs){
 
 document.getElementById('rtmIcc').addEventListener('input', updateRTM);
 document.getElementById('rtmRtrue').addEventListener('input', updateRTM);
-setTimeout(updateRTM, 150)
+setTimeout(updateRTM, 150);
+</script>
+</body>
+</html>
