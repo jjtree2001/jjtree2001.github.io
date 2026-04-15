@@ -328,6 +328,10 @@ fit_gamma &nbsp;&lt;- <span class="ck">fitdist</span>(rt_data, <span class="cs">
   <p>This contrasts with other data-generating processes. For example, in binomial data, variability is not independent of the mean: it is constrained by p(1 − p), and the data are bounded between 0 and 1.</p>
 
 <p>In such cases, the structure of variability is fundamentally different, and a Gaussian model imposes the wrong generative assumptions.</p>
+  <div class="callout">
+  <div class="clabel">Key idea</div>
+  <p>Randomness does not imply normality—Gaussian error is a specific assumption about how randomness is structured.</p>
+</div>
   <div class="formula-block">
     <div class="formula">Y<sub>ij</sub> = μ<sub>j</sub> + ε<sub>ij</sub> &nbsp;&nbsp; where &nbsp;&nbsp; ε<sub>ij</sub> ~ N(0, σ²)</div>
     <div class="gloss">Each score equals a group mean plus Gaussian noise — with the same σ² across all groups</div>
