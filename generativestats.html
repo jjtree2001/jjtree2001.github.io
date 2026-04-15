@@ -373,8 +373,13 @@ fit_gamma &nbsp;&lt;- <span class="ck">fitdist</span>(rt_data, <span class="cs">
 
   <div class="callout">
     <div class="clabel">The F-ratio in brief</div>
-    <p>ANOVA partitions total variability into between-group variance (does group membership predict scores?) divided by within-group variance (how much do scores vary around their own group mean?). This ratio has a known sampling distribution under H₀ only when the Gaussian error model holds. The further your DV's generative distribution departs from Gaussian, the less reliable that F-ratio becomes.</p>
-  </div>
+   <p>The F-ratio compares two sources of variability:</p>
+<ul>
+  <li>variability explained by the model (between groups)</li>
+  <li>variability left unexplained (within groups)</li>
+</ul>
+
+<p>Under a Gaussian error model, this ratio follows a known sampling distribution under the null hypothesis, which allows us to compute a p-value. The further your DV's generative distribution departs from Gaussian, the less reliable that F-ratio becomes.</p>
 </div>
 </section>
 
@@ -507,7 +512,7 @@ const DISTS = {
     ],
     props: { 'Mean': p => p.mu.toFixed(2), 'Variance': p => (p.sigma**2).toFixed(2), 'Type': () => 'Continuous', 'Bounds': () => '−∞ to +∞' },
     ind: 'yes', ind_label: 'Mean & variance: independent ✓',
-    insight: '<strong>Mean and variance are completely independent.</strong> Knowing μ tells you nothing about σ². This is the property that makes ANOVA work — the within-group spread is free to be whatever the data say, independent of where the group means fall. Typical DVs: continuous psychophysical measurements, aggregated cognitive scores, standardised test results.',
+    insight: '<strong>Mean and variance are completely independent.</strong> Knowing μ tells you nothing about σ². This is the property that makes ANOVA work — the within-group spread is free to be whatever the data say, independent of where the group means fall. Typical DVs: continuous psychophysical measurements, aggregated cognitive scores, standardised test results. For example, if accuracy is near ceiling (e.g., 95%), the variance must be small. A Gaussian model does not enforce this constraint, but a binomial model does.</p>',
     color: '#1D9E75', type: 'continuous_normal'
   },
   bernoulli: {
