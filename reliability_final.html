@@ -24,7 +24,6 @@
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   html { scroll-behavior: smooth; }
 
   body {
@@ -399,7 +398,7 @@
   .compare td:first-child { color: var(--cream); font-weight: 600; }
   .compare tr:last-child td { border-bottom: none; }
 
-  /* ── ADVANCE BADGE ── */
+  /* ── ADVANCED BADGE ── */
   .advanced-badge {
     display: inline-block;
     background: rgba(144,96,208,0.2);
@@ -540,7 +539,6 @@
 
   <p>A critical implication follows: reliability is not just a property of a measure, but of a design. Tasks that maximise within-person effects often minimise between-person variance, limiting the signal available for individual differences — a tension that becomes central in modern reliability work.</p>
 
-  <!-- Timeline -->
   <div class="widget" style="padding: 1.5rem 2rem;">
     <div class="widget-title">The Historical Arc — A Century of Reliability Theory</div>
     <div style="position:relative; padding-left: 2rem; margin-top:0.5rem;">
@@ -646,7 +644,6 @@
     <p style="margin-top:0.75rem;">Both follow directly from the same source: the correlation between an observed score and the true score it represents is √reliability — less than 1.0 whenever measurement is imperfect.</p>
   </div>
 
-  <!-- INTERACTIVE WIDGET: RTM + ATTENUATION -->
   <div class="widget">
     <div class="widget-title">Interactive: Regression to the Mean & Attenuation — Two Views of the Same Fact</div>
     <p style="font-size:0.85rem; color:var(--cream-dim); margin-bottom:1.5rem;">The left panel shows RTM: as reliability decreases, extreme scores on a first measurement regress toward the group mean on retest. The right panel shows attenuation: the same reliability reduction deflates the observed correlation between two measures toward zero. Adjust reliability to see both effects simultaneously.</p>
@@ -695,7 +692,6 @@
     </div>
   </div>
 
-  <!-- INTERACTIVE WIDGET 1: ATTENUATION EXPLORER -->
   <div class="widget">
     <div class="widget-title">Interactive: Attenuation Explorer</div>
     <p style="font-size:0.85rem; color:var(--cream-dim); margin-bottom:1.5rem;">Adjust the sliders to see how reliability attenuates both correlations and group differences simultaneously.</p>
@@ -761,14 +757,13 @@
 
   <p>Consider a population that varies in some cognitive ability. The mean difference between the groups you create depends on how far apart their respective group means fall — which is determined by both the spread of the distribution and the location of your cut. A median split on a narrow distribution gives you groups whose means are close together. The same cut on a wider distribution produces more separated means — but the pooled variance is also larger, so the standardised effect size does not simply scale up proportionally.</p>
 
-  <!-- INTERACTIVE WIDGET 2: DICHOTOMISATION -->
   <div class="widget">
     <div class="widget-title">Interactive: Dichotomisation & Effect Size</div>
     <p style="font-size:0.85rem; color:var(--cream-dim); margin-bottom:1.5rem;">See how the cut point location and measurement reliability jointly determine the observed effect size after dichotomisation.</p>
 
     <div class="slider-row">
       <div class="slider-label">Cut point (percentile): <span id="cut-val">50</span>th</div>
-    <input type="range" id="cutSlider" min="5" max="50" step="5" value="50">
+      <input type="range" id="cutSlider" min="5" max="50" step="5" value="50">
     </div>
     <div class="slider-row">
       <div class="slider-label">Reliability (ICC): <span id="dichIcc-val">0.70</span></div>
@@ -875,7 +870,6 @@
 
   <p>This formula is the key insight. It defines an entire <em>curve</em> of reliability as a function of trial size — and the shape of that curve is completely determined by γ². A task with high γ² rises steeply: reasonable reliability is achieved with modest trial counts. A task with low γ² rises slowly and may never reach acceptable reliability within any practical design.</p>
 
-  <!-- INTERACTIVE WIDGET 3: THE RELIABILITY CURVE -->
   <div class="widget">
     <div class="widget-title">Interactive: The Reliability Curve — γ² in Action</div>
     <p style="font-size:0.85rem; color:var(--cream-dim); margin-bottom:1.5rem;">This is the central visualisation. Adjust γ (the signal-to-noise standard deviation ratio) and see how the full reliability curve changes. Compare your task to real examples from the literature.</p>
@@ -944,15 +938,96 @@
     </div>
   </div>
 
+  <h3>Bridging to Linear Mixed Models</h3>
+
+  <p>A useful way to understand Rouder's framework is to recognise that it connects naturally to the variance decomposition estimated in linear mixed models. In a crossed person-by-item model, we typically write:</p>
+
+  <div class="formula">
+    y<sub>pi</sub> = μ + u<sub>p</sub> + v<sub>i</sub> + ε<sub>pi</sub>
+    <div class="formula-label">A standard crossed model with person effects, item effects, and residual noise</div>
+  </div>
+
+  <p>This decomposes variability into at least three familiar sources: <strong>between-person variance</strong> (σ²<sub>person</sub>), <strong>between-item variance</strong> (σ²<sub>item</sub>), and <strong>residual / trial-level variance</strong> (σ²<sub>residual</sub>). In other words, mixed models already contain the ingredients needed for a signal-to-noise account of reliability.</p>
+
+  <p>In the present context, the key comparison is between the variance linked to <em>persons</em> and the variance linked to <em>items</em>. When item variability is large relative to person variability, it becomes intrinsically difficult to localise individuals precisely on the latent dimension of interest. This gives a very natural bridge to Rouder's logic:</p>
+
+  <div class="formula">
+    γ²<sub>LMM</sub> = σ²<sub>person</sub> / σ²<sub>item</sub>
+    <div class="formula-label">A practical LMM-based signal-to-noise ratio: person variance relative to item variance</div>
+  </div>
+
+  <p>This is not a separate idea from Rouder's framework. It is the same basic variance logic expressed in mixed-model language. Indeed, once an LMM has been fitted, these variance components are already estimated. So in practice, one can compute a Rouder-style γ² directly from model output.</p>
+
+  <div class="callout blue">
+    <div class="callout-label">A useful practical bridge</div>
+    <p>In many experimental tasks, the main issue is not simply whether responses are noisy in the abstract, but whether <strong>stable between-person differences are large enough relative to variability introduced by the item set</strong>. Mixed models make that comparison explicit. Rouder's framework then tells us what that comparison implies for attainable reliability at different trial counts.</p>
+  </div>
+
+  <h3>From LMM Output to Trial Planning</h3>
+
+  <p>Suppose a fitted mixed model yields a person variance of 0.20 and an item variance of 0.80. Then the LMM-based signal-to-noise ratio is:</p>
+
+  <div class="formula">
+    γ²<sub>LMM</sub> = 0.20 / 0.80 = 0.25
+    <div class="formula-label">Example: item variance is four times larger than person variance</div>
+  </div>
+
+  <p>This is a low-signal regime. Individual differences exist, but the item set contributes so much competing variance that many more trials will be needed before each person's score becomes stable enough to trust. That is precisely where Rouder's recommendation becomes useful. Once γ² is known, we can estimate the number of trials needed to reach a target reliability.</p>
+
+  <p>Crucially, this is useful not only for <strong>individual differences</strong> research. Increasing trial count averages away item-driven instability, so it also improves the <strong>fidelity of the group mean</strong> and any group contrast built from those observations. Better signal recovery helps both the rank-ordering of people and the precision of aggregate effects.</p>
+
+  <div class="widget">
+    <div class="widget-title">Interactive: From LMM Variance Components to γ² and Trial Planning</div>
+    <p style="font-size:0.85rem; color:var(--cream-dim); margin-bottom:1.5rem;">Imagine you have fitted a crossed mixed model and obtained variance components for persons and items. Adjust them below to see the implied γ², the expected reliability at a given trial count, and the number of trials needed to hit common targets.</p>
+
+    <div class="slider-row">
+      <div class="slider-label">Person variance σ²<sub>person</sub>: <span id="lmm-person-val">0.20</span></div>
+      <input type="range" id="lmmPerson" min="0.01" max="2.00" step="0.01" value="0.20">
+    </div>
+    <div class="slider-row">
+      <div class="slider-label">Item variance σ²<sub>item</sub>: <span id="lmm-item-val">0.80</span></div>
+      <input type="range" id="lmmItem" min="0.01" max="2.00" step="0.01" value="0.80">
+    </div>
+    <div class="slider-row">
+      <div class="slider-label">Trials per condition L: <span id="lmm-L-val">40</span></div>
+      <input type="range" id="lmmTrials" min="5" max="500" step="5" value="40">
+    </div>
+
+    <div class="results-grid">
+      <div class="result-card" id="lmm-gamma-card">
+        <div class="val" id="lmm-gamma">—</div>
+        <div class="lbl">γ² from LMM output</div>
+      </div>
+      <div class="result-card" id="lmm-r-card">
+        <div class="val" id="lmm-r">—</div>
+        <div class="lbl">Expected reliability at L</div>
+      </div>
+      <div class="result-card" id="lmm-t7-card">
+        <div class="val" id="lmm-t7">—</div>
+        <div class="lbl">Trials needed for r = .70</div>
+      </div>
+      <div class="result-card" id="lmm-t9-card">
+        <div class="val" id="lmm-t9">—</div>
+        <div class="lbl">Trials needed for r = .90</div>
+      </div>
+    </div>
+
+    <canvas id="lmmBridgeCanvas" height="220" style="margin-top:1.5rem;"></canvas>
+
+    <p style="font-size:0.75rem; color:var(--cream-dim); margin-top:0.75rem; text-align:center;">
+      The left bars show the variance decomposition from the mixed model. The right panel shows the implied reliability curve from the resulting γ².
+    </p>
+  </div>
+
   <h3>Why This Matters: The Curve Reveals What the Coefficient Hides</h3>
 
-  <p>The reliability curve makes visible something that a single ICC value completely conceals the shape of the curve — and therefore exactly how many trials are needed to reach any reliability target. Consider the Stroop effect (γ ≈ .12). Plugging into the formula, achieving r = .70 requires approximately 158 trials per condition; achieving r = .90 requires over 600. Most studies run 20–50 trials per condition. No amount of increased sample size changes this — the ceiling is set by γ², not by N.</p>
+  <p>The reliability curve makes visible something that a single ICC value completely conceals: the shape of the curve — and therefore exactly how many trials are needed to reach any reliability target. Consider the Stroop effect (γ ≈ .12). Plugging into the formula, achieving r = .70 requires approximately 158 trials per condition; achieving r = .90 requires over 600. Most studies run 20–50 trials per condition. No amount of increased sample size changes this — the ceiling is set by γ², not by N.</p>
 
   <p>Contrast this with the Poggendorf visual illusion (γ ≈ 1.41). With just 15 trials per person, test-retest reliability exceeds .90. The task is intrinsically high-signal: individual differences in susceptibility to the illusion are large relative to trial noise. The individual differences research programme built on this task is on solid ground regardless of how few trials are used.</p>
 
   <div class="callout green">
     <div class="callout-label">The Unifying Principle</div>
-    <p>Both Cronbach's α and ICC, and Rouder's γ², are expressions of the same underlying variance decomposition — true signal relative to noise. The difference is that γ² makes this decomposition <em>explicit and invariant</em>, separating the intrinsic task property from the implementation choice (trial size). Cronbach advocates more items as the solution to low reliability; Rouder's framework tells you precisely <strong>how many more</strong>, and whether any practically achievable number will suffice.</p>
+    <p>Both Cronbach's α / ICC and Rouder's γ² are expressions of the same underlying variance logic: stable person signal relative to competing sources of variability. Mixed models make that decomposition explicit by partitioning variance linked to persons, items, and residual fluctuation. Rouder's framework then turns that decomposition into a design tool, telling you precisely <strong>how many more trials</strong> are needed, and whether any practically achievable number will suffice.</p>
   </div>
 
   <h3>The Connection Back to Attenuation</h3>
@@ -964,7 +1039,7 @@
     <div class="formula-label">Attenuation as a direct function of the task's signal-to-noise ratio and trial size</div>
   </div>
 
-  <p> Importantly, as a final point, this also means that for <em>contrast-based paradigms</em> — such as the well documented face inversion effect— observed γ will be also characteristically low, because the subtraction (i.e., upright − inverted) cancels much of the between-person variance while doubling the noise. As a result, poor cross-task correlations across different inversion tasks or paradigms are not simply evidence of construct fragmentation. They are the mathematically predictable consequence of attempting to localise individuals in a distribution using a ruler too noisy to distinguish nearby positions. In signal-to-noise terms, low γ² directly constrains the maximum observable reliability, and therefore the upper bound on any cross-task association.</p>
+  <p>Importantly, as a final point, this also means that for <em>contrast-based paradigms</em> — such as the well documented face inversion effect — observed γ will also be characteristically low, because the subtraction (i.e., upright − inverted) cancels much of the between-person variance while doubling the noise. As a result, poor cross-task correlations across different inversion tasks or paradigms are not simply evidence of construct fragmentation. They are the mathematically predictable consequence of attempting to localise individuals in a distribution using a ruler too noisy to distinguish nearby positions. In signal-to-noise terms, low γ² directly constrains the maximum observable reliability, and therefore the upper bound on any cross-task association.</p>
 
   <div class="callout">
     <div class="callout-label">Summary: The Full Chain of Measurement Error</div>
@@ -973,14 +1048,14 @@
 </div>
 
 <footer>
-  <p>Based on: <strong>Karvelis & Diaconescu (2025)</strong> · <em>Front. Psychol.</em> · Attenuation of group differences &nbsp;|&nbsp; <strong>Rouder & Mehrvarz (2024)</strong> · <em>Curr. Dir. Psychol. Sci.</em> · Signal-to-noise reliability &nbsp;|&nbsp; <strong>Rouder & Mehrvarz (2025)</strong> · <em>Behav. Res. Methods</em> · Constrained hierarchical models - with thanks to my silicon AI friends Claude and Chatgpt </p>
+  <p>Based on: <strong>Karvelis & Diaconescu (2025)</strong> · <em>Front. Psychol.</em> · Attenuation of group differences &nbsp;|&nbsp; <strong>Rouder & Mehrvarz (2024)</strong> · <em>Curr. Dir. Psychol. Sci.</em> · Signal-to-noise reliability &nbsp;|&nbsp; <strong>Rouder & Mehrvarz (2025)</strong> · <em>Behav. Res. Methods</em> · Constrained hierarchical models — with thanks to my silicon AI friends Claude and ChatGPT</p>
   <p style="margin-top:0.75rem; opacity:0.5;">Teaching resource for psychometrics and individual differences methods.</p>
 </footer>
 
 <script>
 // ── SCROLL ANIMATIONS ──
 const observer = new IntersectionObserver((entries) => {
-  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
 }, { threshold: 0.1 });
 document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
@@ -989,7 +1064,7 @@ function lerp(a,b,t){ return a+(b-a)*t; }
 function reliabilityAtL(gamma2, L){ return gamma2 / (gamma2 + 2/L); }
 function trialsForR(gamma2, target){
   if(gamma2 <= 0) return Infinity;
-  const val = (2*target) / (gamma2*(1-target));
+  const val = (2 * target) / (gamma2 * (1 - target));
   return Math.ceil(val);
 }
 function colorForVal(val, lo, hi){
@@ -1005,6 +1080,7 @@ const w1 = {
   iccX: document.getElementById('iccX'),
   iccY: document.getElementById('iccY'),
 };
+
 function updateAttenuation(){
   const rt = +w1.rTrue.value, dt = +w1.dTrue.value;
   const ix = +w1.iccX.value, iy = +w1.iccY.value;
@@ -1014,9 +1090,9 @@ function updateAttenuation(){
   document.getElementById('iccY-val').textContent = iy.toFixed(2);
 
   const ro = rt * Math.sqrt(ix * iy);
-  const dobs = dt * Math.sqrt(ix); // uses x reliability for group measure
-  const lossR = ((1 - ro/rt)*100).toFixed(0);
-  const lossD = ((1 - dobs/dt)*100).toFixed(0);
+  const dobs = dt * Math.sqrt(ix);
+  const lossR = ((1 - ro/rt) * 100).toFixed(0);
+  const lossD = ((1 - dobs/dt) * 100).toFixed(0);
 
   document.getElementById('obsR-val').textContent = ro.toFixed(2);
   document.getElementById('lossR-val').textContent = lossR + '%';
@@ -1028,35 +1104,34 @@ function updateAttenuation(){
   const obsDC = document.getElementById('obsD-card');
   obsDC.className = 'result-card ' + (dobs >= 0.8 ? 'good' : dobs >= 0.5 ? 'mid' : 'bad');
 
-  // Draw bar chart
   const canvas = document.getElementById('attenuationCanvas');
   const ctx = canvas.getContext('2d');
-  canvas.width = canvas.offsetWidth * window.devicePixelRatio;
-  canvas.height = 200 * window.devicePixelRatio;
-  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = canvas.offsetWidth * dpr;
+  canvas.height = 200 * dpr;
+  ctx.scale(dpr, dpr);
   const W = canvas.offsetWidth, H = 200;
   ctx.clearRect(0,0,W,H);
 
   const pad = 40, barW = 60, gap = 40;
   const groups = [
     { label: 'Correlation (r)', true: rt, obs: ro, color: '#5090e0' },
-    { label: "Cohen's d", true: Math.min(dt,2)/2, obs: Math.min(dobs,2)/2, color: '#e8a020', trueLabel: dt.toFixed(2), obsLabel: dobs.toFixed(2) }
+    { label: "Cohen's d", true: Math.min(dt,2)/2, obs: Math.min(dobs,2)/2, color: '#e8a020' }
   ];
   const maxVal = 1.0;
   const chartH = H - 60;
 
   groups.forEach((g, i) => {
     const x = pad + i * (barW*2 + gap + 30);
-    // True bar (outline)
     const trueH = (g.true / maxVal) * chartH;
     ctx.strokeStyle = 'rgba(240,232,216,0.4)';
     ctx.lineWidth = 2;
     ctx.strokeRect(x, H-40-trueH, barW, trueH);
-    // Observed bar (filled)
+
     const obsH = (g.obs / maxVal) * chartH;
     ctx.fillStyle = g.color;
     ctx.fillRect(x, H-40-obsH, barW, obsH);
-    // Labels
+
     ctx.fillStyle = 'rgba(240,232,216,0.5)';
     ctx.font = '11px "Source Serif 4", serif';
     ctx.textAlign = 'center';
@@ -1074,57 +1149,62 @@ updateAttenuation();
 const cutSlider = document.getElementById('cutSlider');
 const dichIcc = document.getElementById('dichIcc');
 
-function normalPDF(x, mu=0, sigma=1){ return Math.exp(-0.5*((x-mu)/sigma)**2)/(sigma*Math.sqrt(2*Math.PI)); }
-function normalCDF(x){ return 0.5*(1+erf(x/Math.SQRT2)); }
+function normalPDF(x, mu=0, sigma=1){
+  return Math.exp(-0.5*((x-mu)/sigma)**2) / (sigma*Math.sqrt(2*Math.PI));
+}
 function erf(x){
   const a1=0.254829592,a2=-0.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=0.3275911;
-  const sign = x<0?-1:1; x=Math.abs(x);
-  const t=1/(1+p*x);
-  return sign*(1-(((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-x*x));
+  const sign = x < 0 ? -1 : 1;
+  x = Math.abs(x);
+  const t = 1/(1+p*x);
+  return sign * (1 - (((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-x*x));
 }
 function invNorm(p){
-  // Rational approximation
   const a=[-3.969683028665376e+01,2.209460984245205e+02,-2.759285104469687e+02,1.383577518672690e+02,-3.066479806614716e+01,2.506628277459239e+00];
   const b=[-5.447609879822406e+01,1.615858368580409e+02,-1.556989798598866e+02,6.680131188771972e+01,-1.328068155288572e+01];
   const c=[-7.784894002430293e-03,-3.223964580411365e-01,-2.400758277161838e+00,-2.549732539343734e+00,4.374664141464968e+00,2.938163982698783e+00];
   const d=[7.784695709041462e-03,3.224671290700398e-01,2.445134137142996e+00,3.754408661907416e+00];
   const p_low=0.02425, p_high=1-p_low;
   let q,r;
-  if(p<p_low){ q=Math.sqrt(-2*Math.log(p)); return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/(((( d[0]*q+d[1])*q+d[2])*q+d[3])*q+1); }
-  if(p<=p_high){ q=p-0.5; r=q*q; return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q/(((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1); }
-  q=Math.sqrt(-2*Math.log(1-p)); return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/(((( d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
+  if(p < p_low){
+    q = Math.sqrt(-2*Math.log(p));
+    return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) / ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
+  }
+  if(p <= p_high){
+    q = p - 0.5; r = q*q;
+    return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q / (((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);
+  }
+  q = Math.sqrt(-2*Math.log(1-p));
+  return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) / ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
 }
 
 function updateDichotomisation(){
-  const cutPct = +cutSlider.value; // 5 to 45 → bottom group is this percentile
+  const cutPct = +cutSlider.value;
   const icc = +dichIcc.value;
   document.getElementById('cut-val').textContent = cutPct;
   document.getElementById('dichIcc-val').textContent = icc.toFixed(2);
 
-  // True d from dichotomisation of standard normal at this cut
-  // Lower group = bottom cutPct%, upper = top (100-cutPct)%
   const cutZ = invNorm(cutPct/100);
-  const n1 = cutPct/100, n2 = 1-n1;
+  const n1 = cutPct/100, n2 = 1 - n1;
   const phi = normalPDF(cutZ);
-  const mu1 = -phi/n1; // mean of lower group
-  const mu2 = phi/n2;  // mean of upper group
-  const pooledSD = Math.sqrt(n1*(1+mu1*mu1-mu1*mu1) + n2*(1+mu2*mu2-mu2*mu2) - (n1*mu1+n2*mu2)**2);
-  const trueD = (mu2-mu1); // in SD units
+  const mu1 = -phi/n1;
+  const mu2 = phi/n2;
+  const trueD = (mu2-mu1);
   const obsD = trueD * Math.sqrt(icc);
-  const powerRatio = (obsD/trueD)**2 * 0.64; // approximate relative power vs continuous
+  const powerRatio = (obsD/trueD)**2 * 0.64;
 
   document.getElementById('trueD-disp').textContent = trueD.toFixed(2);
   document.getElementById('obsD-disp').textContent = obsD.toFixed(2);
   const obsDCard = document.getElementById('obsD-disp-card');
   obsDCard.className = 'result-card ' + (obsD >= 0.8 ? 'good' : obsD >= 0.4 ? 'mid' : 'bad');
-  document.getElementById('infoLoss-disp').textContent = (powerRatio*100).toFixed(0)+'%';
+  document.getElementById('infoLoss-disp').textContent = (powerRatio*100).toFixed(0) + '%';
 
-  // Draw distribution
   const canvas = document.getElementById('dichCanvas');
   const ctx = canvas.getContext('2d');
-  canvas.width = canvas.offsetWidth * window.devicePixelRatio;
-  canvas.height = 240 * window.devicePixelRatio;
-  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = canvas.offsetWidth * dpr;
+  canvas.height = 240 * dpr;
+  ctx.scale(dpr, dpr);
   const W = canvas.offsetWidth, H = 240;
   ctx.clearRect(0,0,W,H);
 
@@ -1134,29 +1214,22 @@ function updateDichotomisation(){
   function toX(x){ return pad.l + (x-xMin)/(xMax-xMin)*cW; }
   function toY(y){ return pad.t + (1-y/yMax)*cH; }
 
-  // Fill lower group
   ctx.beginPath();
   ctx.moveTo(toX(xMin), toY(0));
-  for(let x=xMin; x<=cutZ; x+=0.05){
-    ctx.lineTo(toX(x), toY(normalPDF(x)));
-  }
+  for(let x=xMin; x<=cutZ; x+=0.05) ctx.lineTo(toX(x), toY(normalPDF(x)));
   ctx.lineTo(toX(cutZ), toY(0));
   ctx.closePath();
   ctx.fillStyle = 'rgba(224,80,80,0.25)';
   ctx.fill();
 
-  // Fill upper group
   ctx.beginPath();
   ctx.moveTo(toX(cutZ), toY(0));
-  for(let x=cutZ; x<=xMax; x+=0.05){
-    ctx.lineTo(toX(x), toY(normalPDF(x)));
-  }
+  for(let x=cutZ; x<=xMax; x+=0.05) ctx.lineTo(toX(x), toY(normalPDF(x)));
   ctx.lineTo(toX(xMax), toY(0));
   ctx.closePath();
   ctx.fillStyle = 'rgba(80,144,224,0.25)';
   ctx.fill();
 
-  // Normal curve
   ctx.beginPath();
   for(let x=xMin; x<=xMax; x+=0.05){
     const px=toX(x), py=toY(normalPDF(x));
@@ -1166,17 +1239,15 @@ function updateDichotomisation(){
   ctx.lineWidth = 2;
   ctx.stroke();
 
-  // Cut line
   ctx.beginPath();
   ctx.moveTo(toX(cutZ), pad.t);
   ctx.lineTo(toX(cutZ), pad.t+cH);
-  ctx.strokeStyle = var_amber = '#e8a020';
+  ctx.strokeStyle = '#e8a020';
   ctx.lineWidth = 2;
   ctx.setLineDash([5,4]);
   ctx.stroke();
   ctx.setLineDash([]);
 
-  // Group means
   const mu1x = toX(mu1), mu2x = toX(mu2);
   [{ x:mu1x, c:'#e05050', label:'μ low' }, { x:mu2x, c:'#5090e0', label:'μ high' }].forEach(m=>{
     ctx.beginPath();
@@ -1193,16 +1264,14 @@ function updateDichotomisation(){
     ctx.fillText(m.label, m.x, pad.t+cH*0.25);
   });
 
-  // Labels
   ctx.fillStyle = 'rgba(240,232,216,0.5)';
   ctx.font = '11px "Source Serif 4", serif';
   ctx.textAlign = 'center';
   ctx.fillText(`Lower group (${cutPct}%)`, toX((xMin+cutZ)/2), H-10);
   ctx.fillText(`Upper group (${100-cutPct}%)`, toX((cutZ+xMax)/2), H-10);
   ctx.fillStyle = '#e8a020';
-  ctx.fillText(`cut`, toX(cutZ), pad.t+cH+18);
+  ctx.fillText('cut', toX(cutZ), pad.t+cH+18);
 
-  // X axis
   ctx.beginPath();
   ctx.moveTo(pad.l, pad.t+cH);
   ctx.lineTo(pad.l+cW, pad.t+cH);
@@ -1260,7 +1329,6 @@ function drawReliabilityCurve(){
   const pad={l:50,r:30,t:20,b:50};
   const cW=W-pad.l-pad.r, cH=H-pad.t-pad.b;
 
-  // Grid
   ctx.strokeStyle = 'rgba(255,255,255,0.06)';
   ctx.lineWidth = 1;
   [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0].forEach(r=>{
@@ -1268,7 +1336,6 @@ function drawReliabilityCurve(){
     ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cW,y); ctx.stroke();
   });
 
-  // X axis is log scale 1–1000
   function toX(L){ return pad.l + (Math.log10(L)/3)*cW; }
   function toY(r){ return pad.t + (1-r)*cH; }
 
@@ -1277,21 +1344,24 @@ function drawReliabilityCurve(){
     ctx.beginPath(); ctx.moveTo(x,pad.t); ctx.lineTo(x,pad.t+cH); ctx.stroke();
   });
 
-  // Reference lines r=.7 and r=.9
   [0.7,0.9].forEach(r=>{
     ctx.beginPath();
     ctx.moveTo(pad.l,toY(r)); ctx.lineTo(pad.l+cW,toY(r));
-    ctx.strokeStyle='rgba(255,255,255,0.25)'; ctx.lineWidth=1;
-    ctx.setLineDash([6,4]); ctx.stroke(); ctx.setLineDash([]);
-    ctx.fillStyle='rgba(255,255,255,0.4)'; ctx.font='10px "JetBrains Mono",monospace';
-    ctx.textAlign='right'; ctx.fillText('r='+r, pad.l-4, toY(r)+4);
+    ctx.strokeStyle='rgba(255,255,255,0.25)';
+    ctx.lineWidth=1;
+    ctx.setLineDash([6,4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='rgba(255,255,255,0.4)';
+    ctx.font='10px "JetBrains Mono",monospace';
+    ctx.textAlign='right';
+    ctx.fillText('r='+r, pad.l-4, toY(r)+4);
   });
 
-  // Reference tasks
   const refTasks=[
-    { gamma: 0.12, color:'rgba(224,80,80,0.5)', label:'Stroop' },
-    { gamma: 0.72, color:'rgba(80,200,120,0.5)', label:'M-L' },
-    { gamma: 1.414, color:'rgba(80,144,224,0.5)', label:'Pog.' },
+    { gamma: 0.12, color:'rgba(224,80,80,0.5)' },
+    { gamma: 0.72, color:'rgba(80,200,120,0.5)' },
+    { gamma: 1.414, color:'rgba(80,144,224,0.5)' },
   ];
 
   refTasks.forEach(task=>{
@@ -1303,11 +1373,13 @@ function drawReliabilityCurve(){
       const x=toX(L), y=toY(r);
       li===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
     }
-    ctx.strokeStyle=task.color; ctx.lineWidth=1.5; ctx.setLineDash([4,3]);
-    ctx.stroke(); ctx.setLineDash([]);
+    ctx.strokeStyle=task.color;
+    ctx.lineWidth=1.5;
+    ctx.setLineDash([4,3]);
+    ctx.stroke();
+    ctx.setLineDash([]);
   });
 
-  // User curve
   const g2=currentGamma*currentGamma;
   ctx.beginPath();
   for(let li=0; li<=300; li++){
@@ -1316,36 +1388,37 @@ function drawReliabilityCurve(){
     const x=toX(L), y=toY(r);
     li===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
   }
-  ctx.strokeStyle='#e8a020'; ctx.lineWidth=3; ctx.stroke();
+  ctx.strokeStyle='#e8a020';
+  ctx.lineWidth=3;
+  ctx.stroke();
 
-  // Dot at L=100 and L=500
-  [100,500].forEach((L,i)=>{
+  [100,500].forEach(L=>{
     const r=reliabilityAtL(g2,L);
     ctx.beginPath();
     ctx.arc(toX(L),toY(r),5,0,Math.PI*2);
-    ctx.fillStyle='#e8a020'; ctx.fill();
+    ctx.fillStyle='#e8a020';
+    ctx.fill();
   });
 
-  // Axes
-  ctx.strokeStyle='rgba(240,232,216,0.3)'; ctx.lineWidth=1;
+  ctx.strokeStyle='rgba(240,232,216,0.3)';
+  ctx.lineWidth=1;
   ctx.beginPath(); ctx.moveTo(pad.l,pad.t); ctx.lineTo(pad.l,pad.t+cH); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(pad.l,pad.t+cH); ctx.lineTo(pad.l+cW,pad.t+cH); ctx.stroke();
 
-  // Y axis labels
-  ctx.fillStyle='rgba(240,232,216,0.6)'; ctx.font='11px "JetBrains Mono",monospace';
+  ctx.fillStyle='rgba(240,232,216,0.6)';
+  ctx.font='11px "JetBrains Mono",monospace';
   ctx.textAlign='right';
   [0,0.2,0.4,0.6,0.8,1.0].forEach(r=>{
     ctx.fillText(r.toFixed(1), pad.l-6, toY(r)+4);
   });
 
-  // X axis labels
   ctx.textAlign='center';
   [1,5,10,50,100,500,1000].forEach(L=>{
     ctx.fillText(L, toX(L), pad.t+cH+18);
   });
 
-  // Axis titles
-  ctx.fillStyle='rgba(240,232,216,0.4)'; ctx.font='11px "Source Serif 4",serif';
+  ctx.fillStyle='rgba(240,232,216,0.4)';
+  ctx.font='11px "Source Serif 4",serif';
   ctx.textAlign='center';
   ctx.fillText('Trials per condition (L) — log scale', pad.l+cW/2, H-8);
   ctx.save();
@@ -1354,9 +1427,9 @@ function drawReliabilityCurve(){
   ctx.fillText('Test-retest reliability', 0, 0);
   ctx.restore();
 
-  // γ label on curve
   const labelL=30, labelR=reliabilityAtL(g2,labelL);
-  ctx.fillStyle='#e8a020'; ctx.font='bold 12px "JetBrains Mono",monospace';
+  ctx.fillStyle='#e8a020';
+  ctx.font='bold 12px "JetBrains Mono",monospace';
   ctx.textAlign='left';
   ctx.fillText('γ='+currentGamma.toFixed(2), toX(labelL)+8, toY(labelR)-8);
 }
@@ -1364,23 +1437,15 @@ function drawReliabilityCurve(){
 document.getElementById('gammaSlider').addEventListener('input', function(){
   currentGamma = +this.value;
   document.getElementById('gamma-val').textContent = currentGamma.toFixed(2);
-  document.getElementById('gamma-sq-val').textContent = 'γ²='+( currentGamma*currentGamma).toFixed(3);
+  document.getElementById('gamma-sq-val').textContent = 'γ²=' + (currentGamma*currentGamma).toFixed(3);
   drawReliabilityCurve();
   updateCurveStats(currentGamma);
 });
 
-// Initial render
 setTimeout(()=>{
   drawReliabilityCurve();
   updateCurveStats(currentGamma);
 }, 100);
-
-window.addEventListener('resize', ()=>{
-  updateAttenuation();
-  updateDichotomisation();
-  drawReliabilityCurve();
-  updateRTM();
-});
 
 // ── WIDGET: RTM + ATTENUATION ──
 function updateRTM(){
@@ -1409,7 +1474,7 @@ function updateRTM(){
 function drawRTMPanel(icc){
   const canvas = document.getElementById('rtmCanvas');
   if(!canvas) return;
-  const dpr = window.devicePixelRatio||1;
+  const dpr = window.devicePixelRatio || 1;
   canvas.width = canvas.offsetWidth*dpr;
   canvas.height = 220*dpr;
   const ctx = canvas.getContext('2d');
@@ -1420,8 +1485,8 @@ function drawRTMPanel(icc){
   const pad={l:40,r:20,t:20,b:40};
   const cW=W-pad.l-pad.r, cH=H-pad.t-pad.b;
 
-  // Grid
-  ctx.strokeStyle='rgba(255,255,255,0.06)'; ctx.lineWidth=1;
+  ctx.strokeStyle='rgba(255,255,255,0.06)';
+  ctx.lineWidth=1;
   [-2,-1,0,1,2].forEach(v=>{
     const x=pad.l+(v+2)/4*cW;
     const y=pad.t+(2-v)/4*cH;
@@ -1429,55 +1494,64 @@ function drawRTMPanel(icc){
     ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cW,y); ctx.stroke();
   });
 
-  // Diagonal identity line (perfect reliability)
   ctx.beginPath();
   ctx.moveTo(pad.l, pad.t+cH);
   ctx.lineTo(pad.l+cW, pad.t);
-  ctx.strokeStyle='rgba(255,255,255,0.15)'; ctx.lineWidth=1;
-  ctx.setLineDash([4,4]); ctx.stroke(); ctx.setLineDash([]);
+  ctx.strokeStyle='rgba(255,255,255,0.15)';
+  ctx.lineWidth=1;
+  ctx.setLineDash([4,4]);
+  ctx.stroke();
+  ctx.setLineDash([]);
 
-  // RTM regression line: E(retest) = icc * test1
-  // Map: x in [-2.5,2.5], y in [-2.5,2.5]
   const toX = v => pad.l + (v+2.5)/5*cW;
   const toY = v => pad.t + (2.5-v)/5*cH;
 
   ctx.beginPath();
   ctx.moveTo(toX(-2.5), toY(-2.5*icc));
   ctx.lineTo(toX(2.5), toY(2.5*icc));
-  ctx.strokeStyle='#e8a020'; ctx.lineWidth=2.5; ctx.stroke();
+  ctx.strokeStyle='#e8a020';
+  ctx.lineWidth=2.5;
+  ctx.stroke();
 
-  // Example point: score of +2 SD
   const testScore = 2.0;
   const expectedRetest = icc * testScore;
   ctx.beginPath();
   ctx.arc(toX(testScore), toY(testScore), 6, 0, Math.PI*2);
-  ctx.fillStyle='rgba(240,232,216,0.4)'; ctx.fill();
+  ctx.fillStyle='rgba(240,232,216,0.4)';
+  ctx.fill();
   ctx.beginPath();
   ctx.arc(toX(testScore), toY(expectedRetest), 6, 0, Math.PI*2);
-  ctx.fillStyle='#e8a020'; ctx.fill();
+  ctx.fillStyle='#e8a020';
+  ctx.fill();
 
-  // Arrow showing regression
   ctx.beginPath();
   ctx.moveTo(toX(testScore)+10, toY(testScore));
   ctx.lineTo(toX(testScore)+10, toY(expectedRetest));
-  ctx.strokeStyle='rgba(232,160,32,0.6)'; ctx.lineWidth=1.5;
-  ctx.setLineDash([3,3]); ctx.stroke(); ctx.setLineDash([]);
+  ctx.strokeStyle='rgba(232,160,32,0.6)';
+  ctx.lineWidth=1.5;
+  ctx.setLineDash([3,3]);
+  ctx.stroke();
+  ctx.setLineDash([]);
 
-  // Labels
-  ctx.fillStyle='rgba(240,232,216,0.5)'; ctx.font='10px "JetBrains Mono",monospace';
+  ctx.fillStyle='rgba(240,232,216,0.5)';
+  ctx.font='10px "JetBrains Mono",monospace';
   ctx.textAlign='center';
   ctx.fillText('Test 1 score (SDs)', pad.l+cW/2, H-8);
-  ctx.save(); ctx.translate(12, pad.t+cH/2); ctx.rotate(-Math.PI/2);
-  ctx.fillText('Expected retest score', 0, 0); ctx.restore();
+  ctx.save();
+  ctx.translate(12, pad.t+cH/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText('Expected retest score', 0, 0);
+  ctx.restore();
 
-  ctx.fillStyle='rgba(240,232,216,0.4)'; ctx.font='9px "JetBrains Mono",monospace';
+  ctx.fillStyle='rgba(240,232,216,0.4)';
+  ctx.font='9px "JetBrains Mono",monospace';
   [-2,-1,0,1,2].forEach(v=>{
     ctx.textAlign='right'; ctx.fillText(v, pad.l-4, toY(v)+3);
     ctx.textAlign='center'; ctx.fillText(v, toX(v), pad.t+cH+14);
   });
 
-  // Annotation
-  ctx.fillStyle='#e8a020'; ctx.font='10px "Source Serif 4",serif';
+  ctx.fillStyle='#e8a020';
+  ctx.font='10px "Source Serif 4",serif';
   ctx.textAlign='left';
   ctx.fillText(`slope = ICC = ${icc.toFixed(2)}`, pad.l+4, pad.t+14);
 }
@@ -1485,7 +1559,7 @@ function drawRTMPanel(icc){
 function drawAttPanel(icc, rtrue, robs){
   const canvas = document.getElementById('attCanvas2');
   if(!canvas) return;
-  const dpr = window.devicePixelRatio||1;
+  const dpr = window.devicePixelRatio || 1;
   canvas.width = canvas.offsetWidth*dpr;
   canvas.height = 220*dpr;
   const ctx = canvas.getContext('2d');
@@ -1498,54 +1572,64 @@ function drawAttPanel(icc, rtrue, robs){
   const toX = r => pad.l + r*cW;
   const toY = r => pad.t + (1-r)*cH;
 
-  // Grid
-  ctx.strokeStyle='rgba(255,255,255,0.06)'; ctx.lineWidth=1;
+  ctx.strokeStyle='rgba(255,255,255,0.06)';
+  ctx.lineWidth=1;
   [0,0.2,0.4,0.6,0.8,1.0].forEach(v=>{
     ctx.beginPath(); ctx.moveTo(toX(0),toY(v)); ctx.lineTo(toX(1),toY(v)); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(toX(v),toY(0)); ctx.lineTo(toX(v),toY(1)); ctx.stroke();
   });
 
-  // Diagonal: robs = rtrue * icc — line across all rtrue values
   ctx.beginPath();
   ctx.moveTo(toX(0), toY(0));
   ctx.lineTo(toX(1), toY(icc));
-  ctx.strokeStyle='#5090e0'; ctx.lineWidth=2.5; ctx.stroke();
+  ctx.strokeStyle='#5090e0';
+  ctx.lineWidth=2.5;
+  ctx.stroke();
 
-  // Identity line
   ctx.beginPath();
-  ctx.moveTo(toX(0),toY(0)); ctx.lineTo(toX(1),toY(1));
-  ctx.strokeStyle='rgba(255,255,255,0.15)'; ctx.lineWidth=1;
-  ctx.setLineDash([4,4]); ctx.stroke(); ctx.setLineDash([]);
+  ctx.moveTo(toX(0),toY(0));
+  ctx.lineTo(toX(1),toY(1));
+  ctx.strokeStyle='rgba(255,255,255,0.15)';
+  ctx.lineWidth=1;
+  ctx.setLineDash([4,4]);
+  ctx.stroke();
+  ctx.setLineDash([]);
 
-  // Current point
   ctx.beginPath();
   ctx.arc(toX(rtrue), toY(rtrue), 5, 0, Math.PI*2);
-  ctx.fillStyle='rgba(240,232,216,0.3)'; ctx.fill();
+  ctx.fillStyle='rgba(240,232,216,0.3)';
+  ctx.fill();
   ctx.beginPath();
   ctx.arc(toX(rtrue), toY(robs), 6, 0, Math.PI*2);
-  ctx.fillStyle='#5090e0'; ctx.fill();
+  ctx.fillStyle='#5090e0';
+  ctx.fill();
 
-  // Drop line
   ctx.beginPath();
   ctx.moveTo(toX(rtrue), toY(rtrue));
   ctx.lineTo(toX(rtrue), toY(robs));
-  ctx.strokeStyle='rgba(80,144,224,0.5)'; ctx.lineWidth=1.5;
-  ctx.setLineDash([3,3]); ctx.stroke(); ctx.setLineDash([]);
+  ctx.strokeStyle='rgba(80,144,224,0.5)';
+  ctx.lineWidth=1.5;
+  ctx.setLineDash([3,3]);
+  ctx.stroke();
+  ctx.setLineDash([]);
 
-  // Axis labels
-  ctx.fillStyle='rgba(240,232,216,0.5)'; ctx.font='10px "JetBrains Mono",monospace';
+  ctx.fillStyle='rgba(240,232,216,0.5)';
+  ctx.font='10px "JetBrains Mono",monospace';
   ctx.textAlign='center';
   ctx.fillText('True correlation', pad.l+cW/2, H-8);
-  ctx.save(); ctx.translate(12,pad.t+cH/2); ctx.rotate(-Math.PI/2);
-  ctx.fillText('Observed correlation', 0, 0); ctx.restore();
+  ctx.save();
+  ctx.translate(12,pad.t+cH/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText('Observed correlation', 0, 0);
+  ctx.restore();
 
   [0,0.2,0.4,0.6,0.8,1.0].forEach(v=>{
     ctx.textAlign='right'; ctx.fillText(v.toFixed(1), pad.l-4, toY(v)+3);
     ctx.textAlign='center'; ctx.fillText(v.toFixed(1), toX(v), pad.t+cH+14);
   });
 
-  // Annotation
-  ctx.fillStyle='#5090e0'; ctx.font='10px "Source Serif 4",serif';
+  ctx.fillStyle='#5090e0';
+  ctx.font='10px "Source Serif 4",serif';
   ctx.textAlign='left';
   ctx.fillText(`slope = ICC = ${icc.toFixed(2)}`, pad.l+4, pad.t+14);
 }
@@ -1553,6 +1637,194 @@ function drawAttPanel(icc, rtrue, robs){
 document.getElementById('rtmIcc').addEventListener('input', updateRTM);
 document.getElementById('rtmRtrue').addEventListener('input', updateRTM);
 setTimeout(updateRTM, 150);
+
+// ── WIDGET: LMM BRIDGE TO γ² ──
+const lmmBridge = {
+  person: document.getElementById('lmmPerson'),
+  item: document.getElementById('lmmItem'),
+  trials: document.getElementById('lmmTrials')
+};
+
+function updateLMMBridge(){
+  const personVar = +lmmBridge.person.value;
+  const itemVar = +lmmBridge.item.value;
+  const L = +lmmBridge.trials.value;
+
+  document.getElementById('lmm-person-val').textContent = personVar.toFixed(2);
+  document.getElementById('lmm-item-val').textContent = itemVar.toFixed(2);
+  document.getElementById('lmm-L-val').textContent = L;
+
+  const gamma2 = personVar / itemVar;
+  const rL = reliabilityAtL(gamma2, L);
+  const t7 = trialsForR(gamma2, 0.70);
+  const t9 = trialsForR(gamma2, 0.90);
+
+  document.getElementById('lmm-gamma').textContent = gamma2.toFixed(2);
+  document.getElementById('lmm-r').textContent = rL.toFixed(2);
+  document.getElementById('lmm-t7').textContent = t7 > 9999 ? '>10k' : t7.toLocaleString();
+  document.getElementById('lmm-t9').textContent = t9 > 9999 ? '>10k' : t9.toLocaleString();
+
+  document.getElementById('lmm-gamma-card').className =
+    'result-card ' + (gamma2 >= 1 ? 'good' : gamma2 >= 0.3 ? 'mid' : 'bad');
+
+  document.getElementById('lmm-r-card').className =
+    'result-card ' + (rL >= 0.7 ? 'good' : rL >= 0.4 ? 'mid' : 'bad');
+
+  drawLMMBridgeCanvas(personVar, itemVar, gamma2, L, rL);
+}
+
+function drawLMMBridgeCanvas(personVar, itemVar, gamma2, L, rL){
+  const canvas = document.getElementById('lmmBridgeCanvas');
+  if(!canvas) return;
+
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = canvas.offsetWidth * dpr;
+  canvas.height = 220 * dpr;
+  ctx.scale(dpr, dpr);
+
+  const W = canvas.offsetWidth;
+  const H = 220;
+  ctx.clearRect(0, 0, W, H);
+
+  const pad = {l: 30, r: 20, t: 20, b: 35};
+
+  const leftW = W * 0.42;
+  const barBaseY = H - 45;
+  const barMaxH = 120;
+  const vmax = Math.max(personVar, itemVar, 0.01);
+
+  function barH(v){ return (v / vmax) * barMaxH; }
+
+  const pH = barH(personVar);
+  const iH = barH(itemVar);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.05)';
+  ctx.fillRect(0, 0, leftW, H);
+
+  ctx.fillStyle = '#50c878';
+  ctx.fillRect(60, barBaseY - pH, 55, pH);
+
+  ctx.fillStyle = '#5090e0';
+  ctx.fillRect(145, barBaseY - iH, 55, iH);
+
+  ctx.fillStyle = 'rgba(240,232,216,0.85)';
+  ctx.font = '11px "JetBrains Mono", monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('person', 87.5, H - 20);
+  ctx.fillText('item', 172.5, H - 20);
+
+  ctx.fillStyle = '#50c878';
+  ctx.fillText(personVar.toFixed(2), 87.5, barBaseY - pH - 8);
+  ctx.fillStyle = '#5090e0';
+  ctx.fillText(itemVar.toFixed(2), 172.5, barBaseY - iH - 8);
+
+  ctx.fillStyle = 'rgba(240,232,216,0.5)';
+  ctx.font = '10px "Source Serif 4", serif';
+  ctx.fillText('LMM variance decomposition', leftW / 2, 16);
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+  ctx.beginPath();
+  ctx.moveTo(leftW + 10, 12);
+  ctx.lineTo(leftW + 10, H - 12);
+  ctx.stroke();
+
+  const rightX = leftW + 25;
+  const rightW = W - rightX - pad.r;
+  const rightTop = 20;
+  const rightH = 145;
+
+  function toX(trials){
+    return rightX + (Math.log10(trials) / 3) * rightW;
+  }
+  function toY(r){
+    return rightTop + (1 - r) * rightH;
+  }
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 1;
+  [0.2,0.4,0.6,0.8,1.0].forEach(rv=>{
+    ctx.beginPath();
+    ctx.moveTo(rightX, toY(rv));
+    ctx.lineTo(rightX + rightW, toY(rv));
+    ctx.stroke();
+  });
+
+  [10,50,100,500,1000].forEach(tv=>{
+    ctx.beginPath();
+    ctx.moveTo(toX(tv), rightTop);
+    ctx.lineTo(toX(tv), rightTop + rightH);
+    ctx.stroke();
+  });
+
+  [0.7, 0.9].forEach(target=>{
+    ctx.beginPath();
+    ctx.moveTo(rightX, toY(target));
+    ctx.lineTo(rightX + rightW, toY(target));
+    ctx.strokeStyle = 'rgba(255,255,255,0.22)';
+    ctx.setLineDash([5,4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  });
+
+  ctx.beginPath();
+  for(let li=0; li<=250; li++){
+    const trials = Math.pow(10, (li/250) * 3);
+    const rr = reliabilityAtL(gamma2, trials);
+    const x = toX(trials);
+    const y = toY(rr);
+    li === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  }
+  ctx.strokeStyle = '#e8a020';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(toX(L), toY(rL), 5, 0, Math.PI * 2);
+  ctx.fillStyle = '#e8a020';
+  ctx.fill();
+
+  ctx.fillStyle = 'rgba(240,232,216,0.5)';
+  ctx.font = '10px "Source Serif 4", serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Reliability implied by γ²', rightX + rightW/2, 16);
+  ctx.fillText('Trials (log scale)', rightX + rightW/2, H - 8);
+
+  ctx.save();
+  ctx.translate(rightX - 14, rightTop + rightH/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText('reliability', 0, 0);
+  ctx.restore();
+
+  ctx.font = '10px "JetBrains Mono", monospace';
+  ctx.textAlign = 'center';
+  [10,50,100,500,1000].forEach(tv=>{
+    ctx.fillText(tv, toX(tv), rightTop + rightH + 14);
+  });
+
+  ctx.textAlign = 'right';
+  [0.2,0.4,0.6,0.8,1.0].forEach(rv=>{
+    ctx.fillText(rv.toFixed(1), rightX - 5, toY(rv) + 3);
+  });
+
+  ctx.fillStyle = '#e8a020';
+  ctx.textAlign = 'left';
+  ctx.fillText(`γ² = ${gamma2.toFixed(2)}`, rightX + 8, rightTop + 14);
+}
+
+Object.values(lmmBridge).forEach(el => {
+  if(el) el.addEventListener('input', updateLMMBridge);
+});
+setTimeout(updateLMMBridge, 200);
+
+// ── RESIZE ──
+window.addEventListener('resize', ()=>{
+  updateAttenuation();
+  updateDichotomisation();
+  drawReliabilityCurve();
+  updateRTM();
+  updateLMMBridge();
+});
 </script>
 </body>
 </html>
