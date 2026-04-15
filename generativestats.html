@@ -168,7 +168,11 @@ footer strong { color: rgba(255,255,255,0.7); }
   <div class="sec-label">Section 1</div>
   <h2>Every number in your dataset has a story</h2>
   <p>When a participant responds correctly or incorrectly on a trial, when they report a pain rating of 4, when their reaction time is 312ms — each of these observations was produced by some real-world process. That process is not arbitrary. It has a characteristic shape: some outcomes are more probable than others, and the probabilities follow a pattern reflecting the nature of the generating mechanism.</p>
-  <p>This pattern is what statisticians formalise as a <em>probability distribution</em>. And here is the key idea that unlocks a great deal of statistical reasoning: when you choose a statistical model, you are making an implicit claim about which distribution generated your data. ANOVA says: my residuals are Gaussian. Logistic regression says: my outcomes are Bernoulli. Poisson regression says: my counts follow a Poisson process. The model is not just a computational procedure — it is a substantive claim about the generative mechanism.</p>
+  <p>This pattern is what statisticians formalise as a <em>probability distribution</em>. Statistical models are not just tools for analysing data—they are claims about how the data were generated.</p>
+
+<p>Every analysis implicitly answers the question: <em>what kind of process produced these observations?</em></p>
+
+<p>ANOVA says: my residuals are Gaussian. Logistic regression says: my outcomes are Bernoulli. Poisson regression says: my counts follow a Poisson process. The model is not just a computational procedure — it is a substantive claim about the generative mechanism.</p>
   <div class="callout amber">
     <div class="clabel">The central question</div>
     <p>Before asking "which test should I use?", ask: "what kind of thing is my dependent variable, and what process plausibly generated it?" The answer to the second question largely determines the answer to the first.</p>
