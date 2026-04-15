@@ -175,9 +175,11 @@ footer strong { color: rgba(255,255,255,0.7); }
 <p>ANOVA says: my residuals are Gaussian. Logistic regression says: my outcomes are Bernoulli. Poisson regression says: my counts follow a Poisson process. The model is not just a computational procedure — it is a substantive claim about the generative mechanism.</p>
   <div class="callout amber">
     <div class="clabel">The central question</div>
-    <p>Before asking "which test should I use?", ask: "what kind of thing is my dependent variable, and what process plausibly generated it?" The answer to the second question largely determines the answer to the first.</p>
-  </div>
-  <h3>Why getting this wrong matters</h3>
+    <p>This pattern is what statisticians formalise as a <em>probability distribution</em>. Statistical models are not just tools for analysing data—they are claims about how the data were generated.</p>
+
+<p>Every analysis implicitly answers the question: <em>what kind of process produced these observations?</em></p>
+
+<p>ANOVA says: my residuals are Gaussian. Logistic regression says: my outcomes are Bernoulli. Poisson regression says: my counts follow a Poisson process. The model is not just a computational procedure — it is a substantive claim about the generative mechanism.</p>
   <p>If your model assumes the wrong distribution, the consequences range from negligible to severe depending on how far reality departs from the assumption. Standard errors may be wrong, p-values may be inflated or deflated, and effect size estimates may be biased. More subtly, the model may be making arithmetically impossible claims — estimating probabilities above 1, predicting negative counts — which is a sign that the assumed generative process simply does not match the data-generating reality.</p>
 </div>
 </section>
