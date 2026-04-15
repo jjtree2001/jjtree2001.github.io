@@ -533,7 +533,7 @@ const DISTS = {
     ],
     props: { 'Mean': p => (p.n*p.p).toFixed(2), 'Variance': p => (p.n*p.p*(1-p.p)).toFixed(2), 'Type': () => 'Discrete', 'Values': () => '0, 1, 2, … n' },
     ind: 'no', ind_label: 'Mean & variance: dependent ✗',
-    insight: '<strong>Variance = np(1−p): still determined by mean and n.</strong> The mean–variance dependency is inherited from Bernoulli and does not disappear with more items — it is attenuated. With large n and middling p, the distribution approaches Gaussian (try n=50, p=0.5). This is why total test scores can often be analysed with ANOVA, but it remains an approximation.',
+    insight: '<strong>Variance = np(1−p): still determined by mean and n.</strong> The mean–variance dependency is inherited from Bernoulli and does not disappear with more items — it is attenuated. With large n and middling p, the distribution approaches Gaussian (try n=50, p=0.5). This is why total test scores can often be analysed with ANOVA, but it remains an approximation. For example, if accuracy is near ceiling (e.g., 95%), the variance must be small. A Gaussian model does not enforce this constraint, but a binomial model does.</p>',
     color: '#1a6fba', type: 'discrete_binom'
   },
   poisson: {
