@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Where does your data come from? Generative distributions and ANOVA</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1c2035; --ink-mid: #3d4460; --muted: #6b7490;
+  --page: #f7f5f0; --surface: #ffffff; --border: #ddd9d0;
+  --teal: #1D9E75; --teal-l: #e1f5ee; --teal-d: #0f6e56;
+  --coral: #c94e28; --coral-l: #faece7;
+  --amber: #b07010; --amber-l: #faeeda; --amber-m: #e8a830;
+  --purple: #534AB7; --purple-l: #eeedfe;
+  --blue: #1a6fba; --blue-l: #e6f1fb;
+  --green: #3B6D11; --green-l: #eaf3de;
+  --pink: #993356; --pink-l: #fbeaf0;
+  --slate: #3d4460; --slate-l: #ecedf2;
+  --r: 8px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--page); color: var(--ink); font-family: 'Source Serif 4', Georgia, serif; font-size: 17px; line-height: 1.78; }
+
+nav {
+  position: sticky; top: 0; background: var(--ink); color: #fff;
+  padding: 0 1.5rem; display: flex; align-items: center; gap: 1.25rem;
+  height: 50px; z-index: 200; font-size: 12.5px; letter-spacing: 0.03em;
+  overflow-x: auto; scrollbar-width: none;
+}
+nav::-webkit-scrollbar { display: none; }
+.brand { font-weight: 600; color: var(--teal); font-size: 13px; margin-right: auto; white-space: nowrap; }
+nav a { color: rgba(255,255,255,0.6); text-decoration: none; transition: color .2s; white-space: nowrap; }
+nav a:hover { color: #fff; }
+
+.hero { background: var(--ink); color: #fff; padding: 5rem 2rem 4.5rem; text-align: center; }
+.eyebrow { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--teal); margin-bottom: 1.2rem; }
+.hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(1.9rem, 5vw, 3rem); font-weight: 600; line-height: 1.2; max-width: 680px; margin: 0 auto 1.4rem; }
+.hero h1 em { font-style: italic; color: var(--amber-m); }
+.hero p { font-size: 17px; color: rgba(255,255,255,0.6); max-width: 540px; margin: 0 auto; font-weight: 300; }
+
+.wrap { max-width: 800px; margin: 0 auto; padding: 0 2rem; }
+section { padding: 4rem 0 3.5rem; border-bottom: 1px solid var(--border); }
+section:last-child { border-bottom: none; }
+.sec-label { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.6rem; }
+h2 { font-family: 'Playfair Display', serif; font-size: 1.85rem; font-weight: 600; margin-bottom: 1.4rem; line-height: 1.25; }
+h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 400; font-style: italic; margin: 2rem 0 0.7rem; }
+p { margin-bottom: 1rem; }
+p:last-child { margin-bottom: 0; }
+
+.callout { border-left: 3px solid var(--teal); background: var(--teal-l); padding: 1rem 1.3rem; margin: 1.75rem 0; border-radius: 0 var(--r) var(--r) 0; }
+.callout.amber { border-color: var(--amber); background: var(--amber-l); }
+.callout.coral { border-color: var(--coral); background: var(--coral-l); }
+.callout.purple { border-color: var(--purple); background: var(--purple-l); }
+.callout .clabel { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; margin-bottom: 0.3rem; color: var(--teal); font-family: 'Source Serif 4', serif; }
+.callout.amber .clabel { color: var(--amber); }
+.callout.coral .clabel { color: var(--coral); }
+.callout.purple .clabel { color: var(--purple); }
+.callout p { margin: 0; font-size: 15.5px; }
+
+/* EXPLORER */
+.explorer { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin: 2rem 0; }
+.tab-strip { display: flex; border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
+.tab-strip::-webkit-scrollbar { display: none; }
+.tab-btn { flex-shrink: 0; padding: 0.75rem 0.9rem; font-family: 'Source Serif 4', serif; font-size: 12.5px; background: none; border: none; border-bottom: 3px solid transparent; cursor: pointer; color: var(--muted); transition: all .2s; white-space: nowrap; margin-bottom: -1px; }
+.tab-btn:hover { color: var(--ink); background: var(--page); }
+.tab-btn.active { color: var(--ink); border-bottom-color: var(--teal); background: var(--surface); }
+
+.dist-panel { padding: 1.75rem 2rem 2rem; }
+.dist-top { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; margin-bottom: 1.5rem; }
+.dist-name { font-family: 'Playfair Display', serif; font-size: 1.35rem; font-weight: 600; margin-bottom: 0.5rem; }
+.dist-desc { font-size: 14.5px; color: var(--ink-mid); line-height: 1.6; margin-bottom: 1rem; }
+.props-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.prop-box { background: var(--page); border-radius: 6px; padding: 0.55rem 0.75rem; }
+.prop-label { font-size: 11px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.15rem; }
+.prop-val { font-size: 13.5px; color: var(--ink); font-family: 'Playfair Display', serif; }
+.ind-badge { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; margin-top: 0.7rem; }
+.ind-yes { background: var(--teal-l); color: var(--teal-d); }
+.ind-no { background: var(--coral-l); color: var(--coral); }
+.ind-partial { background: var(--amber-l); color: var(--amber); }
+
+canvas#dist-canvas { width: 100%; height: 175px; display: block; border: 1px solid var(--border); border-radius: var(--r); background: var(--page); }
+.slider-area { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.65rem; }
+.sl-row { display: flex; align-items: center; gap: 0.75rem; }
+.sl-row label { font-size: 12.5px; color: var(--muted); min-width: 140px; }
+.sl-row input[type=range] { flex: 1; accent-color: var(--teal); cursor: pointer; }
+.sl-row .sl-val { font-size: 13px; font-weight: 600; min-width: 44px; text-align: right; color: var(--ink); font-family: 'Playfair Display', serif; }
+.dist-insight { margin-top: 1.25rem; padding: 0.9rem 1.1rem; background: var(--page); border-radius: var(--r); border-left: 3px solid var(--border); font-size: 14.5px; color: var(--ink-mid); line-height: 1.6; }
+.dist-insight strong { color: var(--ink); }
+
+/* INDEPENDENCE TABLE */
+.ind-table { width: 100%; border-collapse: collapse; margin: 1.75rem 0; font-size: 14.5px; }
+.ind-table th { text-align: left; font-weight: 400; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 0.5rem 0.75rem; border-bottom: 2px solid var(--border); }
+.ind-table td { padding: 0.65rem 0.75rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+.ind-table tr:last-child td { border-bottom: none; }
+.ind-table .dc { font-family: 'Playfair Display', serif; font-size: 0.95rem; }
+.tick { color: var(--teal); font-weight: 600; }
+.cross { color: var(--coral); font-weight: 600; }
+.part { color: var(--amber); font-weight: 600; }
+.hl { background: rgba(29,158,117,0.06); }
+
+/* FORMULA BLOCK */
+.formula-block { background: var(--ink); color: #fff; border-radius: var(--r); padding: 1.4rem 2rem; margin: 1.75rem 0; text-align: center; }
+.formula-block .formula { font-family: 'Playfair Display', serif; font-size: 1.35rem; color: var(--amber-m); margin-bottom: 0.5rem; }
+.formula-block .gloss { font-size: 13px; color: rgba(255,255,255,0.5); font-weight: 300; }
+
+/* FITTING SECTION */
+.fit-steps { display: flex; flex-direction: column; gap: 0; margin: 1.75rem 0; }
+.fit-step { display: grid; grid-template-columns: 2.5rem 1fr; gap: 1rem; padding: 1.1rem 0; border-bottom: 1px solid var(--border); align-items: start; }
+.fit-step:last-child { border-bottom: none; }
+.step-num { width: 2rem; height: 2rem; border-radius: 50%; background: var(--ink); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; flex-shrink: 0; margin-top: 0.15rem; }
+.step-body h4 { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 600; margin-bottom: 0.3rem; }
+.step-body p { font-size: 14.5px; color: var(--ink-mid); margin: 0; line-height: 1.55; }
+
+.code-block { background: var(--ink); color: #b8d4c8; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.6; padding: 1.1rem 1.4rem; border-radius: var(--r); margin: 1rem 0; overflow-x: auto; }
+.code-block .cm { color: #6b8a7a; }
+.code-block .ck { color: var(--amber-m); }
+.code-block .cs { color: #9ad4a0; }
+
+/* MODEL CARDS */
+.model-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(195px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+.model-card { border: 1px solid var(--border); border-radius: var(--r); padding: 1.1rem 1.25rem; background: var(--surface); }
+.mc-dv { font-size: 11px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.35rem; }
+.mc-dist { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 600; margin-bottom: 0.25rem; }
+.mc-model { font-size: 13px; color: var(--teal); margin-bottom: 0.45rem; }
+.mc-note { font-size: 13px; color: var(--muted); line-height: 1.45; }
+
+/* SIGN DEMO */
+.sign-demo { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.5rem 0; }
+.sign-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 1rem 1.2rem; }
+.sign-box h5 { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.7rem; font-family: 'Source Serif 4', serif; font-weight: 400; }
+.score-row { display: flex; justify-content: space-between; font-size: 14px; padding: 2px 0; border-bottom: 1px solid var(--page); }
+.pos { color: var(--teal); } .neg { color: var(--coral); } .zero { color: var(--muted); font-style: italic; }
+.total-row { font-weight: 600; font-size: 14px; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 2px solid var(--border); display: flex; justify-content: space-between; }
+
+footer { background: var(--ink); color: rgba(255,255,255,0.4); text-align: center; padding: 2rem; font-size: 13px; }
+footer strong { color: rgba(255,255,255,0.7); }
+
+@media (max-width: 620px) {
+  .dist-top { grid-template-columns: 1fr; }
+  .sign-demo { grid-template-columns: 1fr; }
+  .model-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="brand">Generative Distributions & ANOVA</span>
+  <a href="#generative">Generative processes</a>
+  <a href="#explorer">Distribution explorer</a>
+  <a href="#independence">Mean–variance independence</a>
+  <a href="#fitting">Fitting distributions</a>
+  <a href="#anova">ANOVA's assumption</a>
+  <a href="#matching">Model matching</a>
+</nav>
+
+<div class="hero">
+  <div class="eyebrow">Teaching resource — Psychometric Methods</div>
+  <h1>Where does your data <em>come from?</em></h1>
+  <p>Understanding the generative process behind your observations — and why it determines which statistical models are appropriate</p>
+</div>
+
+<!-- SECTION 1 -->
+<section id="generative">
+<div class="wrap">
+  <div class="sec-label">Section 1</div>
+  <h2>Every number in your dataset has a story</h2>
+  <p>When a participant responds correctly or incorrectly on a trial, when they report a pain rating of 4, when their reaction time is 312ms — each of these observations was produced by some real-world process. That process is not arbitrary. It has a characteristic shape: some outcomes are more probable than others, and the probabilities follow a pattern reflecting the nature of the generating mechanism.</p>
+  <p>This pattern is what statisticians formalise as a <em>probability distribution</em>. And here is the key idea that unlocks a great deal of statistical reasoning: when you choose a statistical model, you are making an implicit claim about which distribution generated your data. ANOVA says: my residuals are Gaussian. Logistic regression says: my outcomes are Bernoulli. Poisson regression says: my counts follow a Poisson process. The model is not just a computational procedure — it is a substantive claim about the generative mechanism.</p>
+  <div class="callout amber">
+    <div class="clabel">The central question</div>
+    <p>Before asking "which test should I use?", ask: "what kind of thing is my dependent variable, and what process plausibly generated it?" The answer to the second question largely determines the answer to the first.</p>
+  </div>
+  <h3>Why getting this wrong matters</h3>
+  <p>If your model assumes the wrong distribution, the consequences range from negligible to severe depending on how far reality departs from the assumption. Standard errors may be wrong, p-values may be inflated or deflated, and effect size estimates may be biased. More subtly, the model may be making arithmetically impossible claims — estimating probabilities above 1, predicting negative counts — which is a sign that the assumed generative process simply does not match the data-generating reality.</p>
+</div>
+</section>
+
+<!-- SECTION 2: EXPLORER -->
+<section id="explorer">
+<div class="wrap">
+  <div class="sec-label">Section 2</div>
+  <h2>Eight distributions worth knowing</h2>
+  <p>Each distribution is associated with a particular kind of generating process. The explorer below lets you see how the shape responds to parameter changes — building the intuition to recognise which family your DV is likely to belong to before you run any formal tests.</p>
+
+  <div class="explorer">
+    <div class="tab-strip" id="tab-strip">
+      <button class="tab-btn active" data-dist="normal">Gaussian</button>
+      <button class="tab-btn" data-dist="bernoulli">Bernoulli</button>
+      <button class="tab-btn" data-dist="binomial">Binomial</button>
+      <button class="tab-btn" data-dist="poisson">Poisson</button>
+      <button class="tab-btn" data-dist="lognormal">Log-normal</button>
+      <button class="tab-btn" data-dist="exgaussian">Ex-Gaussian</button>
+      <button class="tab-btn" data-dist="beta">Beta</button>
+      <button class="tab-btn" data-dist="negbinom">Neg. Binomial</button>
+    </div>
+    <div class="dist-panel">
+      <div class="dist-top">
+        <div>
+          <div class="dist-name" id="dist-name"></div>
+          <div class="dist-desc" id="dist-desc"></div>
+          <div class="props-grid" id="props-grid"></div>
+          <div id="ind-badge-wrap"></div>
+        </div>
+        <div>
+          <canvas id="dist-canvas"></canvas>
+          <div class="slider-area" id="slider-area"></div>
+        </div>
+      </div>
+      <div class="dist-insight" id="dist-insight"></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- SECTION 3: INDEPENDENCE -->
+<section id="independence">
+<div class="wrap">
+  <div class="sec-label">Section 3</div>
+  <h2>The mean–variance independence question</h2>
+  <p>There is one property that distinguishes the Gaussian from almost all other common distributions, and it is the property that matters most for ANOVA. In a Gaussian distribution, the mean and the variance are <em>entirely independent parameters</em>. Knowing the mean tells you nothing about the variance. You can have a distribution centred on 50 with very low spread, or the same centre with very high spread — they are simply different parameterisations with no necessary relationship between them.</p>
+  <p>In most other distributions the mean constrains the variance to some degree. The table below summarises where each distribution stands on this crucial question.</p>
+
+  <table class="ind-table">
+    <thead><tr><th>Distribution</th><th>Mean</th><th>Variance</th><th>Independent?</th></tr></thead>
+    <tbody>
+      <tr class="hl"><td class="dc">Gaussian</td><td>μ</td><td>σ²</td><td><span class="tick">Yes ✓</span> — completely free parameters</td></tr>
+      <tr><td class="dc">Bernoulli</td><td>p</td><td>p(1 − p)</td><td><span class="cross">No ✗</span> — variance fully determined by mean</td></tr>
+      <tr><td class="dc">Binomial</td><td>np</td><td>np(1 − p)</td><td><span class="cross">No ✗</span> — variance determined by mean and n</td></tr>
+      <tr><td class="dc">Poisson</td><td>λ</td><td>λ</td><td><span class="cross">No ✗</span> — variance always equals mean exactly</td></tr>
+      <tr><td class="dc">Log-normal</td><td>e<sup>μ+σ²/2</sup></td><td>(e<sup>σ²</sup>−1)e<sup>2μ+σ²</sup></td><td><span class="cross">No ✗</span> — both depend on both parameters</td></tr>
+      <tr><td class="dc">Ex-Gaussian</td><td>μ + τ</td><td>σ² + τ²</td><td><span class="part">Partial ≈</span> — τ affects both, but μ and σ provide extra freedom</td></tr>
+      <tr><td class="dc">Beta</td><td>α/(α+β)</td><td>αβ/[(α+β)²(α+β+1)]</td><td><span class="cross">No ✗</span> — entangled through α and β</td></tr>
+      <tr><td class="dc">Neg. Binomial</td><td>μ</td><td>μ + μ²/r</td><td><span class="cross">No ✗</span> — variance exceeds mean, scales with mean</td></tr>
+    </tbody>
+  </table>
+
+  <p>This table is not a curiosity — it is the key to understanding ANOVA's assumptions. ANOVA decomposes total variability into between-group variance (signal) and within-group variance (noise). For the F-ratio to work properly, the within-group variance needs to be a free parameter — independent of where the group means happen to fall. If variance is locked to the mean, that independence is broken.</p>
+</div>
+</section>
+
+<!-- SECTION 4: FITTING -->
+<section id="fitting">
+<div class="wrap">
+  <div class="sec-label">Section 4</div>
+  <h2>Fitting distributions to data</h2>
+  <p>Having developed intuitions about which distribution family your DV is likely to follow — from first principles, substantive knowledge, or visual inspection — you can go further and formally fit competing distributions to test that intuition. Rather than assuming a distribution, you let the data speak to which generative model provides the most plausible account of what was observed.</p>
+  <p>The logic is similar to model comparison in regression: fit each candidate distribution to your data using maximum likelihood estimation (which finds the parameter values that make the observed data most probable under that distribution), then compare the fits using an information criterion. The distribution with the lower AIC or BIC provides a better trade-off between fit quality and model complexity, since more parameters always improve fit and information criteria penalise for that.</p>
+
+  <div class="callout">
+    <div class="clabel">Key idea</div>
+    <p>Maximum likelihood estimation asks: given this distribution family, what parameter values make my observed data most probable? AIC/BIC then asks: across several families, which one achieves the best fit without overfitting?</p>
+  </div>
+
+  <h3>A practical workflow</h3>
+  <div class="fit-steps">
+    <div class="fit-step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Visual inspection</h4>
+        <p>Plot a histogram of your DV overlaid with density curves from candidate distributions. Look at the shape — symmetric or skewed? Bounded or unbounded? Long-tailed or compact? This narrows the candidates before any formal fitting.</p>
+      </div>
+    </div>
+    <div class="fit-step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Fit candidate distributions</h4>
+        <p>Use maximum likelihood to estimate the parameters of each plausible distribution. The fitdistrplus package in R makes this straightforward, with automatic starting values and convergence checks across a wide range of families.</p>
+      </div>
+    </div>
+    <div class="fit-step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Compare fits formally</h4>
+        <p>Compare AIC and BIC across fitted distributions. Inspect Q-Q plots and P-P plots for each — these show whether the fitted distribution's quantiles match the empirical quantiles. A well-fitting distribution produces points close to the diagonal.</p>
+      </div>
+    </div>
+    <div class="fit-step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h4>Interpret substantively</h4>
+        <p>Statistical fit alone is not enough. The winning distribution should also make sense given what you know about the generating process. A distribution that fits well but is implausible mechanistically deserves scrutiny — it may be overfitting, or it may reveal something genuinely interesting about your data.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>In R</h3>
+  <div class="code-block">
+<span class="ck">library</span>(fitdistrplus)<br><br>
+<span class="cm"># Fit several candidate distributions to RT data</span><br>
+fit_norm &nbsp;&nbsp;&nbsp;&lt;- <span class="ck">fitdist</span>(rt_data, <span class="cs">"norm"</span>)<br>
+fit_lnorm &nbsp;&lt;- <span class="ck">fitdist</span>(rt_data, <span class="cs">"lnorm"</span>)<br>
+fit_gamma &nbsp;&lt;- <span class="ck">fitdist</span>(rt_data, <span class="cs">"gamma"</span>)<br><br>
+<span class="cm"># Compare by AIC</span><br>
+<span class="ck">gofstat</span>(<span class="ck">list</span>(fit_norm, fit_lnorm, fit_gamma))<br><br>
+<span class="cm"># Visual comparison</span><br>
+<span class="ck">denscomp</span>(<span class="ck">list</span>(fit_norm, fit_lnorm, fit_gamma), legendtext = <span class="ck">c</span>(<span class="cs">"Normal"</span>, <span class="cs">"Log-normal"</span>, <span class="cs">"Gamma"</span>))<br>
+<span class="ck">qqcomp</span>(&nbsp;&nbsp;<span class="ck">list</span>(fit_norm, fit_lnorm, fit_gamma))
+  </div>
+
+  <p>For ex-Gaussian specifically, the retimes package in R provides direct fitting and the decomposition into μ, σ, and τ components — which is particularly useful since τ carries theoretical interpretability as an index of attentional or executive function variability.</p>
+
+  <div class="callout amber">
+    <div class="clabel">Note on GAMLSS</div>
+    <p>For regression models where you want to allow the distribution to vary as a function of predictors — not just estimate its overall shape — the GAMLSS framework (Generalised Additive Models for Location, Scale and Shape) extends GLMs to cover a very wide range of distributions including beta, ex-Gaussian, negative binomial, and many others, while letting all parameters of the distribution vary with covariates.</p>
+  </div>
+</div>
+</section>
+
+<!-- SECTION 5: ANOVA ASSUMPTION -->
+<section id="anova">
+<div class="wrap">
+  <div class="sec-label">Section 5</div>
+  <h2>ANOVA's generative assumption — and its consequences</h2>
+  <p>ANOVA assumes that observations within each group were generated by a Gaussian process: each score is the group's true mean plus a random error drawn from a normal distribution with mean zero and variance σ². That error variance is assumed the same across all groups — the homogeneity of variance assumption.</p>
+
+  <div class="formula-block">
+    <div class="formula">Y<sub>ij</sub> = μ<sub>j</sub> + ε<sub>ij</sub> &nbsp;&nbsp; where &nbsp;&nbsp; ε<sub>ij</sub> ~ N(0, σ²)</div>
+    <div class="gloss">Each score equals a group mean plus Gaussian noise — with the same σ² across all groups</div>
+  </div>
+
+  <p>The critical feature of this model is that σ² is an entirely free parameter — it says nothing about where the group means μ<sub>j</sub> are. The noise is the same whether groups are close together or far apart. This is exactly the Gaussian mean–variance independence in the table above.</p>
+
+  <h3>Why binary DVs break the model structurally</h3>
+  <p>With a binary DV, the true generative process is Bernoulli — variance = p(1−p), determined entirely by the mean. The moment groups have different means, they must have different variances. ANOVA finds the mean difference it is looking for and simultaneously produces the variance heterogeneity it assumes doesn't exist. The homogeneity assumption is broken not by anything you did, but by the mathematics of the generating process.</p>
+
+  <h3>Why count DVs require care</h3>
+  <p>With count data the generating process is typically Poisson or negative binomial — both of which have variance that scales with the mean. Applying ANOVA to raw counts implicitly assumes the noise is constant across groups with different mean counts, which is structurally implausible. When counts are large and roughly symmetric, the Gaussian approximation becomes tolerable, but it is always an approximation.</p>
+
+  <h3>Why squared deviations and degrees of freedom?</h3>
+  <p>ANOVA computes variance estimates using <em>squared</em> deviations from the mean. The reason is that the mean is defined as the point that exactly balances positive and negative deviations — their raw sum is always zero:</p>
+
+  <div class="sign-demo">
+    <div class="sign-box">
+      <h5>Raw deviations — always cancel</h5>
+      <div class="score-row"><span>3 − 5</span><span class="neg">−2</span></div>
+      <div class="score-row"><span>5 − 5</span><span class="zero">0</span></div>
+      <div class="score-row"><span>4 − 5</span><span class="neg">−1</span></div>
+      <div class="score-row"><span>7 − 5</span><span class="pos">+2</span></div>
+      <div class="score-row"><span>6 − 5</span><span class="pos">+1</span></div>
+      <div class="total-row"><span>Sum</span><span class="zero">0 — always</span></div>
+    </div>
+    <div class="sign-box">
+      <h5>Squared deviations — all positive</h5>
+      <div class="score-row"><span>(3−5)²</span><span class="pos">4</span></div>
+      <div class="score-row"><span>(5−5)²</span><span class="zero">0</span></div>
+      <div class="score-row"><span>(4−5)²</span><span class="pos">1</span></div>
+      <div class="score-row"><span>(7−5)²</span><span class="pos">4</span></div>
+      <div class="score-row"><span>(6−5)²</span><span class="pos">1</span></div>
+      <div class="total-row"><span>SS</span><span style="color:var(--teal)">10</span></div>
+    </div>
+  </div>
+
+  <p>We divide sums of squares by degrees of freedom rather than N because estimating the group mean from the data before computing deviations consumes one degree of freedom — the deviations will be slightly smaller than they would be around the true population mean. Dividing by N−1 (or more generally by the appropriate df) corrects this downward bias and produces an unbiased estimator of the population variance.</p>
+
+  <div class="callout">
+    <div class="clabel">The F-ratio in brief</div>
+    <p>ANOVA partitions total variability into between-group variance (does group membership predict scores?) divided by within-group variance (how much do scores vary around their own group mean?). This ratio has a known sampling distribution under H₀ only when the Gaussian error model holds. The further your DV's generative distribution departs from Gaussian, the less reliable that F-ratio becomes.</p>
+  </div>
+</div>
+</section>
+
+<!-- SECTION 6: MODEL MATCHING -->
+<section id="matching">
+<div class="wrap">
+  <div class="sec-label">Section 6</div>
+  <h2>Matching the model to the generative process</h2>
+  <p>The choice of statistical model should be guided by the likely generating process of your DV. The guide below covers the most common cases encountered in behavioural and cognitive research.</p>
+
+  <div class="model-grid">
+    <div class="model-card">
+      <div class="mc-dv">DV type</div>
+      <div class="mc-dist">Binary outcome</div>
+      <div class="mc-model">→ Logistic regression / binomial GLM</div>
+      <div class="mc-note">Bernoulli errors. Variance locked to mean. ANOVA's Gaussian assumption fundamentally violated.</div>
+    </div>
+    <div class="model-card">
+      <div class="mc-dv">DV type</div>
+      <div class="mc-dist">Count of rare events</div>
+      <div class="mc-model">→ Poisson regression</div>
+      <div class="mc-note">Variance equals mean. Integer-valued, right-skewed. Check for overdispersion first.</div>
+    </div>
+    <div class="model-card">
+      <div class="mc-dv">DV type</div>
+      <div class="mc-dist">Overdispersed counts</div>
+      <div class="mc-model">→ Negative binomial regression</div>
+      <div class="mc-note">Variance exceeds mean. The realistic choice for most behavioural count data where Poisson's strict mean=variance constraint fails.</div>
+    </div>
+    <div class="model-card">
+      <div class="mc-dv">DV type</div>
+      <div class="mc-dist">Reaction times</div>
+      <div class="mc-model">→ Ex-Gaussian model or log-transform</div>
+      <div class="mc-note">Right-skewed with long tail. Ex-Gaussian's τ parameter is theoretically interpretable. Log-transform is simpler but loses the decomposition.</div>
+    </div>
+    <div class="model-card">
+      <div class="mc-dv">DV type</div>
+      <div class="mc-dist">Bounded proportions</div>
+      <div class="mc-model">→ Beta regression</div>
+      <div class="mc-note">Continuous on (0,1). Proportion of fixation time, proportion of trials correct across a block. Gaussian is unbounded — beta is the natural choice.</div>
+    </div>
+    <div class="model-card">
+      <div class="mc-dv">DV type</div>
+      <div class="mc-dist">Total score, many items</div>
+      <div class="mc-model">→ ANOVA often acceptable</div>
+      <div class="mc-note">Binomial approaches Gaussian as n grows. Acceptable approximation with many items and middling difficulty — but not guaranteed near floor or ceiling.</div>
+    </div>
+    <div class="model-card">
+      <div class="mc-dv">DV type</div>
+      <div class="mc-dist">Ordinal rating scale</div>
+      <div class="mc-model">→ ANOVA defensible with caution</div>
+      <div class="mc-note">Unequal intervals are a genuine violation. Tolerable with 5+ points, symmetric distributions. Ordinal mixed models for rigour.</div>
+    </div>
+    <div class="model-card">
+      <div class="mc-dv">DV type</div>
+      <div class="mc-dist">Continuous interval measure</div>
+      <div class="mc-model">→ ANOVA — well-suited</div>
+      <div class="mc-note">Gaussian errors are plausible. Mean and variance genuinely independent. Assumptions met at the level of measurement.</div>
+    </div>
+  </div>
+
+  <div class="callout purple">
+    <div class="clabel">The deeper lesson</div>
+    <p>Statistical models are not neutral computational procedures. They are claims about the world — specifically, about the process that generated your observations. Learning to ask "what distribution does my DV follow, and why?" before reaching for a test is one of the most transferable skills in quantitative research. Formal distribution fitting gives you the tools to move from plausible intuition to empirical evidence about which generative model is most defensible for your data.</p>
+  </div>
+</div>
+</section>
+
+<footer>
+  <strong>Generative Distributions & ANOVA</strong> — Teaching resource for Psychometric Methods<br>
+  Compiled for classroom use.
+</footer>
+
+<script>
+function normCDF(x) {
+  const s = x < 0 ? -1 : 1, a = Math.abs(x) / Math.sqrt(2);
+  const t = 1 / (1 + 0.3275911 * a);
+  const p = t * (0.254829592 + t * (-0.284496736 + t * (1.421413741 + t * (-1.453152027 + t * 1.061405429))));
+  return 0.5 * (1 + s * (1 - p * Math.exp(-a * a)));
+}
+
+function logGamma(x) {
+  const c = [0.99999999999980993,676.5203681218851,-1259.1392167224028,771.32342877765313,
+    -176.61502916214059,12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7];
+  if (x < 0.5) return Math.log(Math.PI / Math.sin(Math.PI * x)) - logGamma(1 - x);
+  x -= 1;
+  let a = c[0];
+  const t = x + 7.5;
+  for (let i = 1; i < 9; i++) a += c[i] / (x + i);
+  return 0.5 * Math.log(2 * Math.PI) + (x + 0.5) * Math.log(t) - t + Math.log(a);
+}
+
+function logBeta(a, b) { return logGamma(a) + logGamma(b) - logGamma(a + b); }
+function logFactorial(n) { let s = 0; for (let i = 2; i <= n; i++) s += Math.log(i); return s; }
+function binomCoeff(n, k) {
+  if (k < 0 || k > n) return 0; if (k === 0 || k === n) return 1;
+  let r = 1;
+  for (let i = 0; i < Math.min(k, n - k); i++) r = r * (n - i) / (i + 1);
+  return r;
+}
+
+const pdf_normal = (x, mu, sigma) => (1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * ((x - mu) / sigma) ** 2);
+const pdf_lognormal = (x, mu, sigma) => x <= 0 ? 0 : (1 / (x * sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * ((Math.log(x) - mu) / sigma) ** 2);
+const pmf_poisson = (k, lam) => lam <= 0 ? (k === 0 ? 1 : 0) : Math.exp(-lam + k * Math.log(lam) - logFactorial(k));
+const pmf_binomial = (k, n, p) => binomCoeff(n, k) * Math.pow(p, k) * Math.pow(1 - p, n - k);
+function pdf_beta(x, a, b) {
+  if (x <= 0 || x >= 1) return 0;
+  return Math.exp((a - 1) * Math.log(x) + (b - 1) * Math.log(1 - x) - logBeta(a, b));
+}
+function pdf_exgaussian(x, mu, sigma, tau) {
+  const lam = 1 / tau;
+  const z = (x - mu) / sigma - sigma / tau;
+  const logv = Math.log(lam) + lam * mu + 0.5 * lam * lam * sigma * sigma - lam * x;
+  return Math.exp(logv) * normCDF(z);
+}
+function pmf_negbinom(k, mu, r) {
+  if (mu <= 0 || r <= 0) return k === 0 ? 1 : 0;
+  const p = r / (r + mu);
+  const logP = logGamma(r + k) - logGamma(r) - logGamma(k + 1) + r * Math.log(p) + k * Math.log(1 - p);
+  return Math.exp(logP);
+}
+
+const DISTS = {
+  normal: {
+    name: 'Gaussian (normal) distribution',
+    desc: 'Arises when an observation is the sum of many small, independent influences — none of which dominates. The classic bell curve. Symmetric around its mean, unbounded in both directions.',
+    params: [
+      { id: 'mu', label: 'Mean (μ)', min: -3, max: 3, step: 0.1, val: 0, fmt: v => v.toFixed(1) },
+      { id: 'sigma', label: 'Std dev (σ)', min: 0.3, max: 3, step: 0.1, val: 1, fmt: v => v.toFixed(1) }
+    ],
+    props: { 'Mean': p => p.mu.toFixed(2), 'Variance': p => (p.sigma**2).toFixed(2), 'Type': () => 'Continuous', 'Bounds': () => '−∞ to +∞' },
+    ind: 'yes', ind_label: 'Mean & variance: independent ✓',
+    insight: '<strong>Mean and variance are completely independent.</strong> Knowing μ tells you nothing about σ². This is the property that makes ANOVA work — the within-group spread is free to be whatever the data say, independent of where the group means fall. Typical DVs: continuous psychophysical measurements, aggregated cognitive scores, standardised test results.',
+    color: '#1D9E75', type: 'continuous_normal'
+  },
+  bernoulli: {
+    name: 'Bernoulli distribution',
+    desc: 'The distribution of a single binary trial: 0 or 1, failure or success, incorrect or correct. Two outcomes with complementary probabilities — the simplest non-trivial distribution.',
+    params: [{ id: 'p', label: 'Probability of 1 (p)', min: 0.01, max: 0.99, step: 0.01, val: 0.5, fmt: v => v.toFixed(2) }],
+    props: { 'Mean': p => p.p.toFixed(3), 'Variance': p => (p.p*(1-p.p)).toFixed(3), 'Type': () => 'Discrete', 'Values': () => '0 or 1 only' },
+    ind: 'no', ind_label: 'Mean & variance: dependent ✗',
+    insight: '<strong>Variance = p(1−p): completely determined by the mean.</strong> One free parameter does double duty. Once you know the group mean, you know the variance exactly. This is why ANOVA on single binary responses is structurally misspecified — the within-group variance can never be independent of group means. Typical DVs: accuracy on a single trial, yes/no responses, signal detection.',
+    color: '#c94e28', type: 'bernoulli'
+  },
+  binomial: {
+    name: 'Binomial distribution',
+    desc: 'The count of successes across n independent Bernoulli trials, each with probability p. As n increases, the shape approaches Gaussian — the justification for using ANOVA on total test scores.',
+    params: [
+      { id: 'n', label: 'Number of trials (n)', min: 2, max: 50, step: 1, val: 10, fmt: v => v.toFixed(0) },
+      { id: 'p', label: 'Probability of success (p)', min: 0.05, max: 0.95, step: 0.01, val: 0.5, fmt: v => v.toFixed(2) }
+    ],
+    props: { 'Mean': p => (p.n*p.p).toFixed(2), 'Variance': p => (p.n*p.p*(1-p.p)).toFixed(2), 'Type': () => 'Discrete', 'Values': () => '0, 1, 2, … n' },
+    ind: 'no', ind_label: 'Mean & variance: dependent ✗',
+    insight: '<strong>Variance = np(1−p): still determined by mean and n.</strong> The mean–variance dependency is inherited from Bernoulli and does not disappear with more items — it is attenuated. With large n and middling p, the distribution approaches Gaussian (try n=50, p=0.5). This is why total test scores can often be analysed with ANOVA, but it remains an approximation.',
+    color: '#1a6fba', type: 'discrete_binom'
+  },
+  poisson: {
+    name: 'Poisson distribution',
+    desc: 'Counts of events occurring randomly in fixed time or space, when events are rare and independent. Right-skewed for small λ, approaching Gaussian as λ grows large.',
+    params: [{ id: 'lambda', label: 'Rate (λ)', min: 0.5, max: 20, step: 0.5, val: 3, fmt: v => v.toFixed(1) }],
+    props: { 'Mean': p => p.lambda.toFixed(2), 'Variance': p => p.lambda.toFixed(2), 'Type': () => 'Discrete', 'Values': () => '0, 1, 2, …' },
+    ind: 'no', ind_label: 'Mean & variance: always equal ✗',
+    insight: '<strong>Mean = Variance = λ: always identical.</strong> One parameter governs both location and spread. This is the fundamental reason Poisson regression exists as a separate model — applying ANOVA to count data assumes constant within-group variance across groups with different means, which is structurally impossible here. Typical DVs: number of errors, number of fixations, symptom episodes.',
+    color: '#b07010', type: 'discrete_pois'
+  },
+  lognormal: {
+    name: 'Log-normal distribution',
+    desc: 'A variable whose logarithm follows a Gaussian distribution. Arises from multiplicative processes. Bounded below by zero, right-skewed. The log transform recovers normality.',
+    params: [
+      { id: 'mu', label: 'Log-scale mean (μ)', min: -1, max: 2, step: 0.1, val: 0.5, fmt: v => v.toFixed(1) },
+      { id: 'sigma', label: 'Log-scale SD (σ)', min: 0.1, max: 1.5, step: 0.05, val: 0.5, fmt: v => v.toFixed(2) }
+    ],
+    props: { 'Mean': p => Math.exp(p.mu+p.sigma**2/2).toFixed(2), 'Median': p => Math.exp(p.mu).toFixed(2), 'Type': () => 'Continuous', 'Bounds': () => '0 to +∞' },
+    ind: 'no', ind_label: 'Mean & variance: entangled ✗',
+    insight: '<strong>Multiplicative variability: a 50ms difference at fast speeds is not the same as a 50ms difference at slow speeds.</strong> The right-skewed shape with a hard lower boundary is characteristic of variables that cannot be negative. Reaction times, income, and many biological measurements follow this pattern. Log-transforming often rescues approximate normality, though the ex-Gaussian (next tab) better captures the RT tail.',
+    color: '#534AB7', type: 'continuous_lognorm'
+  },
+  exgaussian: {
+    name: 'Ex-Gaussian distribution',
+    desc: 'The convolution of a Gaussian and an exponential distribution. The Gaussian component captures the bulk of the distribution; the exponential component captures the long right tail. The characteristic distribution of reaction time data.',
+    params: [
+      { id: 'mu', label: 'Gaussian mean (μ, ms)', min: 200, max: 600, step: 10, val: 350, fmt: v => v.toFixed(0) },
+      { id: 'sigma', label: 'Gaussian SD (σ, ms)', min: 10, max: 120, step: 5, val: 50, fmt: v => v.toFixed(0) },
+      { id: 'tau', label: 'Exponential tail (τ, ms)', min: 10, max: 200, step: 5, val: 100, fmt: v => v.toFixed(0) }
+    ],
+    props: { 'Mean': p => (p.mu+p.tau).toFixed(0)+' ms', 'Variance': p => (p.sigma**2+p.tau**2).toFixed(0), 'Skew': p => (2*p.tau**3/(p.sigma**2+p.tau**2)**1.5).toFixed(2), 'Type': () => 'Continuous' },
+    ind: 'partial', ind_label: 'Mean & variance: partially entangled ≈',
+    insight: '<strong>The τ parameter is theoretically interpretable</strong> — it tends to inflate under attentional lapses, high cognitive load, and certain clinical conditions, making the decomposition scientifically meaningful rather than just a curve-fitting exercise. Mean = μ+τ and Variance = σ²+τ² are both influenced by τ, but μ provides additional location freedom and σ provides additional spread freedom — more decoupled than Bernoulli, less than Gaussian. Fit using the retimes package in R.',
+    color: '#993356', type: 'continuous_exgauss'
+  },
+  beta: {
+    name: 'Beta distribution',
+    desc: 'A continuous distribution bounded strictly between 0 and 1. Highly flexible in shape — symmetric, left-skewed, right-skewed, or U-shaped depending on parameters. The natural distribution for proportions and rates.',
+    params: [
+      { id: 'alpha', label: 'Shape α', min: 0.5, max: 10, step: 0.1, val: 2, fmt: v => v.toFixed(1) },
+      { id: 'beta_p', label: 'Shape β', min: 0.5, max: 10, step: 0.1, val: 5, fmt: v => v.toFixed(1) }
+    ],
+    props: { 'Mean': p => (p.alpha/(p.alpha+p.beta_p)).toFixed(3), 'Variance': p => (p.alpha*p.beta_p/((p.alpha+p.beta_p)**2*(p.alpha+p.beta_p+1))).toFixed(4), 'Mode': p => p.alpha>1&&p.beta_p>1 ? ((p.alpha-1)/(p.alpha+p.beta_p-2)).toFixed(3) : 'boundary', 'Bounds': () => '0 to 1 strictly' },
+    ind: 'no', ind_label: 'Mean & variance: entangled ✗',
+    insight: '<strong>The natural choice when your DV is a proportion that is continuous within (0,1).</strong> Examples include: proportion of fixation time allocated to a target stimulus, proportion of trials on which a response criterion is met, accuracy rates calculated over blocks. Gaussian regression is inappropriate because it permits predictions outside [0,1]. Beta regression models both the mean and the precision of the proportion as functions of predictors.',
+    color: '#3B6D11', type: 'continuous_beta'
+  },
+  negbinom: {
+    name: 'Negative binomial distribution',
+    desc: 'A count distribution that generalises Poisson by adding a dispersion parameter r, allowing variance to exceed the mean. The realistic choice for most behavioural count data, where Poisson\'s strict mean-equals-variance constraint is almost always violated.',
+    params: [
+      { id: 'mu', label: 'Mean count (μ)', min: 0.5, max: 20, step: 0.5, val: 4, fmt: v => v.toFixed(1) },
+      { id: 'r', label: 'Dispersion (r)', min: 0.3, max: 15, step: 0.1, val: 1.5, fmt: v => v.toFixed(1) }
+    ],
+    props: { 'Mean': p => p.mu.toFixed(2), 'Variance': p => (p.mu + p.mu**2/p.r).toFixed(2), 'Overdispersion': p => (p.mu**2/p.r).toFixed(2), 'Values': () => '0, 1, 2, …' },
+    ind: 'no', ind_label: 'Mean & variance: dependent ✗',
+    insight: '<strong>Variance = μ + μ²/r — always greater than the mean.</strong> As r → ∞ the distribution converges to Poisson. Small r means high overdispersion. In practice, count DVs in behavioural data (number of errors, number of intrusions, fixation counts) nearly always show more variance than a Poisson model predicts — making the negative binomial the default sensible choice over Poisson for most psychological count data.',
+    color: '#3d4460', type: 'discrete_negbinom'
+  }
+};
+
+let currentDist = 'normal', params = {};
+
+function initParams(key) {
+  params = {};
+  DISTS[key].params.forEach(p => { params[p.id] = p.val; });
+}
+
+function drawDist(key) {
+  const canvas = document.getElementById('dist-canvas');
+  const rect = canvas.getBoundingClientRect();
+  if (rect.width === 0) return;
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  const W = rect.width, H = rect.height;
+  const P = { t: 14, r: 14, b: 26, l: 10 };
+  const cW = W - P.l - P.r, cH = H - P.t - P.b;
+  const p = params, d = DISTS[key], col = d.color;
+
+  ctx.clearRect(0, 0, W, H);
+  ctx.strokeStyle = '#ddd9d0'; ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(P.l, P.t); ctx.lineTo(P.l, P.t + cH); ctx.lineTo(P.l + cW, P.t + cH);
+  ctx.stroke();
+
+  const bx = P.l, by = P.t, bw = cW, bh = cH;
+
+  if (d.type === 'continuous_normal') {
+    const mu = p.mu, sig = p.sigma;
+    const xMin = mu-4*sig, xMax = mu+4*sig, maxY = pdf_normal(mu,mu,sig);
+    const pts = 250;
+    ctx.beginPath();
+    for (let i=0;i<=pts;i++){
+      const x=xMin+(i/pts)*(xMax-xMin);
+      const y=pdf_normal(x,mu,sig);
+      const px=bx+(x-xMin)/(xMax-xMin)*bw, py=by+bh-(y/maxY)*bh*0.9;
+      i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+    }
+    ctx.strokeStyle=col;ctx.lineWidth=2.5;ctx.stroke();
+    ctx.lineTo(bx+bw,by+bh);ctx.lineTo(bx,by+bh);ctx.closePath();
+    ctx.fillStyle=col+'25';ctx.fill();
+    const mx=bx+((mu-xMin)/(xMax-xMin))*bw;
+    ctx.setLineDash([4,3]);ctx.strokeStyle=col;ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(mx,by);ctx.lineTo(mx,by+bh);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='#6b7490';ctx.font='11px sans-serif';ctx.textAlign='center';
+    for(let s=-3;s<=3;s++){
+      const lx=bx+((mu+s*sig-xMin)/(xMax-xMin))*bw;
+      ctx.fillText(s===0?'μ':(s>0?'+'+s+'σ':s+'σ'),lx,H-4);
+    }
+  } else if (d.type === 'bernoulli') {
+    const pv=p.p;
+    const bars=[{v:1-pv,lab:'0 (incorrect)'},{v:pv,lab:'1 (correct)'}];
+    const bw2=bw*0.22;
+    bars.forEach((b2,i)=>{
+      const cx=bx+bw*(i===0?0.22:0.62);
+      const bh2=(b2.v)*bh*0.9, py=by+bh-bh2;
+      ctx.fillStyle=col+'35';ctx.fillRect(cx-bw2/2,py,bw2,bh2);
+      ctx.strokeStyle=col;ctx.lineWidth=2;ctx.strokeRect(cx-bw2/2,py,bw2,bh2);
+      ctx.fillStyle='#1c2035';ctx.font='12px sans-serif';ctx.textAlign='center';
+      ctx.fillText(b2.v.toFixed(2),cx,py-5);
+      ctx.fillStyle='#6b7490';ctx.font='11px sans-serif';ctx.fillText(b2.lab,cx,H-4);
+    });
+  } else if (d.type === 'discrete_binom') {
+    const n=Math.round(p.n),pv=p.p;
+    let probs=[],maxP=0;
+    for(let k=0;k<=n;k++){const pr=pmf_binomial(k,n,pv);probs.push(pr);if(pr>maxP)maxP=pr;}
+    const bw2=Math.max(1.5,bw/(n+1)*0.8);
+    probs.forEach((pr,k)=>{
+      const cx=bx+(k/(Math.max(n,1)))*bw*0.96+bw*0.02;
+      const bh2=(pr/maxP)*bh*0.9,py=by+bh-bh2;
+      ctx.fillStyle=col+'35';ctx.fillRect(cx-bw2/2,py,bw2,bh2);
+      ctx.strokeStyle=col;ctx.lineWidth=1.2;ctx.strokeRect(cx-bw2/2,py,bw2,bh2);
+    });
+    ctx.fillStyle='#6b7490';ctx.font='11px sans-serif';ctx.textAlign='center';
+    ctx.fillText('0',bx+bw*0.02,H-4);
+    ctx.fillText(Math.round(n*pv),bx+(n*pv/n)*bw*0.96+bw*0.02,H-4);
+    ctx.fillText(n,bx+bw*0.98,H-4);
+  } else if (d.type === 'discrete_pois') {
+    const lam=p.lambda;
+    const kMax=Math.min(50,Math.ceil(lam+5*Math.sqrt(lam)));
+    let probs=[],maxP=0;
+    for(let k=0;k<=kMax;k++){const pr=pmf_poisson(k,lam);probs.push(pr);if(pr>maxP)maxP=pr;}
+    const bw2=Math.max(1.5,bw/(kMax+1)*0.85);
+    probs.forEach((pr,k)=>{
+      const cx=bx+(k/kMax)*bw*0.96+2;
+      const bh2=(pr/maxP)*bh*0.9,py=by+bh-bh2;
+      ctx.fillStyle=col+'35';ctx.fillRect(cx-bw2/2,py,bw2,bh2);
+      ctx.strokeStyle=col;ctx.lineWidth=1.2;ctx.strokeRect(cx-bw2/2,py,bw2,bh2);
+    });
+    ctx.fillStyle='#6b7490';ctx.font='11px sans-serif';ctx.textAlign='center';
+    ctx.fillText('0',bx+2,H-4);ctx.fillText('λ='+lam.toFixed(1),bx+(lam/kMax)*bw*0.96+2,H-4);ctx.fillText(kMax,bx+bw*0.96+2,H-4);
+  } else if (d.type === 'continuous_lognorm') {
+    const mu=p.mu,sig=p.sigma;
+    const xMax=Math.exp(mu+3.5*sig);
+    let maxY=0;
+    for(let i=1;i<=400;i++){const x=(i/400)*xMax;const y=pdf_lognormal(x,mu,sig);if(y>maxY)maxY=y;}
+    ctx.beginPath();
+    for(let i=1;i<=400;i++){
+      const x=(i/400)*xMax,y=pdf_lognormal(x,mu,sig);
+      const px=bx+(x/xMax)*bw,py=by+bh-(y/maxY)*bh*0.9;
+      i===1?ctx.moveTo(px,py):ctx.lineTo(px,py);
+    }
+    ctx.strokeStyle=col;ctx.lineWidth=2.5;ctx.stroke();
+    ctx.lineTo(bx+bw,by+bh);ctx.lineTo(bx,by+bh);ctx.closePath();
+    ctx.fillStyle=col+'25';ctx.fill();
+    const med=Math.exp(mu),mx=bx+(med/xMax)*bw;
+    ctx.setLineDash([4,3]);ctx.strokeStyle=col;ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(mx,by);ctx.lineTo(mx,by+bh);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='#6b7490';ctx.font='11px sans-serif';ctx.textAlign='center';
+    ctx.fillText('0',bx,H-4);ctx.fillText('median',mx,H-4);ctx.fillText(xMax.toFixed(1),bx+bw,H-4);
+  } else if (d.type === 'continuous_exgauss') {
+    const mu=p.mu,sig=p.sigma,tau=p.tau;
+    const meanRT=mu+tau;
+    const xMin=Math.max(0,mu-3*sig),xMax=mu+tau+5*tau;
+    let maxY=0;
+    for(let i=0;i<=400;i++){const x=xMin+(i/400)*(xMax-xMin);const y=pdf_exgaussian(x,mu,sig,tau);if(y>maxY&&isFinite(y))maxY=y;}
+    if(maxY===0)return;
+    ctx.beginPath();
+    let started=false;
+    for(let i=0;i<=400;i++){
+      const x=xMin+(i/400)*(xMax-xMin),y=pdf_exgaussian(x,mu,sig,tau);
+      if(!isFinite(y))continue;
+      const px=bx+((x-xMin)/(xMax-xMin))*bw,py=by+bh-(y/maxY)*bh*0.9;
+      if(!started){ctx.moveTo(px,py);started=true;}else ctx.lineTo(px,py);
+    }
+    ctx.strokeStyle=col;ctx.lineWidth=2.5;ctx.stroke();
+    ctx.lineTo(bx+bw,by+bh);ctx.lineTo(bx,by+bh);ctx.closePath();
+    ctx.fillStyle=col+'25';ctx.fill();
+    const mx=bx+((meanRT-xMin)/(xMax-xMin))*bw;
+    ctx.setLineDash([4,3]);ctx.strokeStyle=col;ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(mx,by);ctx.lineTo(mx,by+bh);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='#6b7490';ctx.font='11px sans-serif';ctx.textAlign='center';
+    ctx.fillText(xMin.toFixed(0)+'ms',bx,H-4);ctx.fillText('mean',mx,H-4);ctx.fillText(xMax.toFixed(0)+'ms',bx+bw,H-4);
+  } else if (d.type === 'continuous_beta') {
+    const a=p.alpha,b2=p.beta_p;
+    let maxY=0;
+    const pts=300;
+    for(let i=1;i<pts;i++){const x=i/pts;const y=pdf_beta(x,a,b2);if(y>maxY&&isFinite(y))maxY=y;}
+    if(maxY===0)return;
+    ctx.beginPath();
+    let started=false;
+    for(let i=0;i<=pts;i++){
+      const x=i/pts,y=pdf_beta(x,a,b2);
+      if(!isFinite(y))continue;
+      const px=bx+x*bw,py=by+bh-Math.min((y/maxY)*bh*0.9,bh*0.97);
+      if(!started){ctx.moveTo(px,py);started=true;}else ctx.lineTo(px,py);
+    }
+    ctx.strokeStyle=col;ctx.lineWidth=2.5;ctx.stroke();
+    ctx.lineTo(bx+bw,by+bh);ctx.lineTo(bx,by+bh);ctx.closePath();
+    ctx.fillStyle=col+'25';ctx.fill();
+    const meanX=a/(a+b2),mx=bx+meanX*bw;
+    ctx.setLineDash([4,3]);ctx.strokeStyle=col;ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(mx,by);ctx.lineTo(mx,by+bh);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='#6b7490';ctx.font='11px sans-serif';ctx.textAlign='center';
+    ctx.fillText('0',bx+2,H-4);ctx.fillText('mean',mx,H-4);ctx.fillText('1',bx+bw,H-4);
+  } else if (d.type === 'discrete_negbinom') {
+    const mu=p.mu,r=p.r;
+    const kMax=Math.min(60,Math.ceil(mu+5*Math.sqrt(mu+mu*mu/r)));
+    let probs=[],maxP=0;
+    for(let k=0;k<=kMax;k++){const pr=pmf_negbinom(k,mu,r);probs.push(pr);if(pr>maxP)maxP=pr;}
+    const bw2=Math.max(1.5,bw/(kMax+1)*0.85);
+    probs.forEach((pr,k)=>{
+      const cx=bx+(k/kMax)*bw*0.96+2;
+      const bh2=(pr/maxP)*bh*0.9,py=by+bh-bh2;
+      ctx.fillStyle=col+'35';ctx.fillRect(cx-bw2/2,py,bw2,bh2);
+      ctx.strokeStyle=col;ctx.lineWidth=1.2;ctx.strokeRect(cx-bw2/2,py,bw2,bh2);
+    });
+    ctx.fillStyle='#6b7490';ctx.font='11px sans-serif';ctx.textAlign='center';
+    ctx.fillText('0',bx+2,H-4);ctx.fillText('μ='+mu.toFixed(1),bx+(mu/kMax)*bw*0.96+2,H-4);ctx.fillText(kMax,bx+bw*0.96+2,H-4);
+  }
+}
+
+function renderDist(key) {
+  const d = DISTS[key];
+  document.getElementById('dist-name').textContent = d.name;
+  document.getElementById('dist-desc').textContent = d.desc;
+
+  const pg = document.getElementById('props-grid');
+  pg.innerHTML = '';
+  Object.entries(d.props).forEach(([label, fn]) => {
+    const box = document.createElement('div'); box.className = 'prop-box';
+    const lbl = document.createElement('div'); lbl.className = 'prop-label'; lbl.textContent = label;
+    const val = document.createElement('div'); val.className = 'prop-val'; val.id = 'prop_' + label.replace(/\W/g,'');
+    val.textContent = fn(params);
+    box.appendChild(lbl); box.appendChild(val); pg.appendChild(box);
+  });
+
+  const bw = document.getElementById('ind-badge-wrap');
+  bw.innerHTML = '';
+  const badge = document.createElement('span');
+  badge.className = 'ind-badge ind-' + d.ind;
+  badge.textContent = d.ind_label;
+  bw.appendChild(badge);
+
+  document.getElementById('dist-insight').innerHTML = d.insight;
+
+  const sa = document.getElementById('slider-area');
+  sa.innerHTML = '';
+  d.params.forEach(sp => {
+    const row = document.createElement('div'); row.className = 'sl-row';
+    const lbl = document.createElement('label'); lbl.textContent = sp.label;
+    const inp = document.createElement('input');
+    inp.type = 'range'; inp.min = sp.min; inp.max = sp.max; inp.step = sp.step; inp.value = params[sp.id];
+    const vs = document.createElement('span'); vs.className = 'sl-val'; vs.textContent = sp.fmt(params[sp.id]);
+    inp.addEventListener('input', () => {
+      params[sp.id] = parseFloat(inp.value);
+      vs.textContent = sp.fmt(params[sp.id]);
+      drawDist(key);
+      Object.entries(d.props).forEach(([label, fn]) => {
+        const el = document.getElementById('prop_' + label.replace(/\W/g,''));
+        if (el) el.textContent = fn(params);
+      });
+    });
+    row.appendChild(lbl); row.appendChild(inp); row.appendChild(vs);
+    sa.appendChild(row);
+  });
+
+  setTimeout(() => drawDist(key), 10);
+}
+
+document.getElementById('tab-strip').addEventListener('click', e => {
+  const btn = e.target.closest('.tab-btn');
+  if (!btn) return;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentDist = btn.dataset.dist;
+  initParams(currentDist);
+  renderDist(currentDist);
+});
+
+initParams('normal');
+renderDist('normal');
+window.addEventListener('resize', () => setTimeout(() => drawDist(currentDist), 60));
+</script>
+</body>
+</html>
