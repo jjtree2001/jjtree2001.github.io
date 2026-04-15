@@ -168,18 +168,30 @@ footer strong { color: rgba(255,255,255,0.7); }
   <div class="sec-label">Section 1</div>
   <h2>Every number in your dataset has a story</h2>
   <p>When a participant responds correctly or incorrectly on a trial, when they report a pain rating of 4, when their reaction time is 312ms — each of these observations was produced by some real-world process. That process is not arbitrary. It has a characteristic shape: some outcomes are more probable than others, and the probabilities follow a pattern reflecting the nature of the generating mechanism.</p>
+
   <p>This pattern is what statisticians formalise as a <em>probability distribution</em>. Statistical models are not just tools for analysing data—they are claims about how the data were generated.</p>
 
-<p>Every analysis implicitly answers the question: <em>what kind of process produced these observations?</em></p>
+  <p>Every analysis implicitly answers the question: <em>what kind of process produced these observations?</em></p>
 
-<p>ANOVA says: my residuals are Gaussian. Logistic regression says: my outcomes are Bernoulli. Poisson regression says: my counts follow a Poisson process. The model is not just a computational procedure — it is a substantive claim about the generative mechanism.</p>
+  <p>ANOVA says: my residuals are Gaussian. Logistic regression says: my outcomes are Bernoulli. Poisson regression says: my counts follow a Poisson process. The model is not just a computational procedure — it is a substantive claim about the generative mechanism.</p>
+
   <div class="callout amber">
     <div class="clabel">The central question</div>
-    <p>This pattern is what statisticians formalise as a <em>probability distribution</em>. Statistical models are not just tools for analysing data—they are claims about how the data were generated.</p>
+    <p>A common starting point is: "Which test should I use?"</p>
+    <p>A better starting point is: "What kind of data-generating process could have produced these observations?"</p>
+  </div>
 
-<p>Every analysis implicitly answers the question: <em>what kind of process produced these observations?</em></p>
+  <div class="callout purple">
+    <div class="clabel">First decision</div>
+    <p>Before thinking about specific models, ask: is my dependent variable <strong>discrete</strong> or <strong>continuous</strong>?</p>
+    <ul>
+      <li><strong>Discrete</strong>: counts, categories, correct/incorrect — outcomes are separate, countable values</li>
+      <li><strong>Continuous</strong>: measurements on a scale — reaction time, intensity, ratings (often treated as continuous)</li>
+    </ul>
+    <p>This distinction immediately narrows the set of plausible generative models.</p>
+  </div>
 
-<p>ANOVA says: my residuals are Gaussian. Logistic regression says: my outcomes are Bernoulli. Poisson regression says: my counts follow a Poisson process. The model is not just a computational procedure — it is a substantive claim about the generative mechanism.</p>
+  <h3>Why getting this wrong matters</h3>
   <p>If your model assumes the wrong distribution, the consequences range from negligible to severe depending on how far reality departs from the assumption. Standard errors may be wrong, p-values may be inflated or deflated, and effect size estimates may be biased. More subtly, the model may be making arithmetically impossible claims — estimating probabilities above 1, predicting negative counts — which is a sign that the assumed generative process simply does not match the data-generating reality.</p>
 </div>
 </section>
@@ -292,7 +304,15 @@ footer strong { color: rgba(255,255,255,0.7); }
     </div>
   </div>
 
-  <h3>In R</h3>
+  <h3>Competing generative stories for reaction time data</h3>
+  <p>For positively skewed continuous variables such as reaction times, different generative stories imply different distributions:</p>
+  <ul>
+    <li><strong>Gaussian</strong>: symmetric noise from many small independent influences</li>
+    <li><strong>Log-normal</strong>: multiplicative processes where variability scales with magnitude</li>
+    <li><strong>Gamma</strong>: additive accumulation of positive waiting times</li>
+  </ul>
+  <p>The goal is not to pick a convenient model, but to test which of these generative accounts best matches the data.</p>
+
   <div class="code-block">
 <span class="ck">library</span>(fitdistrplus)<br><br>
 <span class="cm"># Fit several candidate distributions to RT data</span><br>
@@ -388,7 +408,46 @@ fit_gamma &nbsp;&lt;- <span class="ck">fitdist</span>(rt_data, <span class="cs">
 <div class="wrap">
   <div class="sec-label">Section 6</div>
   <h2>Matching the model to the generative process</h2>
+ 
   <p>The choice of statistical model should be guided by the likely generating process of your DV. The guide below covers the most common cases encountered in behavioural and cognitive research.</p>
+
+  <h3>A practical map of behavioural data</h3>
+  <p>In practice, most behavioural data fall into a small number of recurring types. Each type implies a different generative model:</p>
+
+  <div class="model-grid">
+    <div class="model-card">
+      <div class="mc-dv">Continuous</div>
+      <div class="mc-dist">Reaction times / durations</div>
+      <div class="mc-model">Gaussian, Log-normal, Gamma</div>
+      <div class="mc-note">Right-skewed data. Compare symmetric noise vs multiplicative vs waiting-time processes.</div>
+    </div>
+
+    <div class="model-card">
+      <div class="mc-dv">Discrete</div>
+      <div class="mc-dist">Binary outcomes</div>
+      <div class="mc-model">Bernoulli / Binomial</div>
+      <div class="mc-note">Variance determined by mean. ANOVA assumptions structurally violated at trial level.</div>
+    </div>
+
+    <div class="model-card">
+      <div class="mc-dv">Discrete</div>
+      <div class="mc-dist">Counts</div>
+      <div class="mc-model">Poisson / Negative binomial</div>
+      <div class="mc-note">Variance scales with mean. Overdispersion common in behavioural data.</div>
+    </div>
+
+    <div class="model-card">
+      <div class="mc-dv">Continuous</div>
+      <div class="mc-dist">Proportions</div>
+      <div class="mc-model">Beta</div>
+      <div class="mc-note">Bounded between 0 and 1. Gaussian models can produce impossible values.</div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <div class="clabel">The deeper logic</div>
+    <p>The goal is not to try every possible distribution, but to compare a small set of plausible generative models based on the nature of the data.</p>
+  </div>
 
   <div class="model-grid">
     <div class="model-card">
@@ -512,7 +571,7 @@ const DISTS = {
     ],
     props: { 'Mean': p => p.mu.toFixed(2), 'Variance': p => (p.sigma**2).toFixed(2), 'Type': () => 'Continuous', 'Bounds': () => '−∞ to +∞' },
     ind: 'yes', ind_label: 'Mean & variance: independent ✓',
-    insight: '<strong>Mean and variance are completely independent.</strong> Knowing μ tells you nothing about σ². This is the property that makes ANOVA work — the within-group spread is free to be whatever the data say, independent of where the group means fall. Typical DVs: continuous psychophysical measurements, aggregated cognitive scores, standardised test results.</p>',
+    insight: '<strong>Mean and variance are completely independent.</strong> Knowing μ tells you nothing about σ². This is the property that makes ANOVA work — the within-group spread is free to be whatever the data say, independent of where the group means fall. Typical DVs: continuous psychophysical measurements, aggregated cognitive scores, standardised test results.',
     color: '#1D9E75', type: 'continuous_normal'
   },
   bernoulli: {
