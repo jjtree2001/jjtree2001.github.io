@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -847,24 +848,65 @@
  
   <p>Importantly, this also means that for <em>contrast-based paradigms</em> — such as the well documented face inversion effect — observed γ will also be characteristically low, because the subtraction (i.e., upright − inverted) cancels much of the between-person variance while doubling the noise. As a result, poor cross-task correlations across different inversion tasks or paradigms are not simply evidence of construct fragmentation. They are the mathematically predictable consequence of attempting to localise individuals in a distribution using a ruler too noisy to distinguish nearby positions. In signal-to-noise terms, low γ² directly constrains the maximum observable reliability, and therefore the upper bound on any cross-task association.</p>
  
-  <h3>Beyond Reliability: The Real Endpoint Is Correlation Uncertainty</h3>
+  <h3>Beyond Reliability: Statistical Hell and the Inconsistency Problem</h3>
  
-  <p>Rouder's 2026 paper (with Mehrvarz and Schnuerch) makes a striking further argument: <strong>once hierarchical models are available, reliability is not even the right endpoint</strong> — it is merely an intermediate quantity, useful for planning but not for interpretation.</p>
+  <p>Rouder's 2026 paper (with Mehrvarz and Schnuerch) makes a striking further argument that goes beyond the attenuation story told in Section 2. It is not just that conventional sample correlations between contrast scores are deflated — it is that they are <em>inconsistent</em> estimators of the true latent correlation, and that this inconsistency creates what Rouder calls <strong>"statistical hell."</strong></p>
  
-  <p>The core problem is that conventional sample correlations between contrast scores are not only attenuated — they are <em>inconsistent</em> estimators. Adding more participants makes you increasingly certain of a wrong value. The confidence interval around a sample correlation reflects only the uncertainty from a finite number of individuals, completely ignoring the uncertainty from a finite number of trials. As trial count drops, this omitted uncertainty grows — but the CI stays the same width, creating false precision.</p>
+  <h3>Bias, Inconsistency, and Why They Matter Together</h3>
  
-  <div class="callout purple">
-    <div class="callout-label">The Right Target: Uncertainty on Correlations Directly</div>
-    <p>Rouder et al. (2026) advocate modelling trial noise explicitly via a bivariate hierarchical model, which simultaneously estimates the true between-task correlation <em>and</em> provides credible intervals that correctly incorporate both sources of uncertainty — finite individuals and finite trials. The resulting intervals are typically 3–4× wider than conventional CIs, reflecting the true state of knowledge. Disattenuation emerges naturally from the model rather than as a post-hoc correction. The old adage that you cannot correlate unreliable instruments is wrong — you can, so long as uncertainty is appropriately expressed.</p>
+  <p>To understand what makes this situation especially troubling, two technical terms need to be separated. An estimator is <strong>biased</strong> if its expected value across repeated samples does not equal the true parameter it is trying to estimate. Many estimators carry some bias, and this is normally tolerable because most biased estimators are also <strong>consistent</strong> — meaning that as sample size grows, the bias shrinks and eventually vanishes. The law of large numbers is the intuition behind this: gather enough data and any well-behaved estimator converges to the truth.</p>
+ 
+  <p>The sample correlation between noisy contrast scores is different. It is biased downward — its expected value is the attenuated correlation, not the true latent correlation — and it is also <strong>inconsistent with respect to increasing numbers of participants</strong>. Adding more people does not reduce the attenuation. The estimator converges not to the true correlation but to the attenuated value. No amount of participant recruitment closes that gap.</p>
+ 
+  <div class="callout red">
+    <div class="callout-label">Why Inconsistency Is the Deeper Problem</div>
+    <p>With a biased-but-consistent estimator, a researcher can in principle mitigate the problem by collecting more data — the bias dissolves asymptotically. With an <em>inconsistent</em> estimator, no such mitigation exists. The attenuated value is where the estimator converges, and it stays there regardless of how many participants are added. More data makes the estimate more stable — but stably wrong.</p>
   </div>
  
-  <p>In this view, γ² remains valuable for planning — it tells you how many trials are needed to achieve a target width for your posterior credible interval on the correlation. But the reliability coefficient itself becomes tangential for interpretation. Report uncertainty directly; let the hierarchical model do the disattenuation implicitly. This is a meaningful shift in emphasis from the earlier Rouder and Mehrvarz (2024) framing, and it connects directly to the argument in this resource: the chain of attenuation is quantifiable at every link, and the remedy is modelling, not just more trials or larger samples.</p>
+  <h3>The Precision Trap: How SE Compression Creates False Confidence</h3>
+ 
+  <p>This is where the situation becomes particularly insidious. Standard errors measure sampling variability: how much would this estimate jump around across repeated experiments? As N grows, this variability shrinks. The CI narrows. The p-value drops. The result looks increasingly robust.</p>
+ 
+  <p>But the standard error is computed conditional on the model being correct. If trial noise is not modelled — if the noisy contrast score is treated as if it were a perfect measure of the latent quantity — then the SE reflects only sampling variability around the attenuated estimate. It contains no information about the systematic downward bias. The CI becomes narrower and narrower around the wrong value. MLE is optimal given a correctly specified model; when the model ignores trial noise, MLE faithfully reports precision around a biased target.</p>
+ 
+  <div class="callout red">
+    <div class="callout-label">Statistical Hell: Precision Around the Wrong Number</div>
+    <p>Suppose the true latent correlation between two tasks is 0.50. Because of noisy difference scores, the observed correlation converges near 0.10. Then:</p>
+    <p style="margin-top:0.75rem; font-family:'JetBrains Mono',monospace; font-size:0.85rem; line-height:2;">
+      N = 40 &nbsp;&nbsp;&nbsp; → &nbsp; estimate ≈ 0.10, &nbsp; wide CI<br>
+      N = 400 &nbsp;&nbsp; → &nbsp; estimate ≈ 0.10, &nbsp; narrow CI<br>
+      N = 4000 &nbsp; → &nbsp; estimate ≈ 0.10, &nbsp; extremely narrow CI
+    </p>
+    <p style="margin-top:0.75rem;">The large study gives high confidence in an estimate that is five times smaller than the truth. The more participants recruited, the more precisely wrong the conclusion. This is what Rouder means by "statistical hell": precision improves while validity does not.</p>
+  </div>
+ 
+  <p>This dynamic is especially dangerous because large sample sizes are treated as a mark of quality. A study with N = 800 reporting r = 0.10 with a tight CI will likely survive peer review as reliable evidence that two constructs are weakly related — when in reality the measurement instrument was simply too noisy to recover the true association. The bias does not appear in any diagnostic: the fit indices look fine, the SE is correctly computed for the specified model, and nothing flags that the target parameter has been missed entirely.</p>
+ 
+  <h3>The IRT Route Out of Statistical Hell</h3>
+ 
+  <p>Item Response Theory offers one principled route out of this situation. Rather than computing a noisy person contrast score and treating it as error-free, IRT models the full item response process — estimating latent person ability directly from the pattern of responses across items, with explicit uncertainty attached to each person estimate.</p>
+ 
+  <p>The key advantage is that IRT-derived person ability estimates are calibrated against the information carried by each item. Items that are well-targeted to a person's ability level contribute more to the estimate; items at the floor or ceiling contribute less. This is precisely the kind of signal extraction that Rouder's γ² framework calls for: improving γ² can come from adding trials <em>or</em> from improving item quality. IRT makes item quality explicit and measurable through the discrimination parameter, which directly indexes how steeply an item's response probability rises with latent ability. A test built from high-discrimination items concentrated near the ability levels of interest achieves a higher effective γ² than a same-length test of poorly targeted items — meaning better reliability at the same trial count, or the same reliability at fewer trials.</p>
+ 
+  <p>Where Rouder's framework diagnoses the problem — low γ² means the item set is not generating enough signal relative to noise — IRT provides the design toolkit for addressing it: identify which items discriminate poorly, where the test information function peaks relative to the population of interest, and whether the item pool is generating redundant rather than complementary information about individual differences.</p>
+ 
+  <div class="callout green">
+    <div class="callout-label">IRT as a Remedy: Better Signal, Honest Uncertainty</div>
+    <p>A Bayesian hierarchical model that incorporates IRT-derived ability estimates — or that jointly models item responses and latent person abilities — can recover correlations that are substantially less attenuated than those based on raw contrast scores. Crucially, the uncertainty in each person estimate is explicit and propagatable: the posterior for the between-task correlation reflects both how many people were tested and how informative the items were. This is the honest alternative to SE compression — wider intervals, but around the right quantity.</p>
+  </div>
+ 
+  <h3>The Right Endpoint: Uncertainty on Correlations Directly</h3>
+ 
+  <p>Even without IRT, the hierarchical modelling approach Rouder advocates makes progress. By modelling trial noise explicitly in a bivariate hierarchical model, the true between-task correlation can be estimated with credible intervals that incorporate both sources of uncertainty — finite individuals and finite trials. Disattenuation emerges naturally from the model structure. The resulting intervals are typically 3–4× wider than conventional CIs, but they are honest: they reflect the true state of knowledge given how many people were tested and how many trials each contributed.</p>
+ 
+  <p>γ² and reliability remain valuable for planning — telling you how many trials are needed to achieve a target credible interval width. But for interpretation, the reliability coefficient itself is tangential. Report uncertainty on the correlation directly; let the model handle the rest.</p>
  
   <div class="callout">
     <div class="callout-label">Summary: The Full Chain of Measurement Error</div>
-    <p>Poor γ² → low reliability at any practical trial count → attenuated and inconsistently estimated observed correlations → underestimation of true effect sizes → misleading conclusions about construct structure, test validity, and theoretical models. Every link in this chain is quantifiable. The remedy is not more participants — it is either more trials, better task design (higher γ²), or statistical modelling that explicitly partitions trial noise from true ability variance and reports uncertainty accordingly.</p>
+    <p>Poor γ² → low reliability at any practical trial count → biased and inconsistent observed correlation estimates → SE compression creating false confidence around the wrong value → misleading conclusions about construct structure, test validity, and theoretical models. Every link in this chain is quantifiable. The remedies are: better items (higher γ² via IRT-informed design), more trials, or statistical modelling that explicitly partitions trial noise from true ability variance and reports uncertainty accordingly.</p>
   </div>
-</div>
+ 
+  </div>
  
 <footer>
   <p>Based on: <strong>Karvelis &amp; Diaconescu (2025)</strong> · <em>Front. Psychol.</em> · Attenuation of group differences &nbsp;|&nbsp; <strong>Rouder &amp; Mehrvarz (2024)</strong> · <em>Curr. Dir. Psychol. Sci.</em> · Signal-to-noise reliability &nbsp;|&nbsp; <strong>Rouder, Mehrvarz &amp; Schnuerch (2026)</strong> · <em>Br. J. Math. Stat. Psychol.</em> · The role of reliability in experiments — with thanks to my silicon AI friends Claude and ChatGPT</p>
