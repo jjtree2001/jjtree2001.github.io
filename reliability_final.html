@@ -1,6 +1,3 @@
-Reliability final · HTML
-Copy
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -667,106 +664,168 @@ Copy
  
   <div class="formula">Y<sub>ikℓ</sub> ~ Normal(α<sub>i</sub> + x<sub>k</sub>θ<sub>i</sub>, τ²)<div class="formula-label">Rouder's model: person effect, condition contrast, and trial noise — no item subscript</div></div>
  
-  <p>Notice there is <em>no item subscript</em> in this model. The index ℓ runs over replicate trials, and τ² is simply the variance of each trial around the person-by-condition mean. <strong>Items do not exist as a modelled entity — they are invisible, absorbed entirely into τ².</strong> This is not an oversight. It reflects the paradigm Rouder has in mind (Stroop, flanker) where trials are effectively independent random draws from a large pool, and the derivation of the test-retest reliability formula explicitly requires that noise on Day 1 and Day 2 be statistically independent. Random item sampling across occasions is the assumption baked into the whole framework.</p>
+  <p>Notice there is <em>no item subscript</em> anywhere in this model. The index ℓ runs over replicate trials, and τ² is simply the variance of each trial around the person-by-condition mean. <strong>Items do not exist as a modelled entity — they are absorbed entirely into τ².</strong> This is not an oversight but a deliberate simplification appropriate for the paradigms Rouder considers (Stroop, flanker), where trials are effectively independent random draws from a large pool. The derivation of the test-retest reliability formula requires that noise on Day 1 and Day 2 be statistically independent — random item sampling across occasions is the assumption baked into the whole framework.</p>
  
-  <p>A linear mixed model, by contrast, separates that lumped noise term into distinct components:</p>
+  <p>A linear mixed model separates that lumped noise term into distinct components:</p>
  
-  <div class="formula">y<sub>pi</sub> = μ + u<sub>p</sub> + v<sub>i</sub> + ε<sub>pi</sub><div class="formula-label">Crossed LMM: between-person variance (σ²<sub>person</sub>), between-item variance (σ²<sub>item</sub>), and residual trial noise (σ²<sub>residual</sub>)</div></div>
+  <div class="formula">y<sub>pi</sub> = μ + u<sub>p</sub> + v<sub>i</sub> + ε<sub>pi</sub><div class="formula-label">Crossed LMM: between-person variance (σ²<sub>person</sub>), item intercept variance (σ²<sub>item</sub>), and residual trial noise (σ²<sub>residual</sub>)</div></div>
  
-  <p>This three-component decomposition is what makes the item sampling question visible as a design decision. In Rouder's framework, both σ²<sub>item</sub> and σ²<sub>residual</sub> are lumped inside τ². Once the LMM separates them, a question Rouder's model cannot address becomes tractable: <strong>are items fixed or resampled across test and retest occasions?</strong> The answer matters because it determines how much of the item variance contributes to the noise denominator of γ².</p>
+  <p>This decomposition is richer — but it also introduces a subtlety that matters for reliability. <strong>Standard item intercepts (v<sub>i</sub>) are shared across all participants.</strong> They shift item difficulty, but they do not by themselves create instability in people's rank ordering across occasions. If everyone is presented with the same items on a given occasion, item intercepts largely shift the grand mean rather than adding noise to person scores. What actually drives person-score instability is different: it is the <em>item-sampling variance</em> — the unpredictability introduced when different subsets of items are drawn on different occasions — plus any <em>person-by-item interaction</em> variance that makes some people systematically better or worse on particular items.</p>
  
   <div class="callout blue">
-    <div class="callout-label">Why Item Sampling Changes the Noise Denominator</div>
-    <p>Item effects that are <em>identical</em> on both occasions contribute to the covariance between Day 1 and Day 2 scores — effectively becoming part of the signal. Item effects that are <em>independently sampled</em> each time contribute nothing to the covariance and instead enlarge the noise. The residual ε<sub>pi</sub>, by contrast, is always independent across occasions: it is the irreducible within-person trial-level noise that never cancels.</p>
+    <div class="callout-label">What Actually Enters the Noise Denominator</div>
+    <p>The noise denominator for a Rouder-style γ² should include components that generate <em>instability in person scores across occasions</em>. This means:</p>
+    <p style="margin-top:0.6rem;"><strong>Always contributes:</strong> σ²<sub>residual</sub> — irreducible within-person trial noise, independent across occasions by definition.</p>
+    <p style="margin-top:0.4rem;"><strong>Contributes when items are resampled:</strong> σ²<sub>item-sampling</sub> — the variance attributable to drawing a different item subset each time. This is not simply the LMM's σ²<sub>item</sub> intercept variance, but rather the person-score-level instability introduced by item sampling.</p>
+    <p style="margin-top:0.4rem;"><strong>May contribute:</strong> σ²<sub>person×item</sub> — if people interact differently with specific items, this adds instability that does not average away even with fixed item sets.</p>
+    <p style="margin-top:0.4rem;">Plain item intercept variance (σ²<sub>item</sub> from a crossed LMM) does <em>not</em> directly enter the denominator when items are fixed across occasions, because it is shared structure, not noise.</p>
   </div>
  
-  <h3>Three Designs — Three Formulas</h3>
+  <h3>Three Designs — Three Noise Structures</h3>
  
-  <p>This gives three distinct cases with meaningfully different γ² values, even for the same underlying task:</p>
+  <p>With this clearer picture of what counts as noise, the three design cases can be stated more precisely:</p>
  
   <div class="scenario-grid">
     <div class="scenario-card fixed">
       <div class="scenario-label">Design A · Fixed Items</div>
-      <p>The same item set is used on both occasions. Item effects cancel in the test-retest covariance — they are shared signal, not noise.</p>
-      <div class="formula" style="font-size:0.85rem; padding: 0.75rem 1rem; margin: 0.75rem 0;">γ² = σ²<sub>person</sub> / σ²<sub>residual</sub></div>
-      <p style="font-size:0.8rem; color:var(--green);">Highest γ² — item variance is "free"</p>
+      <p>The same item set used on all occasions. Item intercepts are shared structure — they cancel from the test-retest covariance. Only residual and person×item interaction contribute to noise.</p>
+      <div class="formula" style="font-size:0.85rem; padding: 0.75rem 1rem; margin: 0.75rem 0;">γ² ≈ σ²<sub>person</sub> / (σ²<sub>residual</sub> + σ²<sub>p×i</sub>)</div>
+      <p style="font-size:0.8rem; color:var(--green);">Highest γ² — item difficulty is "free" shared structure</p>
     </div>
     <div class="scenario-card random">
       <div class="scenario-label">Design B · Random Items</div>
-      <p>Items are freshly sampled from a large pool on each occasion. Item effects contribute fully to noise, adding to residual instability.</p>
-      <div class="formula" style="font-size:0.85rem; padding: 0.75rem 1rem; margin: 0.75rem 0;">γ² = σ²<sub>person</sub> / (σ²<sub>item</sub> + σ²<sub>residual</sub>)</div>
-      <p style="font-size:0.8rem; color:var(--red);">Lowest γ² — recovers Rouder's original framework exactly</p>
+      <p>Fresh items sampled each occasion from a large pool. Item-sampling introduces occasion-specific noise at the person-score level, on top of residual variance.</p>
+      <div class="formula" style="font-size:0.85rem; padding: 0.75rem 1rem; margin: 0.75rem 0;">γ² ≈ σ²<sub>person</sub> / (σ²<sub>residual</sub> + σ²<sub>item-sampling</sub>)</div>
+      <p style="font-size:0.8rem; color:var(--red);">Lowest γ² — recovers Rouder's τ² when item-sampling noise dominates</p>
     </div>
     <div class="scenario-card partial">
       <div class="scenario-label">Design C · Partial Overlap</div>
-      <p>A finite pool of N items; L sampled per occasion. Item effects cancel proportionally to overlap ρ ≈ L/N.</p>
-      <div class="formula" style="font-size:0.85rem; padding: 0.75rem 1rem; margin: 0.75rem 0;">γ² = σ²<sub>person</sub> / (σ²<sub>residual</sub> + (1−ρ)·σ²<sub>item</sub>)</div>
-      <p style="font-size:0.8rem; color:var(--amber);">Intermediate — most realistic design</p>
+      <p>Finite pool of N items; L sampled per occasion. Item-sampling noise scales with the non-overlapping fraction (1 − L/N) of items, giving an intermediate noise level.</p>
+      <div class="formula" style="font-size:0.85rem; padding: 0.75rem 1rem; margin: 0.75rem 0;">γ² ≈ σ²<sub>person</sub> / (σ²<sub>residual</sub> + (1−ρ)·σ²<sub>item-sampling</sub>)</div>
+      <p style="font-size:0.8rem; color:var(--amber);">Intermediate — most realistic design in practice</p>
     </div>
   </div>
  
-  <p>The general formula unifying all three cases is:</p>
- 
-  <div class="formula">γ² = σ²<sub>person</sub> / (σ²<sub>residual</sub> + (1 − ρ<sub>items</sub>) × σ²<sub>item</sub>)<div class="formula-label">The general LMM-derived signal-to-noise ratio · ρ<sub>items</sub> = proportion of items shared across occasions (0 = fully random, 1 = fully fixed)</div></div>
- 
-  <p>This formula has an important implication: the formula most researchers intuitively reach for — γ² = σ²<sub>person</sub> / σ²<sub>item</sub> — drops the residual entirely, which is wrong in virtually every real case. σ²<sub>residual</sub> is typically the largest component in RT and accuracy tasks, and it always contributes to noise regardless of item design. Omitting it inflates γ² and leads to optimistic reliability estimates and underestimates of the trials needed.</p>
- 
   <div class="callout">
-    <div class="callout-label">A Note on What Rouder's Framework Can and Cannot Express</div>
-    <p>Rouder hasn't missed the fixed/random item distinction — it simply doesn't exist in his model. He works in a paradigm where items are random draws from a large pool, so the random-items assumption is both reasonable and implicit. The LMM framing is not a correction to his framework but an <em>elaboration</em> that becomes possible when you adopt the richer three-component decomposition. The fixed-items case in particular cannot be expressed at all within γ² = σ²/τ², because fixed items shift some variance from the noise denominator into the covariance numerator — making the structure trial-count-dependent in a way that breaks the elegant trial-invariant formula.</p>
+    <div class="callout-label">What Rouder's Framework Can and Cannot Express</div>
+    <p>Rouder's τ² lumps all of these noise sources together into a single within-person trial variance. The LMM can unpack them — but doing so correctly requires identifying which components are stable shared structure (item intercepts, when fixed) and which generate genuine person-score instability (residual noise, item-sampling variance, person×item interactions). The LMM framing is not a correction to Rouder but an elaboration that becomes useful once you want to ask <em>why</em> a task has low SNR and what can be done about it.</p>
   </div>
  
-  <h3>Worked Examples Across the Three Designs</h3>
+  <h3>From Fitted Model to Planning Diagnostic: The Practical Workflow</h3>
  
-  <p>To make this concrete, consider three tasks with the same underlying variance components but different item-sampling designs. In each case, σ²<sub>person</sub> = 0.20, σ²<sub>item</sub> = 0.30, σ²<sub>residual</sub> = 0.50.</p>
+  <p>This is where the LMM bridge becomes genuinely actionable. Once a hierarchical model has been fitted and converged, the estimated variance components are already in hand. Rather than simply reporting a reliability coefficient that conflates task quality with trial count, a researcher can compute a Rouder-style signal-to-noise index directly from those components — and use it as a planning diagnostic.</p>
  
-  <p><strong>Example A — Face recognition task (fixed items, realistic).</strong> The same 20 target faces are used on both occasions. Since ρ<sub>items</sub> = 1, item variance does not contribute to noise: γ² = 0.20 / 0.50 = <strong>0.40</strong>. This is a respectable signal-to-noise ratio. Face stimuli are expensive to collect, so using a fixed set is common — and this analysis shows it pays a genuine reliability dividend.</p>
+  <div class="callout green">
+    <div class="callout-label">Practical Workflow: From Model Output to Trial Planning</div>
+    <p><strong>Step 1 — Fit the hierarchical model.</strong> A crossed LMM (or Bayesian hierarchical model) yields variance components for persons, items, and residual noise.</p>
+    <p style="margin-top:0.6rem;"><strong>Step 2 — Identify the noise denominator.</strong> Decide which components act as measurement noise for your inferential target: residual variance always counts; item-sampling variance counts if items are resampled across occasions; person×item interaction counts if present.</p>
+    <p style="margin-top:0.6rem;"><strong>Step 3 — Compute γ².</strong> Form the ratio of person signal variance to effective noise variance.</p>
+    <p style="margin-top:0.6rem;"><strong>Step 4 — Consult the reliability curve.</strong> Use E(r) ≈ γ²/(γ² + 2/L) to see what reliability your current trial count achieves, and how many more trials would be needed to reach a target.</p>
+    <p style="margin-top:0.6rem;"><strong>Step 5 — Interpret diagnostically.</strong> Low γ² from high residual noise suggests brute-force trial addition may help. Low γ² from low person signal suggests the task may not discriminate individuals well regardless of trial count — redesign of items may be more effective than simply adding more of them.</p>
+  </div>
  
-  <p><strong>Example B — Stroop task (random items from large pool).</strong> Each occasion draws 40 fresh congruent/incongruent word pairs. Since ρ<sub>items</sub> ≈ 0: γ² = 0.20 / (0.30 + 0.50) = 0.20 / 0.80 = <strong>0.25</strong>. Substantially lower — and even this is optimistic for the Stroop where σ²<sub>person</sub> is empirically much smaller relative to τ².</p>
+  <p>This workflow is very much in the spirit of Rouder's recommendation that task goodness should be expressed in a trial-size-invariant way. The reliability coefficient tells you where you currently are; γ² tells you the shape of the entire curve and whether any practical trial count can get you where you need to be.</p>
  
-  <p><strong>Example C — Working memory task (partial overlap).</strong> A pool of 60 items, 30 administered per occasion, giving ρ<sub>items</sub> ≈ 30/60 = 0.50: γ² = 0.20 / (0.50 + 0.50 × 0.30) = 0.20 / 0.65 = <strong>0.31</strong>. Intermediate — between the two extremes, as expected. This is arguably the most common situation in cognitive psychology, yet it is the case least addressed by either CTT or Rouder's simple two-component model.</p>
+  <h3>A Worked Example: Face Recognition with a 2×2 Design</h3>
+ 
+  <p>To make this concrete, consider a 100-item face recognition memory task with a 2×2 design: Factor A = Upright vs Inverted, Factor B = Familiar vs Unfamiliar. Two hundred participants each complete all conditions. You fit a crossed hierarchical model with participant and item random slopes for both factors and their interaction:</p>
+ 
+  <div class="formula" style="font-size:0.9rem;">accuracy ~ A * B + (1 + A*B | participant) + (1 + A*B | item)<div class="formula-label">Full crossed model — random slopes for both participants and items across all effects</div></div>
+ 
+  <p>Suppose the model yields the following variance components:</p>
+ 
+  <div style="overflow-x:auto; margin: 1.5rem 0;">
+    <table class="compare">
+      <tr>
+        <th>Source</th>
+        <th>Component</th>
+        <th>Variance</th>
+        <th>Role</th>
+      </tr>
+      <tr><td>Participant intercept</td><td>σ²<sub>p-intercept</sub></td><td>0.40</td><td>Overall memory ability signal</td></tr>
+      <tr><td>Participant slope A</td><td>σ²<sub>p-A</sub></td><td>0.12</td><td>Individual inversion effect signal</td></tr>
+      <tr><td>Participant slope B</td><td>σ²<sub>p-B</sub></td><td>0.06</td><td>Individual familiarity effect signal</td></tr>
+      <tr><td>Participant slope A×B</td><td>σ²<sub>p-A×B</sub></td><td>0.03</td><td>Individual interaction signal</td></tr>
+      <tr><td>Item intercept</td><td>σ²<sub>i-intercept</sub></td><td>0.25</td><td>Item difficulty (shared structure)</td></tr>
+      <tr><td>Item slope A</td><td>σ²<sub>i-A</sub></td><td>0.05</td><td>Item-level inversion variability</td></tr>
+      <tr><td>Residual</td><td>σ²<sub>residual</sub></td><td>0.80</td><td>Trial noise (always in denominator)</td></tr>
+    </table>
+  </div>
+ 
+  <p>Because faces are presented as a fixed set (the same 100 faces on both occasions), item intercepts are shared structure and do not contribute to noise. The effective noise denominator is σ²<sub>residual</sub> = 0.80 throughout. This gives a separate γ² for each inferential target:</p>
+ 
+  <div class="scenario-grid" style="grid-template-columns: repeat(2, 1fr);">
+    <div class="scenario-card fixed">
+      <div class="scenario-label">Overall Ability</div>
+      <p>How well can we rank people by general face memory?</p>
+      <div class="formula" style="font-size:0.85rem; padding:0.75rem 1rem; margin:0.75rem 0;">γ² = 0.40 / 0.80 = <strong>0.50</strong></div>
+      <p style="font-size:0.8rem; color:var(--green);">Good signal — stable individual differences detectable with moderate trial counts.</p>
+    </div>
+    <div class="scenario-card partial">
+      <div class="scenario-label">Inversion Effect</div>
+      <p>How well can we rank people by their upright–inverted sensitivity?</p>
+      <div class="formula" style="font-size:0.85rem; padding:0.75rem 1rem; margin:0.75rem 0;">γ² = 0.12 / 0.80 = <strong>0.15</strong></div>
+      <p style="font-size:0.8rem; color:var(--amber);">Modest — people differ in inversion sensitivity, but many more trials needed to localise individuals.</p>
+    </div>
+    <div class="scenario-card random">
+      <div class="scenario-label">Familiarity Effect</div>
+      <p>How well can we rank people by familiar–unfamiliar sensitivity?</p>
+      <div class="formula" style="font-size:0.85rem; padding:0.75rem 1rem; margin:0.75rem 0;">γ² = 0.06 / 0.80 = <strong>0.075</strong></div>
+      <p style="font-size:0.8rem; color:var(--red);">Low — weakly discriminating for individual differences research.</p>
+    </div>
+    <div class="scenario-card random">
+      <div class="scenario-label">A×B Interaction</div>
+      <p>How well can we rank people by their interaction contrast?</p>
+      <div class="formula" style="font-size:0.85rem; padding:0.75rem 1rem; margin:0.75rem 0;">γ² = 0.03 / 0.80 = <strong>0.038</strong></div>
+      <p style="font-size:0.8rem; color:var(--red);">Very low — 100 items is far too few; task redesign likely needed.</p>
+    </div>
+  </div>
+ 
+  <p>This example makes a point that a single reliability coefficient would completely obscure: <strong>the same task is simultaneously excellent for measuring overall ability, mediocre for inversion sensitivity, and essentially unsuitable for studying individual differences in the interaction effect.</strong> A researcher who runs 100 items and reports a high reliability for the overall memory score has no grounds for assuming the inversion contrast is equally well measured — yet this assumption is routinely made in the literature.</p>
+ 
+  <p>Consulting the reliability curve for each γ²: overall ability (γ² = 0.50) achieves r ≈ .96 at L = 100 trials, meaning very few additional items are needed. The inversion effect (γ² = 0.15) achieves only r ≈ .88 — still useful, but considerably more fragile. The interaction (γ² = 0.038) achieves r ≈ .66 — below the conventional threshold of .70 even with 100 trials per condition, and would require over 450 trials to reach .90. No amount of modest sample-size increase rescues this; only more items or a fundamentally different task design will help.</p>
  
   <div class="callout green">
     <div class="callout-label">Item Design Is a Reliability Design Decision</div>
-    <p>The three examples make visible something that is easy to overlook: <strong>the choice of fixed versus sampled items is not merely a logistical decision — it is a reliability design decision.</strong> Using fixed items inflates γ² by converting item variance from noise into shared signal. Using randomly sampled items deflates γ² but increases generalisability (you are measuring performance on the construct, not on those specific items). The partial-overlap framework lets you quantify exactly where on this tradeoff your design sits — and the LMM gives you the components needed to compute it from existing data.</p>
+    <p>Two further lessons from this example. First: the choice of fixed versus sampled items matters. Using the same 100 faces on both occasions was what made item intercept variance "free" — if different face sets were drawn each time, item-sampling variance would enter the noise denominator and every γ² would drop. Second: low SNR may reflect not just too few items but poorly discriminating ones. If the inversion effect shows low person slope variance (σ²<sub>p-A</sub> = 0.12), the task structure itself limits what can be recovered — brute-force item addition is less effective than redesigning items to amplify between-person differences in the contrast of interest.</p>
   </div>
  
   <div class="widget">
     <div class="widget-title">Interactive: From LMM Variance Components to γ² and Trial Planning</div>
-    <p style="font-size:0.85rem; color:var(--cream-dim); margin-bottom:1.5rem;">Adjust the three variance components from a fitted crossed mixed model, then set the item overlap to reflect your design. The implied γ², expected reliability, and required trial counts update automatically — showing how item design affects the noise denominator.</p>
+    <p style="font-size:0.85rem; color:var(--cream-dim); margin-bottom:1.5rem;">Enter variance components from a fitted crossed mixed model and set item overlap. The noise denominator is computed correctly — residual always contributes; item-sampling noise scales with (1 − overlap). Compare how different random effects (person intercept vs slopes) yield different γ² values for the same task.</p>
  
     <div class="slider-row">
-      <div class="slider-label">Person variance σ²<sub>person</sub>: <span id="lmm-person-val">0.20</span></div>
-      <input type="range" id="lmmPerson" min="0.01" max="2.00" step="0.01" value="0.20">
+      <div class="slider-label">Person signal σ²<sub>person</sub>: <span id="lmm-person-val">0.40</span></div>
+      <input type="range" id="lmmPerson" min="0.01" max="2.00" step="0.01" value="0.40">
     </div>
     <div class="slider-row">
-      <div class="slider-label">Item variance σ²<sub>item</sub>: <span id="lmm-item-val">0.30</span></div>
-      <input type="range" id="lmmItem" min="0.01" max="2.00" step="0.01" value="0.30">
+      <div class="slider-label">Item-sampling noise σ²<sub>item-samp</sub>: <span id="lmm-item-val">0.25</span></div>
+      <input type="range" id="lmmItem" min="0.00" max="2.00" step="0.01" value="0.25">
     </div>
     <div class="slider-row">
-      <div class="slider-label">Residual variance σ²<sub>residual</sub>: <span id="lmm-resid-val">0.50</span></div>
-      <input type="range" id="lmmResid" min="0.01" max="2.00" step="0.01" value="0.50">
+      <div class="slider-label">Residual noise σ²<sub>residual</sub>: <span id="lmm-resid-val">0.80</span></div>
+      <input type="range" id="lmmResid" min="0.01" max="2.00" step="0.01" value="0.80">
     </div>
     <div class="slider-row">
-      <div class="slider-label">Item overlap ρ (0=random, 1=fixed): <span id="lmm-overlap-val">0.00</span></div>
-      <input type="range" id="lmmOverlap" min="0.00" max="1.00" step="0.05" value="0.00">
+      <div class="slider-label">Item overlap ρ (0=random, 1=fixed): <span id="lmm-overlap-val">1.00</span></div>
+      <input type="range" id="lmmOverlap" min="0.00" max="1.00" step="0.05" value="1.00">
     </div>
     <div class="slider-row">
-      <div class="slider-label">Trials per condition L: <span id="lmm-L-val">40</span></div>
-      <input type="range" id="lmmTrials" min="5" max="500" step="5" value="40">
+      <div class="slider-label">Trials per condition L: <span id="lmm-L-val">100</span></div>
+      <input type="range" id="lmmTrials" min="5" max="500" step="5" value="100">
     </div>
  
-    <div id="lmm-design-label" style="font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:var(--amber); margin: 0.5rem 0 1rem; text-align:center;">Design: Fully Random Items (Rouder framework)</div>
+    <div id="lmm-design-label" style="font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:var(--amber); margin: 0.5rem 0 1rem; text-align:center;">Design: Fixed Items — item-sampling noise does not contribute</div>
  
     <div class="results-grid">
-      <div class="result-card" id="lmm-gamma-card"><div class="val" id="lmm-gamma">—</div><div class="lbl">γ² from LMM</div></div>
+      <div class="result-card" id="lmm-gamma-card"><div class="val" id="lmm-gamma">—</div><div class="lbl">γ² (task goodness)</div></div>
       <div class="result-card" id="lmm-r-card"><div class="val" id="lmm-r">—</div><div class="lbl">Reliability at L</div></div>
       <div class="result-card" id="lmm-t7-card"><div class="val" id="lmm-t7">—</div><div class="lbl">Trials for r = .70</div></div>
       <div class="result-card" id="lmm-t9-card"><div class="val" id="lmm-t9">—</div><div class="lbl">Trials for r = .90</div></div>
     </div>
  
     <canvas id="lmmBridgeCanvas" height="260" style="margin-top:1.5rem;"></canvas>
-    <p style="font-size:0.75rem; color:var(--cream-dim); margin-top:0.75rem; text-align:center;">Left: LMM variance decomposition showing how item overlap determines the effective noise. Right: implied reliability curve. Note how shifting from random to fixed items lifts the curve.</p>
+    <p style="font-size:0.75rem; color:var(--cream-dim); margin-top:0.75rem; text-align:center;">Left: variance decomposition showing signal (green) vs noise components. Right: reliability curve implied by γ². Try setting overlap to 1.0 (face task) vs 0.0 (Stroop) to see how item design shifts the curve.</p>
   </div>
  
   <h3>Why This Matters: The Curve Reveals What the Coefficient Hides</h3>
