@@ -1,3 +1,6 @@
+Reliability final · HTML
+Copy
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,10 +25,8 @@
     --border: rgba(232,160,32,0.2);
     --border-dim: rgba(255,255,255,0.07);
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
-
   body {
     background: var(--navy);
     color: var(--cream);
@@ -34,8 +35,6 @@
     line-height: 1.75;
     overflow-x: hidden;
   }
-
-  /* ── NAV ── */
   nav {
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -72,8 +71,6 @@
     font-family: 'Source Serif 4', serif;
   }
   nav a:hover { color: var(--amber); border-bottom-color: var(--amber); }
-
-  /* ── HERO ── */
   .hero {
     min-height: 100vh;
     display: flex;
@@ -122,10 +119,7 @@
     margin-bottom: 1.5rem;
     color: var(--cream);
   }
-  h1 em {
-    font-style: italic;
-    color: var(--amber);
-  }
+  h1 em { font-style: italic; color: var(--amber); }
   .hero-sub {
     font-size: 1.15rem;
     color: var(--cream-dim);
@@ -133,12 +127,7 @@
     margin: 0 auto 3rem;
     line-height: 1.7;
   }
-  .hero-nav {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
+  .hero-nav { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
   .btn {
     display: inline-flex;
     align-items: center;
@@ -152,30 +141,12 @@
     cursor: pointer;
     border: none;
   }
-  .btn-primary {
-    background: var(--amber);
-    color: var(--navy);
-    font-weight: 600;
-  }
+  .btn-primary { background: var(--amber); color: var(--navy); font-weight: 600; }
   .btn-primary:hover { background: var(--amber-light); transform: translateY(-1px); }
-  .btn-secondary {
-    background: transparent;
-    color: var(--cream);
-    border: 1px solid rgba(240,232,216,0.3);
-  }
+  .btn-secondary { background: transparent; color: var(--cream); border: 1px solid rgba(240,232,216,0.3); }
   .btn-secondary:hover { border-color: var(--amber); color: var(--amber); }
-
-  /* ── SECTIONS ── */
-  .section {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 6rem 2rem;
-  }
-  .section-divider {
-    border: none;
-    border-top: 1px solid var(--border-dim);
-    margin: 0 2rem;
-  }
+  .section { max-width: 900px; margin: 0 auto; padding: 6rem 2rem; }
+  .section-divider { border: none; border-top: 1px solid var(--border-dim); margin: 0 2rem; }
   .section-number {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.7rem;
@@ -212,8 +183,6 @@
   p { margin-bottom: 1.2rem; color: var(--cream-dim); }
   p strong { color: var(--cream); font-weight: 600; }
   p em { color: var(--amber-light); font-style: italic; }
-
-  /* ── CALLOUT BOXES ── */
   .callout {
     background: var(--card);
     border-left: 3px solid var(--amber);
@@ -224,6 +193,7 @@
   .callout.blue { border-left-color: var(--blue); }
   .callout.green { border-left-color: var(--green); }
   .callout.red { border-left-color: var(--red); }
+  .callout.purple { border-left-color: var(--purple); }
   .callout-label {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.65rem;
@@ -235,9 +205,8 @@
   .callout.blue .callout-label { color: var(--blue); }
   .callout.green .callout-label { color: var(--green); }
   .callout.red .callout-label { color: var(--red); }
+  .callout.purple .callout-label { color: var(--purple); }
   .callout p { margin: 0; font-size: 0.95rem; }
-
-  /* ── FORMULA ── */
   .formula {
     background: var(--slate);
     border: 1px solid var(--border-dim);
@@ -258,8 +227,6 @@
     margin-top: 0.5rem;
     font-family: 'Source Serif 4', serif;
   }
-
-  /* ── WIDGET CARD ── */
   .widget {
     background: var(--card);
     border: 1px solid var(--border-dim);
@@ -277,28 +244,15 @@
     align-items: center;
     gap: 0.5rem;
   }
-  .widget-title::before {
-    content: '◆';
-    font-size: 0.6rem;
-  }
-
-  /* ── SLIDERS ── */
-  .slider-row {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1rem;
-  }
+  .widget-title::before { content: '◆'; font-size: 0.6rem; }
+  .slider-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
   .slider-label {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.8rem;
     color: var(--cream-dim);
-    min-width: 160px;
+    min-width: 200px;
   }
-  .slider-label span {
-    color: var(--amber);
-    font-weight: 500;
-  }
+  .slider-label span { color: var(--amber); font-weight: 500; }
   input[type=range] {
     flex: 1;
     -webkit-appearance: none;
@@ -324,15 +278,7 @@
     min-width: 50px;
     text-align: right;
   }
-
-  /* ── CANVAS ── */
-  canvas {
-    width: 100%;
-    border-radius: 4px;
-    display: block;
-  }
-
-  /* ── RESULTS GRID ── */
+  canvas { width: 100%; border-radius: 4px; display: block; }
   .results-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -354,31 +300,13 @@
     line-height: 1;
     margin-bottom: 0.25rem;
   }
-  .result-card .lbl {
-    font-size: 0.72rem;
-    color: var(--cream-dim);
-    letter-spacing: 0.05em;
-  }
+  .result-card .lbl { font-size: 0.72rem; color: var(--cream-dim); letter-spacing: 0.05em; }
   .result-card.good .val { color: var(--green); }
   .result-card.bad .val { color: var(--red); }
   .result-card.mid .val { color: var(--amber); }
-
-  /* ── TWO-COL ── */
-  .two-col {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    margin: 1.5rem 0;
-  }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.5rem 0; }
   @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
-
-  /* ── COMPARISON TABLE ── */
-  .compare {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 2rem 0;
-    font-size: 0.9rem;
-  }
+  .compare { width: 100%; border-collapse: collapse; margin: 2rem 0; font-size: 0.9rem; }
   .compare th {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.7rem;
@@ -397,8 +325,6 @@
   }
   .compare td:first-child { color: var(--cream); font-weight: 600; }
   .compare tr:last-child td { border-bottom: none; }
-
-  /* ── ADVANCED BADGE ── */
   .advanced-badge {
     display: inline-block;
     background: rgba(144,96,208,0.2);
@@ -413,14 +339,7 @@
     margin-left: 0.75rem;
     vertical-align: middle;
   }
-
-  /* ── TASK REFERENCE PILLS ── */
-  .task-pills {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    margin-top: 1rem;
-  }
+  .task-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; }
   .task-pill {
     display: flex;
     align-items: center;
@@ -434,52 +353,44 @@
     border: 1px solid;
   }
   .task-pill .dot { width: 8px; height: 8px; border-radius: 50%; }
-
-  /* ── FOOTER ── */
-  footer {
-    text-align: center;
-    padding: 3rem 2rem;
-    border-top: 1px solid var(--border-dim);
-    color: var(--cream-dim);
-    font-size: 0.8rem;
+  .scenario-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin: 1.5rem 0;
   }
-  footer strong { color: var(--amber); }
-
-  /* ── SCROLL ANIMATIONS ── */
-  .fade-in {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
+  @media (max-width: 640px) { .scenario-grid { grid-template-columns: 1fr; } }
+  .scenario-card {
+    background: var(--slate);
+    border: 1px solid var(--border-dim);
+    border-radius: 6px;
+    padding: 1.1rem;
   }
-  .fade-in.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* ── CURVE LEGEND ── */
-  .curve-legend {
-    display: flex;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-    margin-top: 1rem;
-    font-size: 0.78rem;
+  .scenario-card.fixed { border-top: 2px solid var(--green); }
+  .scenario-card.random { border-top: 2px solid var(--red); }
+  .scenario-card.partial { border-top: 2px solid var(--amber); }
+  .scenario-label {
     font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
   }
-  .curve-legend-item {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    color: var(--cream-dim);
-  }
-  .curve-legend-line {
-    width: 24px;
-    height: 3px;
-    border-radius: 2px;
-  }
+  .scenario-card.fixed .scenario-label { color: var(--green); }
+  .scenario-card.random .scenario-label { color: var(--red); }
+  .scenario-card.partial .scenario-label { color: var(--amber); }
+  .scenario-card p { font-size: 0.82rem; margin: 0; }
+  footer { text-align: center; padding: 3rem 2rem; border-top: 1px solid var(--border-dim); color: var(--cream-dim); font-size: 0.8rem; }
+  footer strong { color: var(--amber); }
+  .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+  .curve-legend { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem; font-size: 0.78rem; font-family: 'JetBrains Mono', monospace; }
+  .curve-legend-item { display: flex; align-items: center; gap: 0.4rem; color: var(--cream-dim); }
+  .curve-legend-line { width: 24px; height: 3px; border-radius: 2px; }
 </style>
 </head>
 <body>
-
+ 
 <nav>
   <div class="logo">The Reliability Problem</div>
   <a href="#section1">§1 Foundations</a>
@@ -487,12 +398,11 @@
   <a href="#section3">§3 Dichotomisation</a>
   <a href="#section4">§4 Signal-to-Noise</a>
 </nav>
-
-<!-- HERO -->
+ 
 <div class="hero">
   <div class="hero-grid"></div>
   <div class="hero-content">
-    <div class="hero-tag">Teaching Resource · Psychometrics & Individual Differences</div>
+    <div class="hero-tag">Teaching Resource · Psychometrics &amp; Individual Differences</div>
     <h1>The Reliability Problem<br><em>From Attenuation to Signal-to-Noise</em></h1>
     <p class="hero-sub">A guide to measurement error in psychological research — tracing the history from Spearman's original insight through Classical Test Theory, to a modern signal-to-noise framework that reveals what reliability really is and what it demands of us.</p>
     <div class="hero-nav">
@@ -501,153 +411,95 @@
     </div>
   </div>
 </div>
-
+ 
 <hr class="section-divider">
-
-<!-- SECTION 1: FOUNDATIONS + HISTORY -->
+ 
 <div class="section fade-in" id="section1">
   <div class="section-number">Section 01 · Foundations</div>
   <h2>Observed Scores, True Scores,<br>and a Century of Consequences</h2>
-
   <p>The reliability problem is not a recent discovery. It was identified in 1904 by Charles Spearman — in the very same paper that introduced the correlation coefficient to psychology. That Spearman recognised the measurement error problem at the moment he invented the tool most affected by it is one of the more elegant ironies in the history of science. And the framework he proposed that year remains the foundation on which all subsequent work, including the most modern approaches, is built.</p>
-
   <h3>The Fundamental Decomposition</h3>
-
   <p>Spearman's core insight was that every observed score on a psychological test is composed of two distinct parts:</p>
-
-  <div class="formula">
-    Observed Score = True Score + Measurement Error
-    <div class="formula-label">The fundamental decomposition of Classical Test Theory (Spearman, 1904)</div>
-  </div>
-
+  <div class="formula">Observed Score = True Score + Measurement Error<div class="formula-label">The fundamental decomposition of Classical Test Theory (Spearman, 1904)</div></div>
   <p>The <strong>true score</strong> is what we actually care about — the person's genuine, stable standing on whatever latent ability we are trying to measure: their working memory capacity, their face recognition ability, their susceptibility to a visual illusion. The <strong>measurement error</strong> is everything else: random fluctuations in attention on the day, guessing, ambiguous stimuli, fatigue, the particular items that happened to appear on this occasion. In classical test theory, error is treated as random with respect to the true score — that is, it is uncorrelated with the underlying ability we are trying to measure.</p>
-
   <p>This decomposition has an immediate and important consequence. Because error is random, it contributes variance to observed scores without contributing any systematic information. As the proportion of error variance grows relative to true score variance, observed scores become increasingly poor guides to individuals' true standing on the latent ability — and, crucially, any statistic we compute from those observed scores inherits that contamination.</p>
-
   <h3>Reliability: Quantifying the Signal-to-Noise Balance</h3>
-
   <p><strong>Reliability</strong> is the formal index of how much of the observed score variance reflects true score variance versus error. It is defined as the ratio:</p>
-
-  <div class="formula">
-    Reliability = σ²_true / (σ²_true + σ²_error)
-    <div class="formula-label">True score variance as a proportion of total observed variance</div>
-  </div>
-
+  <div class="formula">Reliability = σ²_true / (σ²_true + σ²_error)<div class="formula-label">True score variance as a proportion of total observed variance</div></div>
   <p>A reliability of 1.0 means no error — every point of observed variance reflects genuine individual differences. A reliability of 0 means pure noise. Most psychological measures fall somewhere in between, and the practical consequences of that position are severe — not merely in the form of imprecision, but in the form of a systematic, one-directional bias in every effect we estimate. This systematic bias is what Spearman named <strong>attenuation</strong>, and quantifying it was his second major contribution of 1904.</p>
-
   <p>Reliability can be estimated in two broad ways: through <strong>test-retest reliability</strong> (correlating two administrations of the same measure) or through <strong>internal consistency</strong> (asking how well items within a single administration agree with each other, as indexed by Cronbach's α, introduced in 1951). Despite their different computational forms, both aim to estimate the same underlying ratio above, but they rely on different assumptions and can diverge in practice. The choice between them is often practical — internal consistency is cheaper to obtain — but they should not be treated as interchangeable in all contexts.</p>
-
   <p>A critical implication follows: reliability is not just a property of a measure, but of a design. Tasks that maximise within-person effects often minimise between-person variance, limiting the signal available for individual differences — a tension that becomes central in modern reliability work.</p>
-
   <div class="widget" style="padding: 1.5rem 2rem;">
     <div class="widget-title">The Historical Arc — A Century of Reliability Theory</div>
     <div style="position:relative; padding-left: 2rem; margin-top:0.5rem;">
       <div style="position:absolute; left:0.65rem; top:0; bottom:0; width:2px; background:linear-gradient(to bottom, var(--amber), var(--blue), #60b0a0, #9060d0); border-radius:1px;"></div>
-
       <div style="margin-bottom:2rem; position:relative;">
         <div style="position:absolute; left:-1.9rem; top:0.3rem; width:12px; height:12px; border-radius:50%; background:var(--amber); border:2px solid var(--navy);"></div>
         <div style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--amber); letter-spacing:0.1em; margin-bottom:0.3rem;">1904 — SPEARMAN</div>
         <div style="font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:var(--cream); margin-bottom:0.3rem;">The Problem Named and First Solution Proposed</div>
-        <div style="font-size:0.85rem; color:var(--cream-dim);">Introduces the correlation coefficient; immediately recognises that measurement error deflates it (attenuation); derives both the attenuation formula and the disattenuation correction r* = r_xy/√(r_xx·r_yy). Correct in direction — but unstable in practice, since the correction can yield r > 1 when reliability estimates themselves contain sampling error.</div>
+        <div style="font-size:0.85rem; color:var(--cream-dim);">Introduces the correlation coefficient; immediately recognises that measurement error deflates it (attenuation); derives both the attenuation formula and the disattenuation correction r* = r_xy/√(r_xx·r_yy). Correct in direction — but unstable in practice, since the correction can yield r &gt; 1 when reliability estimates themselves contain sampling error.</div>
       </div>
-
       <div style="margin-bottom:2rem; position:relative;">
         <div style="position:absolute; left:-1.9rem; top:0.3rem; width:12px; height:12px; border-radius:50%; background:var(--blue); border:2px solid var(--navy);"></div>
         <div style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--blue); letter-spacing:0.1em; margin-bottom:0.3rem;">1951 — CRONBACH</div>
         <div style="font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:var(--cream); margin-bottom:0.3rem;">Internal Consistency as a Practical Reliability Estimate</div>
         <div style="font-size:0.85rem; color:var(--cream-dim);">Coefficient alpha provides a practical way to estimate reliability from a single administration — no retest required. The problem (attenuation) is still Spearman's; alpha simply gives a more convenient way to estimate the reliability values needed for his correction. Dominant for seven decades, but shares Spearman's blind spot: it tells you where you are on the reliability curve, not the shape of the curve itself.</div>
       </div>
-
       <div style="margin-bottom:2rem; position:relative;">
         <div style="position:absolute; left:-1.9rem; top:0.3rem; width:12px; height:12px; border-radius:50%; background:#60b0a0; border:2px solid var(--navy);"></div>
-        <div style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#60b0a0; letter-spacing:0.1em; margin-bottom:0.3rem;">2018 — HEDGE, POWELL & SUMNER</div>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#60b0a0; letter-spacing:0.1em; margin-bottom:0.3rem;">2018 — HEDGE, POWELL &amp; SUMNER</div>
         <div style="font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:var(--cream); margin-bottom:0.3rem;">The Reliability Paradox Formally Demonstrated</div>
         <div style="font-size:0.85rem; color:var(--cream-dim);">Show empirically that tasks producing robust group-level effects consistently yield poor test-retest reliability for individual differences. The paradox arises because tasks designed to maximise within-person condition differences minimise between-person variance — the very signal needed for individual differences research. Attenuation is not a theoretical worry; it is pervasive and severe.</div>
       </div>
-
-      <div style="position:relative;">
+      <div style="margin-bottom:2rem; position:relative;">
         <div style="position:absolute; left:-1.9rem; top:0.3rem; width:12px; height:12px; border-radius:50%; background:#9060d0; border:2px solid var(--navy);"></div>
-        <div style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#9060d0; letter-spacing:0.1em; margin-bottom:0.3rem;">2024 — ROUDER & MEHRVARZ</div>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#9060d0; letter-spacing:0.1em; margin-bottom:0.3rem;">2024–2026 — ROUDER, MEHRVARZ &amp; SCHNUERCH</div>
         <div style="font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:var(--cream); margin-bottom:0.3rem;">Reliability as Signal-to-Noise: The Full Curve Revealed</div>
-        <div style="font-size:0.85rem; color:var(--cream-dim);">Reframe reliability as γ² = σ²_B/σ²_W — a trial-size-invariant variance ratio that depends on both the task and the population, independent of how many trials were run. From γ² alone you can derive the entire reliability curve as a function of trial size, determine whether any practical trial count can reach your target, and compare tasks on equal footing across studies. The shape of the curve — not just one point on it — is now the object of inquiry.</div>
+        <div style="font-size:0.85rem; color:var(--cream-dim);">Reframe reliability as γ² = σ²_B/σ²_W — a trial-size-invariant variance ratio independent of how many trials were run. From γ² alone you can derive the entire reliability curve as a function of trial size. Crucially, their 2026 paper argues that reliability itself is merely an intermediate quantity: the true goal is directly modelling uncertainty in correlations across tasks via hierarchical models, bypassing the reliability bottleneck entirely.</div>
       </div>
     </div>
   </div>
-
   <div class="callout">
     <div class="callout-label">The Thread Running Through Everything</div>
     <p>From Spearman to Rouder, the underlying idea is identical: observed scores mix signal and noise, and any statistic computed from them inherits that mixture in predictable ways. What has changed across the century is the precision with which we can quantify that mixture — and therefore the precision with which we can diagnose problems and prescribe remedies. The next section makes the consequences concrete, starting with Spearman's own attenuation formula and what it implies for the effects we report every day.</p>
   </div>
 </div>
-
+ 
 <hr class="section-divider">
-
-<!-- SECTION 2: ATTENUATION -->
+ 
 <div class="section fade-in" id="section2">
   <div class="section-number">Section 02 · Attenuation</div>
   <h2>Attenuation: The Predictable<br>Deflation of Every Effect</h2>
-
-  <p>Section 1 established that observed scores are a mixture of true score and error, and that reliability quantifies how much of the observed variance is signal. The natural next question is: what does this do to the statistics we compute from those scores? The answer — which Spearman derived in the same 1904 paper that introduced the reliability ratio — is precise and sobering. Low reliability does not merely add imprecision; it introduces a systematic, one-directional bias that pushes every effect we measure <em>toward zero</em>. This bias is called <strong>attenuation</strong>, and it operates on correlations and group differences alike.</p>
-
+  <p>Section 1 established that observed scores are a mixture of true score and error, and that reliability quantifies how much of the observed variance is signal. The natural next question is: what does this do to the statistics we compute from those scores? The answer — which Spearman derived in the same 1904 paper — is precise and sobering. Low reliability does not merely add imprecision; it introduces a systematic, one-directional bias that pushes every effect we measure <em>toward zero</em>. This bias is called <strong>attenuation</strong>, and it operates on correlations and group differences alike.</p>
   <h3>Attenuation of Correlations</h3>
-
   <p>When two measures are both imperfectly reliable, the observed correlation between them is systematically smaller than the true underlying correlation, in expectation. Spearman's attenuation formula gives the exact relationship:</p>
-
-  <div class="formula">
-    r_observed = r_true × √(ICC_x × ICC_y)
-    <div class="formula-label">Spearman's attenuation formula for correlations</div>
-  </div>
-
+  <div class="formula">r_observed = r_true × √(ICC_x × ICC_y)<div class="formula-label">Spearman's attenuation formula for correlations</div></div>
   <p>The implication is stark. If two measures each have reliability of .5, and the true correlation between the underlying constructs is .8, the observed correlation will be .8 × √(.5 × .5) = .8 × .5 = <strong>.40</strong> — exactly half the true value. A researcher who observes r = .40 and concludes the constructs are weakly related has been misled by measurement error, not by the constructs themselves.</p>
-
   <h3>Attenuation of Group Differences</h3>
-
   <p>A critical and often overlooked point: <strong>attenuation affects mean differences just as severely as it affects correlations</strong>. This is frequently misunderstood — researchers sometimes assume that poor reliability "only matters for individual differences research." This is wrong. Karvelis and Diaconescu (2025) demonstrate mathematically that observed standardised mean differences follow the same reliability-based scaling:</p>
-
-  <div class="formula">
-    δ_observed = δ_true × √ICC
-    <div class="formula-label">Attenuation formula for standardised group differences (Cohen's d), assuming equal reliability across groups</div>
-  </div>
-
+  <div class="formula">δ_observed = δ_true × √ICC<div class="formula-label">Attenuation formula for standardised group differences (Cohen's d), assuming equal reliability across groups</div></div>
   <p>A true effect of d = 0.8 measured with an instrument of reliability .5 yields an observed d of 0.8 × √.5 ≈ <strong>0.57</strong>. A "large" effect becomes a "medium" effect — not because the effect is smaller in reality, but because measurement error inflates the denominator of the effect size formula.</p>
-
   <h3>Why Attenuation Is Always a Lower Bound — Never an Upper One</h3>
-
   <p>At this point a reasonable question arises: if measurement error is <em>random</em>, why does it always push effects downward? If errors are equally likely to be positive or negative, shouldn't they sometimes inflate an observed correlation and sometimes deflate it — producing a noisy estimate centred on the true value rather than a systematically lower one?</p>
-
   <p>This intuition is correct for means — random error cancels across people, leaving group means unbiased. But a correlation is not a mean. It is a <em>ratio</em> of covariance to variance, and error affects the numerator and denominator very differently:</p>
-
-  <div class="formula">
-    r = Covariance(X, Y) / √(Variance(X) × Variance(Y))
-    <div class="formula-label">The correlation as a ratio — and why each component is affected differently by error</div>
-  </div>
-
-  <p>When you add random error to both measures, the <strong>covariance in the numerator is unchanged</strong> — provided the errors on measure X and the errors on measure Y are independent of each other. Independent quantities contribute zero covariance by definition. But those same errors <strong>inflate the variance in the denominator</strong> — because each person's observed score now fluctuates around their true score, making both distributions wider. A larger denominator with the same numerator always means a smaller fraction. Always. Under these assumptions, adding independent noise to both variables does not increase their observed correlation.</p>
-
+  <div class="formula">r = Covariance(X, Y) / √(Variance(X) × Variance(Y))<div class="formula-label">The correlation as a ratio — and why each component is affected differently by error</div></div>
+  <p>When you add random error to both measures, the <strong>covariance in the numerator is unchanged</strong> — provided the errors on measure X and the errors on measure Y are independent of each other. But those same errors <strong>inflate the variance in the denominator</strong> — because each person's observed score now fluctuates around their true score, making both distributions wider. A larger denominator with the same numerator always means a smaller fraction. Always.</p>
   <div class="callout blue">
     <div class="callout-label">The Asymmetry in Plain Language</div>
     <p>Error spreads scores out (inflating variance) without making them track each other any better (covariance unchanged). You have made both distributions noisier without adding any genuine shared signal between them. The ratio of shared signal to total spread therefore shrinks — and this happens every time, in every sample, regardless of direction.</p>
   </div>
-
   <h3>Attenuation and Regression to the Mean — The Same Phenomenon</h3>
-
   <p>This connects to a concept that often surprises students: <strong>attenuation and regression to the mean (RTM) are the same underlying mathematical fact, viewed from different angles.</strong></p>
-
-  <p>RTM describes what happens to a single person across two measurement occasions. If someone scores extremely high on a first measurement, their score on retest tends to be lower — closer to the group mean. The reason is identical to the attenuation argument: their extreme first score is partly driven by error. On retest that error is not repeated, so the expected score shifts back toward the mean. On retest, the error is freshly drawn and uncorrelated with the first — so it no longer systematically pushes in the same direction. The extreme score regresses toward the mean in proportion to how much of its variance was error. That proportion is precisely 1 − reliability.</p>
-
-  <p>In RTM, the "mean" that scores regress toward is the group mean of the distribution. In attenuation, the analogous quantity is a correlation of zero — the "mean" of the correlation scale in a world where the two variables share no true covariance. Just as a noisy single measurement regresses toward the group mean, a noisy observed correlation regresses toward zero. The degree of regression in both cases is determined by how much of the observed variance is error — that is, by 1 − reliability.</p>
-
+  <p>RTM describes what happens to a single person across two measurement occasions. If someone scores extremely high on a first measurement, their score on retest tends to be lower — closer to the group mean. The reason is identical to the attenuation argument: their extreme first score is partly driven by error. On retest that error is not repeated, so the expected score shifts back toward the mean. The extreme score regresses toward the mean in proportion to how much of its variance was error — that proportion is precisely 1 − reliability.</p>
   <div class="callout green">
     <div class="callout-label">RTM and Attenuation — One Idea, Two Views</div>
     <p><strong>RTM (within-person, across occasions):</strong> A person's extreme observed score will likely be less extreme on retest — because the error that pushed it to the extreme is random and will not repeat. The score regresses toward the group mean in proportion to measurement error.</p>
     <p style="margin-top:0.75rem;"><strong>Attenuation (between-persons, across measures):</strong> An observed correlation between two imperfect measures is always smaller than the true correlation — because error inflates variance without inflating covariance. The correlation regresses toward zero in proportion to measurement error.</p>
     <p style="margin-top:0.75rem;">Both follow directly from the same source: the correlation between an observed score and the true score it represents is √reliability — less than 1.0 whenever measurement is imperfect.</p>
   </div>
-
   <div class="widget">
-    <div class="widget-title">Interactive: Regression to the Mean & Attenuation — Two Views of the Same Fact</div>
-    <p style="font-size:0.85rem; color:var(--cream-dim); margin-bottom:1.5rem;">The left panel shows RTM: as reliability decreases, extreme scores on a first measurement regress toward the group mean on retest. The right panel shows attenuation: the same reliability reduction deflates the observed correlation between two measures toward zero. Adjust reliability to see both effects simultaneously.</p>
-
+    <div class="widget-title">Interactive: Regression to the Mean &amp; Attenuation — Two Views of the Same Fact</div>
+    <p style="font-size:0.85rem; color:var(--cream-dim); margin-bottom:1.5rem;">The left panel shows RTM: as reliability decreases, extreme scores on a first measurement regress toward the group mean on retest. The right panel shows attenuation: the same reliability reduction deflates the observed correlation between two measures toward zero.</p>
     <div class="slider-row">
       <div class="slider-label">Reliability (ICC): <span id="rtm-icc-val">0.80</span></div>
       <input type="range" id="rtmIcc" min="0.05" max="1.0" step="0.05" value="0.80">
@@ -656,7 +508,6 @@
       <div class="slider-label">True correlation r<sub>true</sub>: <span id="rtm-rtrue-val">0.70</span></div>
       <input type="range" id="rtmRtrue" min="0.1" max="0.99" step="0.05" value="0.70">
     </div>
-
     <div class="two-col" style="margin-top:1rem;">
       <div>
         <div style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--amber); letter-spacing:0.1em; margin-bottom:0.5rem; text-align:center;">REGRESSION TO THE MEAN</div>
@@ -675,27 +526,15 @@
         </div>
       </div>
     </div>
-
     <div class="results-grid" style="margin-top:1.5rem;">
-      <div class="result-card">
-        <div class="val" id="rtm-regression">—</div>
-        <div class="lbl">RTM: % regression toward mean</div>
-      </div>
-      <div class="result-card" id="rtm-obsR-card">
-        <div class="val" id="rtm-obsR">—</div>
-        <div class="lbl">Observed r (attenuated)</div>
-      </div>
-      <div class="result-card bad">
-        <div class="val" id="rtm-signal-lost">—</div>
-        <div class="lbl">Signal lost to error (%)</div>
-      </div>
+      <div class="result-card"><div class="val" id="rtm-regression">—</div><div class="lbl">RTM: % regression toward mean</div></div>
+      <div class="result-card" id="rtm-obsR-card"><div class="val" id="rtm-obsR">—</div><div class="lbl">Observed r (attenuated)</div></div>
+      <div class="result-card bad"><div class="val" id="rtm-signal-lost">—</div><div class="lbl">Signal lost to error (%)</div></div>
     </div>
   </div>
-
   <div class="widget">
     <div class="widget-title">Interactive: Attenuation Explorer</div>
     <p style="font-size:0.85rem; color:var(--cream-dim); margin-bottom:1.5rem;">Adjust the sliders to see how reliability attenuates both correlations and group differences simultaneously.</p>
-
     <div class="slider-row">
       <div class="slider-label">True correlation r<sub>true</sub>: <span id="rTrue-val">0.70</span></div>
       <input type="range" id="rTrue" min="0.1" max="0.99" step="0.01" value="0.70">
@@ -712,55 +551,32 @@
       <div class="slider-label">Reliability ICC<sub>y</sub>: <span id="iccY-val">0.70</span></div>
       <input type="range" id="iccY" min="0.05" max="1.0" step="0.05" value="0.70">
     </div>
-
     <div class="results-grid">
-      <div class="result-card" id="obsR-card">
-        <div class="val" id="obsR-val">—</div>
-        <div class="lbl">Observed r</div>
-      </div>
-      <div class="result-card" id="lossR-card">
-        <div class="val" id="lossR-val">—</div>
-        <div class="lbl">Signal lost (%)</div>
-      </div>
-      <div class="result-card" id="obsD-card">
-        <div class="val" id="obsD-val">—</div>
-        <div class="lbl">Observed d</div>
-      </div>
-      <div class="result-card" id="lossD-card">
-        <div class="val" id="lossD-val">—</div>
-        <div class="lbl">Signal lost (%)</div>
-      </div>
+      <div class="result-card" id="obsR-card"><div class="val" id="obsR-val">—</div><div class="lbl">Observed r</div></div>
+      <div class="result-card" id="lossR-card"><div class="val" id="lossR-val">—</div><div class="lbl">Signal lost (%)</div></div>
+      <div class="result-card" id="obsD-card"><div class="val" id="obsD-val">—</div><div class="lbl">Observed d</div></div>
+      <div class="result-card" id="lossD-card"><div class="val" id="lossD-val">—</div><div class="lbl">Signal lost (%)</div></div>
     </div>
-
     <canvas id="attenuationCanvas" height="200" style="margin-top:1.5rem;"></canvas>
     <p style="font-size:0.75rem; color:var(--cream-dim); margin-top:0.5rem; text-align:center;">Observed values (coloured bars) versus true values (outline bars). Both are attenuated by the same reliability mechanism.</p>
   </div>
-
   <div class="callout red">
     <div class="callout-label">Critical Point</div>
     <p>Attenuation does <strong>not</strong> diminish as sample size increases. Adding more participants makes you increasingly confident in a badly attenuated value — not in the true value. The only remedy is better measurement (higher reliability), not larger samples. This asymptotic property of attenuation is one of the most important and underappreciated facts in psychological methodology.</p>
   </div>
 </div>
-
+ 
 <hr class="section-divider">
-
-<!-- SECTION 3: DICHOTOMISATION -->
+ 
 <div class="section fade-in" id="section3">
   <div class="section-number">Section 03 · Dichotomisation</div>
   <h2>The Hidden Cost of Cutting<br>Continuous Measures</h2>
-
   <p>Many researchers in psychology and neuroscience routinely convert continuous measures into groups — median splits into "high" and "low" scorers, clinical thresholds creating "patient" versus "control" groups, or factorial designs that require categorical independent variables. This practice introduces a further layer of distortion that compounds the attenuation problem described above.</p>
-
   <h3>Why Observed Group Differences Depend on Where You Cut</h3>
-
   <p>When you dichotomise a continuous distribution, the observed standardised difference between your two groups is not simply a function of the true underlying difference. It depends on <em>two things working together</em>: the overall variance of the underlying distribution, and where you place the cut point.</p>
-
-  <p>Consider a population that varies in some cognitive ability. The mean difference between the groups you create depends on how far apart their respective group means fall — which is determined by both the spread of the distribution and the location of your cut. A median split on a narrow distribution gives you groups whose means are close together. The same cut on a wider distribution produces more separated means — but the pooled variance is also larger, so the standardised effect size does not simply scale up proportionally.</p>
-
   <div class="widget">
-    <div class="widget-title">Interactive: Dichotomisation & Effect Size</div>
+    <div class="widget-title">Interactive: Dichotomisation &amp; Effect Size</div>
     <p style="font-size:0.85rem; color:var(--cream-dim); margin-bottom:1.5rem;">See how the cut point location and measurement reliability jointly determine the observed effect size after dichotomisation.</p>
-
     <div class="slider-row">
       <div class="slider-label">Cut point (percentile): <span id="cut-val">50</span>th</div>
       <input type="range" id="cutSlider" min="5" max="50" step="5" value="50">
@@ -769,318 +585,267 @@
       <div class="slider-label">Reliability (ICC): <span id="dichIcc-val">0.70</span></div>
       <input type="range" id="dichIcc" min="0.1" max="1.0" step="0.05" value="0.70">
     </div>
-
     <canvas id="dichCanvas" height="240" style="margin-top:1rem;"></canvas>
-
     <div class="results-grid" style="margin-top:1rem;">
-      <div class="result-card mid">
-        <div class="val" id="trueD-disp">—</div>
-        <div class="lbl">True Cohen's d</div>
-      </div>
-      <div class="result-card" id="obsD-disp-card">
-        <div class="val" id="obsD-disp">—</div>
-        <div class="lbl">Observed d (attenuated)</div>
-      </div>
-      <div class="result-card bad">
-        <div class="val" id="infoLoss-disp">—</div>
-        <div class="lbl">Power vs. continuous analysis</div>
-      </div>
+      <div class="result-card mid"><div class="val" id="trueD-disp">—</div><div class="lbl">True Cohen's d</div></div>
+      <div class="result-card" id="obsD-disp-card"><div class="val" id="obsD-disp">—</div><div class="lbl">Observed d (attenuated)</div></div>
+      <div class="result-card bad"><div class="val" id="infoLoss-disp">—</div><div class="lbl">Power vs. continuous analysis</div></div>
     </div>
   </div>
-
   <h3>The Misclassification Problem</h3>
-
-  <p>Add measurement error and the situation worsens further. When the underlying measure is unreliable, individuals near the cut point are frequently misclassified — a true "high" scorer falls below the median on this occasion, and vice versa. This misclassification is worst precisely where the population is most dense: near the cut. The consequence is that attenuation compounds: the observed group difference is attenuated first by measurement error in the underlying measure (following δ_observed = δ_true × √ICC) and then further by the information discarded through dichotomisation itself.</p>
-
+  <p>Add measurement error and the situation worsens further. When the underlying measure is unreliable, individuals near the cut point are frequently misclassified — a true "high" scorer falls below the median on this occasion, and vice versa. The consequence is that attenuation compounds: the observed group difference is attenuated first by measurement error in the underlying measure (following δ_observed = δ_true × √ICC) and then further by the information discarded through dichotomisation itself.</p>
   <div class="callout blue">
     <div class="callout-label">Connection to ANOVA Designs</div>
-    <p>The pressure toward dichotomisation often comes from the desire to use factorial ANOVA designs, which require categorical independent variables. A researcher who measures a continuous trait but wants a 2×2 ANOVA must cut it into two groups — discarding the information that makes the continuous measure valuable. As a rule, <strong>any analysis that uses a continuous measure as a categorical independent variable is throwing away information and inflating required sample sizes</strong>. Regression and mixed models with continuous predictors are almost always preferable.</p>
+    <p>The pressure toward dichotomisation often comes from the desire to use factorial ANOVA designs, which require categorical independent variables. As a rule, <strong>any analysis that uses a continuous measure as a categorical independent variable is throwing away information and inflating required sample sizes</strong>. Regression and mixed models with continuous predictors are almost always preferable.</p>
   </div>
-
-  <p>The practical consequence is that researchers using dichotomised designs need substantially larger sample sizes to achieve the same statistical power as those using continuous analyses — often two to three times larger, depending on reliability and cut location. And crucially, this sample size penalty is on top of the attenuation penalty already introduced by imperfect reliability. The two sources of information loss are multiplicative, not additive.</p>
+  <p>The practical consequence is that researchers using dichotomised designs need substantially larger sample sizes to achieve the same statistical power as those using continuous analyses — often two to three times larger, depending on reliability and cut location. The two sources of information loss are multiplicative, not additive.</p>
 </div>
-
+ 
 <hr class="section-divider">
-
-<!-- SECTION 4: SIGNAL-TO-NOISE -->
-<div class="section fade-in" id="section4">
+ 
+<div class="section" id="section4">
   <div class="section-number">Section 04 · Advanced</div>
   <h2>A Better Measure of Reliability:<br>The Signal-to-Noise Ratio <span class="advanced-badge">Advanced</span></h2>
-
-  <p>The previous sections showed that reliability determines the degree of attenuation in both correlations and group differences. But there is a deeper problem with how reliability is conventionally measured that limits our ability to diagnose and fix the problem. This section introduces a more informative framework — due to Rouder and Mehrvarz (2024) — that reframes reliability as a signal-to-noise ratio.</p>
-
+  <p>The previous sections showed that reliability determines the degree of attenuation in both correlations and group differences. But there is a deeper problem with how reliability is conventionally measured that limits our ability to diagnose and fix the problem. This section introduces a more informative framework — due to Rouder and Mehrvarz (2024, 2026) — that reframes reliability as a signal-to-noise ratio, and asks what that framework reveals when placed alongside the richer variance decomposition of linear mixed models.</p>
+ 
   <h3>The Problem with Conventional Reliability Coefficients</h3>
-
   <p>Cronbach's alpha and test-retest ICC are the workhorses of reliability assessment. Both are widely reported and widely interpreted. But they share a critical limitation: <strong>they are not fixed properties of a task — they depend on how many trials or items you administer.</strong></p>
-
-  <p>Consider two labs both studying the Stroop task. Lab A runs 200 trials per person per condition; Lab B runs 20 trials per person per condition. Lab A will report much higher test-retest reliability than Lab B — but the task is identical. The reliability coefficient has told us something about the experimental implementation, not about the task itself. This makes reported reliability coefficients difficult to compare across studies and impossible to use for planning new research without knowing the specific trial counts involved.</p>
-
-  <p>When a researcher sees a low ICC and follows the conventional advice to "add more items," they are applying the right general principle — but they have no information about how much improvement to expect, or whether any reasonable number of additional items could achieve their reliability target. The ICC alone cannot answer this question.</p>
-
+  <p>Consider two labs both studying the Stroop task. Lab A runs 200 trials per person per condition; Lab B runs 20 trials per person per condition. Lab A will report much higher test-retest reliability than Lab B — but the task is identical. The reliability coefficient has told us something about the experimental implementation, not about the task itself.</p>
   <table class="compare">
-    <tr>
-      <th>Property</th>
-      <th>Cronbach's α / ICC</th>
-      <th>Signal-to-Noise Ratio γ²</th>
-    </tr>
-    <tr>
-      <td>Trial-size invariant?</td>
-      <td>✗ Changes with L</td>
-      <td>✓ Fixed property of the task</td>
-    </tr>
-    <tr>
-      <td>Comparable across studies?</td>
-      <td>✗ Only if L is matched</td>
-      <td>✓ Always comparable</td>
-    </tr>
-    <tr>
-      <td>Can plan required trial size?</td>
-      <td>✗ No</td>
-      <td>✓ Directly, via formula</td>
-    </tr>
-    <tr>
-      <td>Reveals reliability ceiling?</td>
-      <td>✗ No</td>
-      <td>✓ Yes — shape of full curve</td>
-    </tr>
-    <tr>
-      <td>Estimable from summary statistics?</td>
-      <td>✓ Yes</td>
-      <td>✓ Yes, γ̂² = Var(d)/MSE − 2/L</td>
-    </tr>
+    <tr><th>Property</th><th>Cronbach's α / ICC</th><th>Signal-to-Noise Ratio γ²</th></tr>
+    <tr><td>Trial-size invariant?</td><td>✗ Changes with L</td><td>✓ Fixed property of the task</td></tr>
+    <tr><td>Comparable across studies?</td><td>✗ Only if L is matched</td><td>✓ Always comparable</td></tr>
+    <tr><td>Can plan required trial size?</td><td>✗ No</td><td>✓ Directly, via formula</td></tr>
+    <tr><td>Reveals reliability ceiling?</td><td>✗ No</td><td>✓ Yes — shape of full curve</td></tr>
+    <tr><td>Estimable from summary statistics?</td><td>✓ Yes</td><td>✓ Yes, γ̂² = Var(d)/MSE − 2/L</td></tr>
   </table>
-
+ 
   <h3>The Signal-to-Noise Ratio γ²</h3>
-
   <p>Rouder and Mehrvarz propose replacing the reliability coefficient with a <strong>signal-to-noise variance ratio</strong>:</p>
-
-  <div class="formula">
-    γ² = σ²_B / σ²_W
-    <div class="formula-label">Between-person true variance (signal) divided by within-person trial noise (noise)</div>
-  </div>
-
-  <p>Here σ²_B is the genuine variance in people's true ability — how much people actually differ from one another. σ²_W is the trial-by-trial noise — the random fluctuations within a single person's performance that have nothing to do with their ability. The ratio of these two quantities is a property of the task and the population, entirely independent of how many trials you choose to run.</p>
-
+  <div class="formula">γ² = σ²_B / σ²_W<div class="formula-label">Between-person true variance (signal) divided by within-person trial noise (noise)</div></div>
+  <p>Here σ²_B is the genuine variance in people's true ability — how much people actually differ from one another. σ²_W is the trial-by-trial noise — the random fluctuations within a single person's performance. The ratio of these two quantities is a property of the task and the population, entirely independent of how many trials you choose to run.</p>
   <p>From γ², the expected test-retest reliability at any trial size L follows directly:</p>
-
-  <div class="formula">
-    E(r) ≈ γ² / (γ² + 2/L)
-    <div class="formula-label">The reliability curve — reliability as a function of γ² and trial size L</div>
-  </div>
-
-  <p>This formula is the key insight. It defines an entire <em>curve</em> of reliability as a function of trial size — and the shape of that curve is completely determined by γ². A task with high γ² rises steeply: reasonable reliability is achieved with modest trial counts. A task with low γ² rises slowly and may never reach acceptable reliability within any practical design.</p>
-
+  <div class="formula">E(r) ≈ γ² / (γ² + 2/L)<div class="formula-label">The reliability curve — reliability as a function of γ² and trial size L</div></div>
+  <p>This formula defines an entire <em>curve</em> of reliability as a function of trial size — and the shape of that curve is completely determined by γ². A task with high γ² rises steeply: reasonable reliability is achieved with modest trial counts. A task with low γ² rises slowly and may never reach acceptable reliability within any practical design.</p>
+ 
   <div class="widget">
     <div class="widget-title">Interactive: The Reliability Curve — γ² in Action</div>
-    <p style="font-size:0.85rem; color:var(--cream-dim); margin-bottom:1.5rem;">This is the central visualisation. Adjust γ (the signal-to-noise standard deviation ratio) and see how the full reliability curve changes. Compare your task to real examples from the literature.</p>
-
+    <p style="font-size:0.85rem; color:var(--cream-dim); margin-bottom:1.5rem;">Adjust γ (the signal-to-noise standard deviation ratio) and see how the full reliability curve changes. Compare your task to real examples from the literature.</p>
     <div class="slider-row">
       <div class="slider-label">Your γ (SNR SD ratio): <span id="gamma-val">0.30</span></div>
       <input type="range" id="gammaSlider" min="0.05" max="2.0" step="0.05" value="0.30">
       <div class="slider-val" id="gamma-sq-val">γ²=0.09</div>
     </div>
-
     <canvas id="curveCanvas" height="320"></canvas>
-
     <div class="task-pills" id="taskPills">
-      <div class="task-pill" style="border-color:#e05050; color:#e05050;" data-gamma="0.12" onclick="setGamma(0.12)">
-        <div class="dot" style="background:#e05050;"></div>Stroop Effect γ=.12
-      </div>
-      <div class="task-pill" style="border-color:#e07030; color:#e07030;" data-gamma="0.084" onclick="setGamma(0.084)">
-        <div class="dot" style="background:#e07030;"></div>Flanker Effect γ=.08
-      </div>
-      <div class="task-pill" style="border-color:#e0c030; color:#e0c030;" data-gamma="0.96" onclick="setGamma(0.96)">
-        <div class="dot" style="background:#e0c030;"></div>Stroop Speed γ=.96
-      </div>
-      <div class="task-pill" style="border-color:#50c878; color:#50c878;" data-gamma="0.72" onclick="setGamma(0.72)">
-        <div class="dot" style="background:#50c878;"></div>Mueller-Lyer γ=.72
-      </div>
-      <div class="task-pill" style="border-color:#5090e0; color:#5090e0;" data-gamma="1.414" onclick="setGamma(1.414)">
-        <div class="dot" style="background:#5090e0;"></div>Poggendorf γ=1.41
-      </div>
+      <div class="task-pill" style="border-color:#e05050; color:#e05050;" data-gamma="0.12" onclick="setGamma(0.12)"><div class="dot" style="background:#e05050;"></div>Stroop Effect γ=.12</div>
+      <div class="task-pill" style="border-color:#e07030; color:#e07030;" data-gamma="0.084" onclick="setGamma(0.084)"><div class="dot" style="background:#e07030;"></div>Flanker Effect γ=.08</div>
+      <div class="task-pill" style="border-color:#e0c030; color:#e0c030;" data-gamma="0.96" onclick="setGamma(0.96)"><div class="dot" style="background:#e0c030;"></div>Stroop Speed γ=.96</div>
+      <div class="task-pill" style="border-color:#50c878; color:#50c878;" data-gamma="0.72" onclick="setGamma(0.72)"><div class="dot" style="background:#50c878;"></div>Mueller-Lyer γ=.72</div>
+      <div class="task-pill" style="border-color:#5090e0; color:#5090e0;" data-gamma="1.414" onclick="setGamma(1.414)"><div class="dot" style="background:#5090e0;"></div>Poggendorf γ=1.41</div>
     </div>
-
     <div class="results-grid" style="margin-top:1.5rem;">
-      <div class="result-card" id="trialsFor7-card">
-        <div class="val" id="trialsFor7">—</div>
-        <div class="lbl">Trials needed for r = .70</div>
-      </div>
-      <div class="result-card" id="trialsFor9-card">
-        <div class="val" id="trialsFor9">—</div>
-        <div class="lbl">Trials needed for r = .90</div>
-      </div>
-      <div class="result-card" id="rAt100-card">
-        <div class="val" id="rAt100">—</div>
-        <div class="lbl">Reliability at L=100 trials</div>
-      </div>
-      <div class="result-card" id="rAt500-card">
-        <div class="val" id="rAt500">—</div>
-        <div class="lbl">Reliability at L=500 trials</div>
-      </div>
+      <div class="result-card" id="trialsFor7-card"><div class="val" id="trialsFor7">—</div><div class="lbl">Trials needed for r = .70</div></div>
+      <div class="result-card" id="trialsFor9-card"><div class="val" id="trialsFor9">—</div><div class="lbl">Trials needed for r = .90</div></div>
+      <div class="result-card" id="rAt100-card"><div class="val" id="rAt100">—</div><div class="lbl">Reliability at L=100 trials</div></div>
+      <div class="result-card" id="rAt500-card"><div class="val" id="rAt500">—</div><div class="lbl">Reliability at L=500 trials</div></div>
     </div>
-
     <div class="curve-legend" style="margin-top:1.5rem;">
-      <div class="curve-legend-item">
-        <div class="curve-legend-line" style="background:var(--amber);"></div>Your task
-      </div>
-      <div class="curve-legend-item">
-        <div class="curve-legend-line" style="background:var(--red); opacity:0.7;"></div>Stroop effect
-      </div>
-      <div class="curve-legend-item">
-        <div class="curve-legend-line" style="background:var(--green); opacity:0.7;"></div>Mueller-Lyer
-      </div>
-      <div class="curve-legend-item">
-        <div class="curve-legend-line" style="background:var(--blue); opacity:0.7;"></div>Poggendorf
-      </div>
-      <div class="curve-legend-item">
-        <div class="curve-legend-line" style="background:rgba(255,255,255,0.2); border-top: 1px dashed rgba(255,255,255,0.3);"></div>r = .70 / .90 targets
-      </div>
+      <div class="curve-legend-item"><div class="curve-legend-line" style="background:var(--amber);"></div>Your task</div>
+      <div class="curve-legend-item"><div class="curve-legend-line" style="background:var(--red); opacity:0.7;"></div>Stroop effect</div>
+      <div class="curve-legend-item"><div class="curve-legend-line" style="background:var(--green); opacity:0.7;"></div>Mueller-Lyer</div>
+      <div class="curve-legend-item"><div class="curve-legend-line" style="background:var(--blue); opacity:0.7;"></div>Poggendorf</div>
+      <div class="curve-legend-item"><div class="curve-legend-line" style="background:rgba(255,255,255,0.2);"></div>r = .70 / .90 targets</div>
     </div>
   </div>
-
-  <h3>Bridging to Linear Mixed Models</h3>
-
-  <p>A useful way to understand Rouder's framework is to recognise that it connects naturally to the variance decomposition estimated in linear mixed models. In a crossed person-by-item model, we typically write:</p>
-
-  <div class="formula">
-    y<sub>pi</sub> = μ + u<sub>p</sub> + v<sub>i</sub> + ε<sub>pi</sub>
-    <div class="formula-label">A standard crossed model with person effects, item effects, and residual noise</div>
-  </div>
-
-  <p>This decomposes variability into at least three familiar sources: <strong>between-person variance</strong> (σ²<sub>person</sub>), <strong>between-item variance</strong> (σ²<sub>item</sub>), and <strong>residual / trial-level variance</strong> (σ²<sub>residual</sub>). In other words, mixed models already contain the ingredients needed for a signal-to-noise account of reliability.</p>
-
-  <p>In the present context, the key comparison is between the variance linked to <em>persons</em> and the variance linked to <em>items</em>. When item variability is large relative to person variability, it becomes intrinsically difficult to localise individuals precisely on the latent dimension of interest. This gives a very natural bridge to Rouder's logic:</p>
-
-  <div class="formula">
-    γ²<sub>LMM</sub> = σ²<sub>person</sub> / σ²<sub>item</sub>
-    <div class="formula-label">A practical LMM-based signal-to-noise ratio: person variance relative to item variance</div>
-  </div>
-
-  <p>This is not a separate idea from Rouder's framework. It is the same basic variance logic expressed in mixed-model language. Indeed, once an LMM has been fitted, these variance components are already estimated. So in practice, one can compute a Rouder-style γ² directly from model output.</p>
-
+ 
+  <h3>Bridging to Linear Mixed Models — and What the Bridge Reveals</h3>
+ 
+  <p>A useful way to understand Rouder's framework is to recognise how it maps onto the variance decomposition estimated in linear mixed models — and, crucially, where the two framings diverge in ways that are practically important.</p>
+ 
+  <p>Rouder's data model is explicitly:</p>
+ 
+  <div class="formula">Y<sub>ikℓ</sub> ~ Normal(α<sub>i</sub> + x<sub>k</sub>θ<sub>i</sub>, τ²)<div class="formula-label">Rouder's model: person effect, condition contrast, and trial noise — no item subscript</div></div>
+ 
+  <p>Notice there is <em>no item subscript</em> in this model. The index ℓ runs over replicate trials, and τ² is simply the variance of each trial around the person-by-condition mean. <strong>Items do not exist as a modelled entity — they are invisible, absorbed entirely into τ².</strong> This is not an oversight. It reflects the paradigm Rouder has in mind (Stroop, flanker) where trials are effectively independent random draws from a large pool, and the derivation of the test-retest reliability formula explicitly requires that noise on Day 1 and Day 2 be statistically independent. Random item sampling across occasions is the assumption baked into the whole framework.</p>
+ 
+  <p>A linear mixed model, by contrast, separates that lumped noise term into distinct components:</p>
+ 
+  <div class="formula">y<sub>pi</sub> = μ + u<sub>p</sub> + v<sub>i</sub> + ε<sub>pi</sub><div class="formula-label">Crossed LMM: between-person variance (σ²<sub>person</sub>), between-item variance (σ²<sub>item</sub>), and residual trial noise (σ²<sub>residual</sub>)</div></div>
+ 
+  <p>This three-component decomposition is what makes the item sampling question visible as a design decision. In Rouder's framework, both σ²<sub>item</sub> and σ²<sub>residual</sub> are lumped inside τ². Once the LMM separates them, a question Rouder's model cannot address becomes tractable: <strong>are items fixed or resampled across test and retest occasions?</strong> The answer matters because it determines how much of the item variance contributes to the noise denominator of γ².</p>
+ 
   <div class="callout blue">
-    <div class="callout-label">A useful practical bridge</div>
-    <p>In many experimental tasks, the main issue is not simply whether responses are noisy in the abstract, but whether <strong>stable between-person differences are large enough relative to variability introduced by the item set</strong>. Mixed models make that comparison explicit. Rouder's framework then tells us what that comparison implies for attainable reliability at different trial counts.</p>
+    <div class="callout-label">Why Item Sampling Changes the Noise Denominator</div>
+    <p>Item effects that are <em>identical</em> on both occasions contribute to the covariance between Day 1 and Day 2 scores — effectively becoming part of the signal. Item effects that are <em>independently sampled</em> each time contribute nothing to the covariance and instead enlarge the noise. The residual ε<sub>pi</sub>, by contrast, is always independent across occasions: it is the irreducible within-person trial-level noise that never cancels.</p>
   </div>
-
-  <h3>From LMM Output to Trial Planning</h3>
-
-  <p>Suppose a fitted mixed model yields a person variance of 0.20 and an item variance of 0.80. Then the LMM-based signal-to-noise ratio is:</p>
-
-  <div class="formula">
-    γ²<sub>LMM</sub> = 0.20 / 0.80 = 0.25
-    <div class="formula-label">Example: item variance is four times larger than person variance</div>
+ 
+  <h3>Three Designs — Three Formulas</h3>
+ 
+  <p>This gives three distinct cases with meaningfully different γ² values, even for the same underlying task:</p>
+ 
+  <div class="scenario-grid">
+    <div class="scenario-card fixed">
+      <div class="scenario-label">Design A · Fixed Items</div>
+      <p>The same item set is used on both occasions. Item effects cancel in the test-retest covariance — they are shared signal, not noise.</p>
+      <div class="formula" style="font-size:0.85rem; padding: 0.75rem 1rem; margin: 0.75rem 0;">γ² = σ²<sub>person</sub> / σ²<sub>residual</sub></div>
+      <p style="font-size:0.8rem; color:var(--green);">Highest γ² — item variance is "free"</p>
+    </div>
+    <div class="scenario-card random">
+      <div class="scenario-label">Design B · Random Items</div>
+      <p>Items are freshly sampled from a large pool on each occasion. Item effects contribute fully to noise, adding to residual instability.</p>
+      <div class="formula" style="font-size:0.85rem; padding: 0.75rem 1rem; margin: 0.75rem 0;">γ² = σ²<sub>person</sub> / (σ²<sub>item</sub> + σ²<sub>residual</sub>)</div>
+      <p style="font-size:0.8rem; color:var(--red);">Lowest γ² — recovers Rouder's original framework exactly</p>
+    </div>
+    <div class="scenario-card partial">
+      <div class="scenario-label">Design C · Partial Overlap</div>
+      <p>A finite pool of N items; L sampled per occasion. Item effects cancel proportionally to overlap ρ ≈ L/N.</p>
+      <div class="formula" style="font-size:0.85rem; padding: 0.75rem 1rem; margin: 0.75rem 0;">γ² = σ²<sub>person</sub> / (σ²<sub>residual</sub> + (1−ρ)·σ²<sub>item</sub>)</div>
+      <p style="font-size:0.8rem; color:var(--amber);">Intermediate — most realistic design</p>
+    </div>
   </div>
-
-  <p>This is a low-signal regime. Individual differences exist, but the item set contributes so much competing variance that many more trials will be needed before each person's score becomes stable enough to trust. That is precisely where Rouder's recommendation becomes useful. Once γ² is known, we can estimate the number of trials needed to reach a target reliability.</p>
-
-  <p>Crucially, this is useful not only for <strong>individual differences</strong> research. Increasing trial count averages away item-driven instability, so it also improves the <strong>fidelity of the group mean</strong> and any group contrast built from those observations. Better signal recovery helps both the rank-ordering of people and the precision of aggregate effects.</p>
-
+ 
+  <p>The general formula unifying all three cases is:</p>
+ 
+  <div class="formula">γ² = σ²<sub>person</sub> / (σ²<sub>residual</sub> + (1 − ρ<sub>items</sub>) × σ²<sub>item</sub>)<div class="formula-label">The general LMM-derived signal-to-noise ratio · ρ<sub>items</sub> = proportion of items shared across occasions (0 = fully random, 1 = fully fixed)</div></div>
+ 
+  <p>This formula has an important implication: the formula most researchers intuitively reach for — γ² = σ²<sub>person</sub> / σ²<sub>item</sub> — drops the residual entirely, which is wrong in virtually every real case. σ²<sub>residual</sub> is typically the largest component in RT and accuracy tasks, and it always contributes to noise regardless of item design. Omitting it inflates γ² and leads to optimistic reliability estimates and underestimates of the trials needed.</p>
+ 
+  <div class="callout">
+    <div class="callout-label">A Note on What Rouder's Framework Can and Cannot Express</div>
+    <p>Rouder hasn't missed the fixed/random item distinction — it simply doesn't exist in his model. He works in a paradigm where items are random draws from a large pool, so the random-items assumption is both reasonable and implicit. The LMM framing is not a correction to his framework but an <em>elaboration</em> that becomes possible when you adopt the richer three-component decomposition. The fixed-items case in particular cannot be expressed at all within γ² = σ²/τ², because fixed items shift some variance from the noise denominator into the covariance numerator — making the structure trial-count-dependent in a way that breaks the elegant trial-invariant formula.</p>
+  </div>
+ 
+  <h3>Worked Examples Across the Three Designs</h3>
+ 
+  <p>To make this concrete, consider three tasks with the same underlying variance components but different item-sampling designs. In each case, σ²<sub>person</sub> = 0.20, σ²<sub>item</sub> = 0.30, σ²<sub>residual</sub> = 0.50.</p>
+ 
+  <p><strong>Example A — Face recognition task (fixed items, realistic).</strong> The same 20 target faces are used on both occasions. Since ρ<sub>items</sub> = 1, item variance does not contribute to noise: γ² = 0.20 / 0.50 = <strong>0.40</strong>. This is a respectable signal-to-noise ratio. Face stimuli are expensive to collect, so using a fixed set is common — and this analysis shows it pays a genuine reliability dividend.</p>
+ 
+  <p><strong>Example B — Stroop task (random items from large pool).</strong> Each occasion draws 40 fresh congruent/incongruent word pairs. Since ρ<sub>items</sub> ≈ 0: γ² = 0.20 / (0.30 + 0.50) = 0.20 / 0.80 = <strong>0.25</strong>. Substantially lower — and even this is optimistic for the Stroop where σ²<sub>person</sub> is empirically much smaller relative to τ².</p>
+ 
+  <p><strong>Example C — Working memory task (partial overlap).</strong> A pool of 60 items, 30 administered per occasion, giving ρ<sub>items</sub> ≈ 30/60 = 0.50: γ² = 0.20 / (0.50 + 0.50 × 0.30) = 0.20 / 0.65 = <strong>0.31</strong>. Intermediate — between the two extremes, as expected. This is arguably the most common situation in cognitive psychology, yet it is the case least addressed by either CTT or Rouder's simple two-component model.</p>
+ 
+  <div class="callout green">
+    <div class="callout-label">Item Design Is a Reliability Design Decision</div>
+    <p>The three examples make visible something that is easy to overlook: <strong>the choice of fixed versus sampled items is not merely a logistical decision — it is a reliability design decision.</strong> Using fixed items inflates γ² by converting item variance from noise into shared signal. Using randomly sampled items deflates γ² but increases generalisability (you are measuring performance on the construct, not on those specific items). The partial-overlap framework lets you quantify exactly where on this tradeoff your design sits — and the LMM gives you the components needed to compute it from existing data.</p>
+  </div>
+ 
   <div class="widget">
     <div class="widget-title">Interactive: From LMM Variance Components to γ² and Trial Planning</div>
-    <p style="font-size:0.85rem; color:var(--cream-dim); margin-bottom:1.5rem;">Imagine you have fitted a crossed mixed model and obtained variance components for persons and items. Adjust them below to see the implied γ², the expected reliability at a given trial count, and the number of trials needed to hit common targets.</p>
-
+    <p style="font-size:0.85rem; color:var(--cream-dim); margin-bottom:1.5rem;">Adjust the three variance components from a fitted crossed mixed model, then set the item overlap to reflect your design. The implied γ², expected reliability, and required trial counts update automatically — showing how item design affects the noise denominator.</p>
+ 
     <div class="slider-row">
       <div class="slider-label">Person variance σ²<sub>person</sub>: <span id="lmm-person-val">0.20</span></div>
       <input type="range" id="lmmPerson" min="0.01" max="2.00" step="0.01" value="0.20">
     </div>
     <div class="slider-row">
-      <div class="slider-label">Item variance σ²<sub>item</sub>: <span id="lmm-item-val">0.80</span></div>
-      <input type="range" id="lmmItem" min="0.01" max="2.00" step="0.01" value="0.80">
+      <div class="slider-label">Item variance σ²<sub>item</sub>: <span id="lmm-item-val">0.30</span></div>
+      <input type="range" id="lmmItem" min="0.01" max="2.00" step="0.01" value="0.30">
+    </div>
+    <div class="slider-row">
+      <div class="slider-label">Residual variance σ²<sub>residual</sub>: <span id="lmm-resid-val">0.50</span></div>
+      <input type="range" id="lmmResid" min="0.01" max="2.00" step="0.01" value="0.50">
+    </div>
+    <div class="slider-row">
+      <div class="slider-label">Item overlap ρ (0=random, 1=fixed): <span id="lmm-overlap-val">0.00</span></div>
+      <input type="range" id="lmmOverlap" min="0.00" max="1.00" step="0.05" value="0.00">
     </div>
     <div class="slider-row">
       <div class="slider-label">Trials per condition L: <span id="lmm-L-val">40</span></div>
       <input type="range" id="lmmTrials" min="5" max="500" step="5" value="40">
     </div>
-
+ 
+    <div id="lmm-design-label" style="font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:var(--amber); margin: 0.5rem 0 1rem; text-align:center;">Design: Fully Random Items (Rouder framework)</div>
+ 
     <div class="results-grid">
-      <div class="result-card" id="lmm-gamma-card">
-        <div class="val" id="lmm-gamma">—</div>
-        <div class="lbl">γ² from LMM output</div>
-      </div>
-      <div class="result-card" id="lmm-r-card">
-        <div class="val" id="lmm-r">—</div>
-        <div class="lbl">Expected reliability at L</div>
-      </div>
-      <div class="result-card" id="lmm-t7-card">
-        <div class="val" id="lmm-t7">—</div>
-        <div class="lbl">Trials needed for r = .70</div>
-      </div>
-      <div class="result-card" id="lmm-t9-card">
-        <div class="val" id="lmm-t9">—</div>
-        <div class="lbl">Trials needed for r = .90</div>
-      </div>
+      <div class="result-card" id="lmm-gamma-card"><div class="val" id="lmm-gamma">—</div><div class="lbl">γ² from LMM</div></div>
+      <div class="result-card" id="lmm-r-card"><div class="val" id="lmm-r">—</div><div class="lbl">Reliability at L</div></div>
+      <div class="result-card" id="lmm-t7-card"><div class="val" id="lmm-t7">—</div><div class="lbl">Trials for r = .70</div></div>
+      <div class="result-card" id="lmm-t9-card"><div class="val" id="lmm-t9">—</div><div class="lbl">Trials for r = .90</div></div>
     </div>
-
-    <canvas id="lmmBridgeCanvas" height="220" style="margin-top:1.5rem;"></canvas>
-
-    <p style="font-size:0.75rem; color:var(--cream-dim); margin-top:0.75rem; text-align:center;">
-      The left bars show the variance decomposition from the mixed model. The right panel shows the implied reliability curve from the resulting γ².
-    </p>
+ 
+    <canvas id="lmmBridgeCanvas" height="260" style="margin-top:1.5rem;"></canvas>
+    <p style="font-size:0.75rem; color:var(--cream-dim); margin-top:0.75rem; text-align:center;">Left: LMM variance decomposition showing how item overlap determines the effective noise. Right: implied reliability curve. Note how shifting from random to fixed items lifts the curve.</p>
   </div>
-
+ 
   <h3>Why This Matters: The Curve Reveals What the Coefficient Hides</h3>
-
+ 
   <p>The reliability curve makes visible something that a single ICC value completely conceals: the shape of the curve — and therefore exactly how many trials are needed to reach any reliability target. Consider the Stroop effect (γ ≈ .12). Plugging into the formula, achieving r = .70 requires approximately 158 trials per condition; achieving r = .90 requires over 600. Most studies run 20–50 trials per condition. No amount of increased sample size changes this — the ceiling is set by γ², not by N.</p>
-
+ 
   <p>Contrast this with the Poggendorf visual illusion (γ ≈ 1.41). With just 15 trials per person, test-retest reliability exceeds .90. The task is intrinsically high-signal: individual differences in susceptibility to the illusion are large relative to trial noise. The individual differences research programme built on this task is on solid ground regardless of how few trials are used.</p>
-
+ 
   <div class="callout green">
     <div class="callout-label">The Unifying Principle</div>
-    <p>Both Cronbach's α / ICC and Rouder's γ² are expressions of the same underlying variance logic: stable person signal relative to competing sources of variability. Mixed models make that decomposition explicit by partitioning variance linked to persons, items, and residual fluctuation. Rouder's framework then turns that decomposition into a design tool, telling you precisely <strong>how many more trials</strong> are needed, and whether any practically achievable number will suffice.</p>
+    <p>Both Cronbach's α / ICC and Rouder's γ² are expressions of the same underlying variance logic: stable person signal relative to competing sources of variability. Mixed models make that decomposition explicit by partitioning variance linked to persons, items, and residual fluctuation. Rouder's framework then turns that decomposition into a design tool — and the LMM lens extends it by making item design a quantifiable lever.</p>
   </div>
-
+ 
   <h3>The Connection Back to Attenuation</h3>
-
+ 
   <p>The full circle closes here. Recall from Section 2 that attenuation of correlations follows r_observed = r_true × √(ICC_x × ICC_y). The ICC values in that formula are themselves determined by γ² and L. So for any task in any study, the degree of attenuation in reported correlations is:</p>
-
-  <div class="formula">
-    r_observed ≈ r_true × γ²/(γ² + 2/L)
-    <div class="formula-label">Attenuation as a direct function of the task's signal-to-noise ratio and trial size</div>
+ 
+  <div class="formula">r_observed ≈ r_true × γ²/(γ² + 2/L)<div class="formula-label">Attenuation as a direct function of the task's signal-to-noise ratio and trial size</div></div>
+ 
+  <p>Importantly, this also means that for <em>contrast-based paradigms</em> — such as the well documented face inversion effect — observed γ will also be characteristically low, because the subtraction (i.e., upright − inverted) cancels much of the between-person variance while doubling the noise. As a result, poor cross-task correlations across different inversion tasks or paradigms are not simply evidence of construct fragmentation. They are the mathematically predictable consequence of attempting to localise individuals in a distribution using a ruler too noisy to distinguish nearby positions. In signal-to-noise terms, low γ² directly constrains the maximum observable reliability, and therefore the upper bound on any cross-task association.</p>
+ 
+  <h3>Beyond Reliability: The Real Endpoint Is Correlation Uncertainty</h3>
+ 
+  <p>Rouder's 2026 paper (with Mehrvarz and Schnuerch) makes a striking further argument: <strong>once hierarchical models are available, reliability is not even the right endpoint</strong> — it is merely an intermediate quantity, useful for planning but not for interpretation.</p>
+ 
+  <p>The core problem is that conventional sample correlations between contrast scores are not only attenuated — they are <em>inconsistent</em> estimators. Adding more participants makes you increasingly certain of a wrong value. The confidence interval around a sample correlation reflects only the uncertainty from a finite number of individuals, completely ignoring the uncertainty from a finite number of trials. As trial count drops, this omitted uncertainty grows — but the CI stays the same width, creating false precision.</p>
+ 
+  <div class="callout purple">
+    <div class="callout-label">The Right Target: Uncertainty on Correlations Directly</div>
+    <p>Rouder et al. (2026) advocate modelling trial noise explicitly via a bivariate hierarchical model, which simultaneously estimates the true between-task correlation <em>and</em> provides credible intervals that correctly incorporate both sources of uncertainty — finite individuals and finite trials. The resulting intervals are typically 3–4× wider than conventional CIs, reflecting the true state of knowledge. Disattenuation emerges naturally from the model rather than as a post-hoc correction. The old adage that you cannot correlate unreliable instruments is wrong — you can, so long as uncertainty is appropriately expressed.</p>
   </div>
-
-  <p>Importantly, as a final point, this also means that for <em>contrast-based paradigms</em> — such as the well documented face inversion effect — observed γ will also be characteristically low, because the subtraction (i.e., upright − inverted) cancels much of the between-person variance while doubling the noise. As a result, poor cross-task correlations across different inversion tasks or paradigms are not simply evidence of construct fragmentation. They are the mathematically predictable consequence of attempting to localise individuals in a distribution using a ruler too noisy to distinguish nearby positions. In signal-to-noise terms, low γ² directly constrains the maximum observable reliability, and therefore the upper bound on any cross-task association.</p>
-
+ 
+  <p>In this view, γ² remains valuable for planning — it tells you how many trials are needed to achieve a target width for your posterior credible interval on the correlation. But the reliability coefficient itself becomes tangential for interpretation. Report uncertainty directly; let the hierarchical model do the disattenuation implicitly. This is a meaningful shift in emphasis from the earlier Rouder and Mehrvarz (2024) framing, and it connects directly to the argument in this resource: the chain of attenuation is quantifiable at every link, and the remedy is modelling, not just more trials or larger samples.</p>
+ 
   <div class="callout">
     <div class="callout-label">Summary: The Full Chain of Measurement Error</div>
-    <p>Poor γ² → low reliability at any practical trial count → attenuated observed correlations and group differences → underestimation of true effect sizes → misleading conclusions about construct structure, test validity, and theoretical models. Every link in this chain is quantifiable. The remedy is not more participants — it is either more trials, better task design (higher γ²), or statistical modelling that explicitly partitions trial noise from true ability variance.</p>
+    <p>Poor γ² → low reliability at any practical trial count → attenuated and inconsistently estimated observed correlations → underestimation of true effect sizes → misleading conclusions about construct structure, test validity, and theoretical models. Every link in this chain is quantifiable. The remedy is not more participants — it is either more trials, better task design (higher γ²), or statistical modelling that explicitly partitions trial noise from true ability variance and reports uncertainty accordingly.</p>
   </div>
 </div>
-
+ 
 <footer>
-  <p>Based on: <strong>Karvelis & Diaconescu (2025)</strong> · <em>Front. Psychol.</em> · Attenuation of group differences &nbsp;|&nbsp; <strong>Rouder & Mehrvarz (2024)</strong> · <em>Curr. Dir. Psychol. Sci.</em> · Signal-to-noise reliability &nbsp;|&nbsp; <strong>Rouder & Mehrvarz (2025)</strong> · <em>Behav. Res. Methods</em> · Constrained hierarchical models — with thanks to my silicon AI friends Claude and ChatGPT</p>
+  <p>Based on: <strong>Karvelis &amp; Diaconescu (2025)</strong> · <em>Front. Psychol.</em> · Attenuation of group differences &nbsp;|&nbsp; <strong>Rouder &amp; Mehrvarz (2024)</strong> · <em>Curr. Dir. Psychol. Sci.</em> · Signal-to-noise reliability &nbsp;|&nbsp; <strong>Rouder, Mehrvarz &amp; Schnuerch (2026)</strong> · <em>Br. J. Math. Stat. Psychol.</em> · The role of reliability in experiments — with thanks to my silicon AI friends Claude and ChatGPT</p>
   <p style="margin-top:0.75rem; opacity:0.5;">Teaching resource for psychometrics and individual differences methods.</p>
 </footer>
-
+ 
 <script>
 // ── SCROLL ANIMATIONS ──
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-}, { threshold: 0.1 });
+}, { threshold: 0, rootMargin: '0px 0px -80px 0px' });
 document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
+// Also immediately show elements already in viewport
+requestAnimationFrame(() => {
+  document.querySelectorAll('.fade-in').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight) el.classList.add('visible');
+  });
+});
+ 
 // ── HELPERS ──
 function lerp(a,b,t){ return a+(b-a)*t; }
 function reliabilityAtL(gamma2, L){ return gamma2 / (gamma2 + 2/L); }
 function trialsForR(gamma2, target){
   if(gamma2 <= 0) return Infinity;
-  const val = (2 * target) / (gamma2 * (1 - target));
-  return Math.ceil(val);
+  return Math.ceil((2 * target) / (gamma2 * (1 - target)));
 }
 function colorForVal(val, lo, hi){
   if(val >= hi) return '#50c878';
   if(val >= lo) return '#e8a020';
   return '#e05050';
 }
-
-// ── WIDGET 1: ATTENUATION EXPLORER ──
+ 
+// ── WIDGET: ATTENUATION EXPLORER ──
 const w1 = {
   rTrue: document.getElementById('rTrue'),
   dTrue: document.getElementById('dTrue'),
   iccX: document.getElementById('iccX'),
   iccY: document.getElementById('iccY'),
 };
-
 function updateAttenuation(){
   const rt = +w1.rTrue.value, dt = +w1.dTrue.value;
   const ix = +w1.iccX.value, iy = +w1.iccY.value;
@@ -1088,22 +853,18 @@ function updateAttenuation(){
   document.getElementById('dTrue-val').textContent = dt.toFixed(2);
   document.getElementById('iccX-val').textContent = ix.toFixed(2);
   document.getElementById('iccY-val').textContent = iy.toFixed(2);
-
   const ro = rt * Math.sqrt(ix * iy);
   const dobs = dt * Math.sqrt(ix);
   const lossR = ((1 - ro/rt) * 100).toFixed(0);
   const lossD = ((1 - dobs/dt) * 100).toFixed(0);
-
   document.getElementById('obsR-val').textContent = ro.toFixed(2);
   document.getElementById('lossR-val').textContent = lossR + '%';
   document.getElementById('obsD-val').textContent = dobs.toFixed(2);
   document.getElementById('lossD-val').textContent = lossD + '%';
-
   const obsRC = document.getElementById('obsR-card');
   obsRC.className = 'result-card ' + (ro >= 0.6 ? 'good' : ro >= 0.3 ? 'mid' : 'bad');
   const obsDC = document.getElementById('obsD-card');
   obsDC.className = 'result-card ' + (dobs >= 0.8 ? 'good' : dobs >= 0.5 ? 'mid' : 'bad');
-
   const canvas = document.getElementById('attenuationCanvas');
   const ctx = canvas.getContext('2d');
   const dpr = window.devicePixelRatio || 1;
@@ -1112,26 +873,21 @@ function updateAttenuation(){
   ctx.scale(dpr, dpr);
   const W = canvas.offsetWidth, H = 200;
   ctx.clearRect(0,0,W,H);
-
   const pad = 40, barW = 60, gap = 40;
   const groups = [
     { label: 'Correlation (r)', true: rt, obs: ro, color: '#5090e0' },
     { label: "Cohen's d", true: Math.min(dt,2)/2, obs: Math.min(dobs,2)/2, color: '#e8a020' }
   ];
-  const maxVal = 1.0;
   const chartH = H - 60;
-
   groups.forEach((g, i) => {
     const x = pad + i * (barW*2 + gap + 30);
-    const trueH = (g.true / maxVal) * chartH;
+    const trueH = (g.true / 1.0) * chartH;
     ctx.strokeStyle = 'rgba(240,232,216,0.4)';
     ctx.lineWidth = 2;
     ctx.strokeRect(x, H-40-trueH, barW, trueH);
-
-    const obsH = (g.obs / maxVal) * chartH;
+    const obsH = (g.obs / 1.0) * chartH;
     ctx.fillStyle = g.color;
     ctx.fillRect(x, H-40-obsH, barW, obsH);
-
     ctx.fillStyle = 'rgba(240,232,216,0.5)';
     ctx.font = '11px "Source Serif 4", serif';
     ctx.textAlign = 'center';
@@ -1144,21 +900,9 @@ function updateAttenuation(){
 }
 Object.values(w1).forEach(el => el.addEventListener('input', updateAttenuation));
 updateAttenuation();
-
-// ── WIDGET 2: DICHOTOMISATION ──
-const cutSlider = document.getElementById('cutSlider');
-const dichIcc = document.getElementById('dichIcc');
-
-function normalPDF(x, mu=0, sigma=1){
-  return Math.exp(-0.5*((x-mu)/sigma)**2) / (sigma*Math.sqrt(2*Math.PI));
-}
-function erf(x){
-  const a1=0.254829592,a2=-0.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=0.3275911;
-  const sign = x < 0 ? -1 : 1;
-  x = Math.abs(x);
-  const t = 1/(1+p*x);
-  return sign * (1 - (((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-x*x));
-}
+ 
+// ── WIDGET: DICHOTOMISATION ──
+function normalPDF(x){ return Math.exp(-0.5*x*x) / Math.sqrt(2*Math.PI); }
 function invNorm(p){
   const a=[-3.969683028665376e+01,2.209460984245205e+02,-2.759285104469687e+02,1.383577518672690e+02,-3.066479806614716e+01,2.506628277459239e+00];
   const b=[-5.447609879822406e+01,1.615858368580409e+02,-1.556989798598866e+02,6.680131188771972e+01,-1.328068155288572e+01];
@@ -1166,39 +910,27 @@ function invNorm(p){
   const d=[7.784695709041462e-03,3.224671290700398e-01,2.445134137142996e+00,3.754408661907416e+00];
   const p_low=0.02425, p_high=1-p_low;
   let q,r;
-  if(p < p_low){
-    q = Math.sqrt(-2*Math.log(p));
-    return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) / ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
-  }
-  if(p <= p_high){
-    q = p - 0.5; r = q*q;
-    return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q / (((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);
-  }
-  q = Math.sqrt(-2*Math.log(1-p));
-  return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) / ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
+  if(p < p_low){ q=Math.sqrt(-2*Math.log(p)); return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1); }
+  if(p <= p_high){ q=p-0.5; r=q*q; return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q/((((( b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1); }
+  q=Math.sqrt(-2*Math.log(1-p));
+  return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
 }
-
 function updateDichotomisation(){
-  const cutPct = +cutSlider.value;
-  const icc = +dichIcc.value;
+  const cutPct = +document.getElementById('cutSlider').value;
+  const icc = +document.getElementById('dichIcc').value;
   document.getElementById('cut-val').textContent = cutPct;
   document.getElementById('dichIcc-val').textContent = icc.toFixed(2);
-
   const cutZ = invNorm(cutPct/100);
   const n1 = cutPct/100, n2 = 1 - n1;
   const phi = normalPDF(cutZ);
-  const mu1 = -phi/n1;
-  const mu2 = phi/n2;
+  const mu1 = -phi/n1, mu2 = phi/n2;
   const trueD = (mu2-mu1);
   const obsD = trueD * Math.sqrt(icc);
   const powerRatio = (obsD/trueD)**2 * 0.64;
-
   document.getElementById('trueD-disp').textContent = trueD.toFixed(2);
   document.getElementById('obsD-disp').textContent = obsD.toFixed(2);
-  const obsDCard = document.getElementById('obsD-disp-card');
-  obsDCard.className = 'result-card ' + (obsD >= 0.8 ? 'good' : obsD >= 0.4 ? 'mid' : 'bad');
+  document.getElementById('obsD-disp-card').className = 'result-card ' + (obsD >= 0.8 ? 'good' : obsD >= 0.4 ? 'mid' : 'bad');
   document.getElementById('infoLoss-disp').textContent = (powerRatio*100).toFixed(0) + '%';
-
   const canvas = document.getElementById('dichCanvas');
   const ctx = canvas.getContext('2d');
   const dpr = window.devicePixelRatio || 1;
@@ -1207,85 +939,35 @@ function updateDichotomisation(){
   ctx.scale(dpr, dpr);
   const W = canvas.offsetWidth, H = 240;
   ctx.clearRect(0,0,W,H);
-
-  const xMin=-3.5, xMax=3.5, yMax=0.42;
+  const xMin=-3.5,xMax=3.5,yMax=0.42;
   const pad={l:30,r:30,t:20,b:40};
   const cW=W-pad.l-pad.r, cH=H-pad.t-pad.b;
-  function toX(x){ return pad.l + (x-xMin)/(xMax-xMin)*cW; }
-  function toY(y){ return pad.t + (1-y/yMax)*cH; }
-
+  const toX = x => pad.l + (x-xMin)/(xMax-xMin)*cW;
+  const toY = y => pad.t + (1-y/yMax)*cH;
+  ctx.beginPath(); ctx.moveTo(toX(xMin),toY(0));
+  for(let x=xMin; x<=cutZ; x+=0.05) ctx.lineTo(toX(x),toY(normalPDF(x)));
+  ctx.lineTo(toX(cutZ),toY(0)); ctx.closePath();
+  ctx.fillStyle='rgba(224,80,80,0.25)'; ctx.fill();
+  ctx.beginPath(); ctx.moveTo(toX(cutZ),toY(0));
+  for(let x=cutZ; x<=xMax; x+=0.05) ctx.lineTo(toX(x),toY(normalPDF(x)));
+  ctx.lineTo(toX(xMax),toY(0)); ctx.closePath();
+  ctx.fillStyle='rgba(80,144,224,0.25)'; ctx.fill();
   ctx.beginPath();
-  ctx.moveTo(toX(xMin), toY(0));
-  for(let x=xMin; x<=cutZ; x+=0.05) ctx.lineTo(toX(x), toY(normalPDF(x)));
-  ctx.lineTo(toX(cutZ), toY(0));
-  ctx.closePath();
-  ctx.fillStyle = 'rgba(224,80,80,0.25)';
-  ctx.fill();
-
-  ctx.beginPath();
-  ctx.moveTo(toX(cutZ), toY(0));
-  for(let x=cutZ; x<=xMax; x+=0.05) ctx.lineTo(toX(x), toY(normalPDF(x)));
-  ctx.lineTo(toX(xMax), toY(0));
-  ctx.closePath();
-  ctx.fillStyle = 'rgba(80,144,224,0.25)';
-  ctx.fill();
-
-  ctx.beginPath();
-  for(let x=xMin; x<=xMax; x+=0.05){
-    const px=toX(x), py=toY(normalPDF(x));
-    x===xMin ? ctx.moveTo(px,py) : ctx.lineTo(px,py);
-  }
-  ctx.strokeStyle = 'rgba(240,232,216,0.7)';
-  ctx.lineWidth = 2;
-  ctx.stroke();
-
-  ctx.beginPath();
-  ctx.moveTo(toX(cutZ), pad.t);
-  ctx.lineTo(toX(cutZ), pad.t+cH);
-  ctx.strokeStyle = '#e8a020';
-  ctx.lineWidth = 2;
-  ctx.setLineDash([5,4]);
-  ctx.stroke();
-  ctx.setLineDash([]);
-
-  const mu1x = toX(mu1), mu2x = toX(mu2);
-  [{ x:mu1x, c:'#e05050', label:'μ low' }, { x:mu2x, c:'#5090e0', label:'μ high' }].forEach(m=>{
-    ctx.beginPath();
-    ctx.moveTo(m.x, pad.t+cH*0.3);
-    ctx.lineTo(m.x, pad.t+cH);
-    ctx.strokeStyle = m.c;
-    ctx.lineWidth = 1.5;
-    ctx.setLineDash([3,3]);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.fillStyle = m.c;
-    ctx.font = '11px "JetBrains Mono", monospace';
-    ctx.textAlign = 'center';
-    ctx.fillText(m.label, m.x, pad.t+cH*0.25);
-  });
-
-  ctx.fillStyle = 'rgba(240,232,216,0.5)';
-  ctx.font = '11px "Source Serif 4", serif';
-  ctx.textAlign = 'center';
+  for(let x=xMin; x<=xMax; x+=0.05){ const px=toX(x),py=toY(normalPDF(x)); x===xMin?ctx.moveTo(px,py):ctx.lineTo(px,py); }
+  ctx.strokeStyle='rgba(240,232,216,0.7)'; ctx.lineWidth=2; ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(toX(cutZ),pad.t); ctx.lineTo(toX(cutZ),pad.t+cH);
+  ctx.strokeStyle='#e8a020'; ctx.lineWidth=2; ctx.setLineDash([5,4]); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle='rgba(240,232,216,0.5)'; ctx.font='11px "Source Serif 4",serif'; ctx.textAlign='center';
   ctx.fillText(`Lower group (${cutPct}%)`, toX((xMin+cutZ)/2), H-10);
   ctx.fillText(`Upper group (${100-cutPct}%)`, toX((cutZ+xMax)/2), H-10);
-  ctx.fillStyle = '#e8a020';
-  ctx.fillText('cut', toX(cutZ), pad.t+cH+18);
-
-  ctx.beginPath();
-  ctx.moveTo(pad.l, pad.t+cH);
-  ctx.lineTo(pad.l+cW, pad.t+cH);
-  ctx.strokeStyle = 'rgba(240,232,216,0.2)';
-  ctx.lineWidth = 1;
-  ctx.stroke();
+  ctx.fillStyle='#e8a020'; ctx.fillText('cut', toX(cutZ), pad.t+cH+18);
 }
-cutSlider.addEventListener('input', updateDichotomisation);
-dichIcc.addEventListener('input', updateDichotomisation);
+document.getElementById('cutSlider').addEventListener('input', updateDichotomisation);
+document.getElementById('dichIcc').addEventListener('input', updateDichotomisation);
 updateDichotomisation();
-
-// ── WIDGET 3: RELIABILITY CURVE ──
+ 
+// ── WIDGET: RELIABILITY CURVE ──
 let currentGamma = 0.30;
-
 function setGamma(g){
   currentGamma = g;
   document.getElementById('gammaSlider').value = g;
@@ -1294,529 +976,319 @@ function setGamma(g){
   drawReliabilityCurve();
   updateCurveStats(g);
 }
-
 function updateCurveStats(g){
-  const g2 = g*g;
-  const t7 = trialsForR(g2, 0.7);
-  const t9 = trialsForR(g2, 0.9);
-  const r100 = reliabilityAtL(g2, 100);
-  const r500 = reliabilityAtL(g2, 500);
-
-  document.getElementById('trialsFor7').textContent = t7 > 9999 ? '>10k' : t7.toLocaleString();
-  document.getElementById('trialsFor9').textContent = t9 > 9999 ? '>10k' : t9.toLocaleString();
-
-  const r7el = document.getElementById('rAt100');
-  r7el.textContent = r100.toFixed(2);
-  const c7 = document.getElementById('rAt100-card');
-  c7.className = 'result-card ' + (r100>=0.7?'good':r100>=0.4?'mid':'bad');
-
-  const r9el = document.getElementById('rAt500');
-  r9el.textContent = r500.toFixed(2);
-  const c9 = document.getElementById('rAt500-card');
-  c9.className = 'result-card ' + (r500>=0.7?'good':r500>=0.4?'mid':'bad');
+  const g2=g*g;
+  const t7=trialsForR(g2,0.7), t9=trialsForR(g2,0.9);
+  const r100=reliabilityAtL(g2,100), r500=reliabilityAtL(g2,500);
+  document.getElementById('trialsFor7').textContent = t7>9999?'>10k':t7.toLocaleString();
+  document.getElementById('trialsFor9').textContent = t9>9999?'>10k':t9.toLocaleString();
+  document.getElementById('rAt100').textContent = r100.toFixed(2);
+  document.getElementById('rAt100-card').className = 'result-card '+(r100>=0.7?'good':r100>=0.4?'mid':'bad');
+  document.getElementById('rAt500').textContent = r500.toFixed(2);
+  document.getElementById('rAt500-card').className = 'result-card '+(r500>=0.7?'good':r500>=0.4?'mid':'bad');
 }
-
 function drawReliabilityCurve(){
-  const canvas = document.getElementById('curveCanvas');
-  const ctx = canvas.getContext('2d');
-  const dpr = window.devicePixelRatio || 1;
-  canvas.width = canvas.offsetWidth * dpr;
-  canvas.height = 320 * dpr;
-  ctx.scale(dpr, dpr);
-  const W = canvas.offsetWidth, H = 320;
+  const canvas=document.getElementById('curveCanvas');
+  const ctx=canvas.getContext('2d');
+  const dpr=window.devicePixelRatio||1;
+  canvas.width=canvas.offsetWidth*dpr; canvas.height=320*dpr;
+  ctx.scale(dpr,dpr);
+  const W=canvas.offsetWidth, H=320;
   ctx.clearRect(0,0,W,H);
-
   const pad={l:50,r:30,t:20,b:50};
   const cW=W-pad.l-pad.r, cH=H-pad.t-pad.b;
-
-  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
-  ctx.lineWidth = 1;
+  const toX=L=>pad.l+(Math.log10(L)/3)*cW;
+  const toY=r=>pad.t+(1-r)*cH;
+  ctx.strokeStyle='rgba(255,255,255,0.06)'; ctx.lineWidth=1;
   [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0].forEach(r=>{
-    const y = pad.t + (1-r)*cH;
-    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cW,y); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(pad.l,toY(r)); ctx.lineTo(pad.l+cW,toY(r)); ctx.stroke();
   });
-
-  function toX(L){ return pad.l + (Math.log10(L)/3)*cW; }
-  function toY(r){ return pad.t + (1-r)*cH; }
-
   [1,2,5,10,20,50,100,200,500,1000].forEach(L=>{
-    const x=toX(L);
-    ctx.beginPath(); ctx.moveTo(x,pad.t); ctx.lineTo(x,pad.t+cH); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(toX(L),pad.t); ctx.lineTo(toX(L),pad.t+cH); ctx.stroke();
   });
-
   [0.7,0.9].forEach(r=>{
-    ctx.beginPath();
-    ctx.moveTo(pad.l,toY(r)); ctx.lineTo(pad.l+cW,toY(r));
-    ctx.strokeStyle='rgba(255,255,255,0.25)';
-    ctx.lineWidth=1;
-    ctx.setLineDash([6,4]);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.fillStyle='rgba(255,255,255,0.4)';
-    ctx.font='10px "JetBrains Mono",monospace';
-    ctx.textAlign='right';
-    ctx.fillText('r='+r, pad.l-4, toY(r)+4);
+    ctx.beginPath(); ctx.moveTo(pad.l,toY(r)); ctx.lineTo(pad.l+cW,toY(r));
+    ctx.strokeStyle='rgba(255,255,255,0.25)'; ctx.lineWidth=1; ctx.setLineDash([6,4]); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle='rgba(255,255,255,0.4)'; ctx.font='10px "JetBrains Mono",monospace';
+    ctx.textAlign='right'; ctx.fillText('r='+r, pad.l-4, toY(r)+4);
   });
-
-  const refTasks=[
-    { gamma: 0.12, color:'rgba(224,80,80,0.5)' },
-    { gamma: 0.72, color:'rgba(80,200,120,0.5)' },
-    { gamma: 1.414, color:'rgba(80,144,224,0.5)' },
-  ];
-
-  refTasks.forEach(task=>{
+  [{gamma:0.12,color:'rgba(224,80,80,0.5)'},{gamma:0.72,color:'rgba(80,200,120,0.5)'},{gamma:1.414,color:'rgba(80,144,224,0.5)'}].forEach(task=>{
     const g2=task.gamma*task.gamma;
     ctx.beginPath();
-    for(let li=0; li<=200; li++){
-      const L=Math.pow(10,(li/200)*3);
-      const r=reliabilityAtL(g2,L);
-      const x=toX(L), y=toY(r);
-      li===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
-    }
-    ctx.strokeStyle=task.color;
-    ctx.lineWidth=1.5;
-    ctx.setLineDash([4,3]);
-    ctx.stroke();
-    ctx.setLineDash([]);
+    for(let li=0;li<=200;li++){ const L=Math.pow(10,(li/200)*3); const r=reliabilityAtL(g2,L); li===0?ctx.moveTo(toX(L),toY(r)):ctx.lineTo(toX(L),toY(r)); }
+    ctx.strokeStyle=task.color; ctx.lineWidth=1.5; ctx.setLineDash([4,3]); ctx.stroke(); ctx.setLineDash([]);
   });
-
   const g2=currentGamma*currentGamma;
   ctx.beginPath();
-  for(let li=0; li<=300; li++){
-    const L=Math.pow(10,(li/300)*3);
-    const r=reliabilityAtL(g2,L);
-    const x=toX(L), y=toY(r);
-    li===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
-  }
-  ctx.strokeStyle='#e8a020';
-  ctx.lineWidth=3;
-  ctx.stroke();
-
-  [100,500].forEach(L=>{
-    const r=reliabilityAtL(g2,L);
-    ctx.beginPath();
-    ctx.arc(toX(L),toY(r),5,0,Math.PI*2);
-    ctx.fillStyle='#e8a020';
-    ctx.fill();
-  });
-
-  ctx.strokeStyle='rgba(240,232,216,0.3)';
-  ctx.lineWidth=1;
+  for(let li=0;li<=300;li++){ const L=Math.pow(10,(li/300)*3); const r=reliabilityAtL(g2,L); li===0?ctx.moveTo(toX(L),toY(r)):ctx.lineTo(toX(L),toY(r)); }
+  ctx.strokeStyle='#e8a020'; ctx.lineWidth=3; ctx.stroke();
+  [100,500].forEach(L=>{ const r=reliabilityAtL(g2,L); ctx.beginPath(); ctx.arc(toX(L),toY(r),5,0,Math.PI*2); ctx.fillStyle='#e8a020'; ctx.fill(); });
+  ctx.strokeStyle='rgba(240,232,216,0.3)'; ctx.lineWidth=1;
   ctx.beginPath(); ctx.moveTo(pad.l,pad.t); ctx.lineTo(pad.l,pad.t+cH); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(pad.l,pad.t+cH); ctx.lineTo(pad.l+cW,pad.t+cH); ctx.stroke();
-
-  ctx.fillStyle='rgba(240,232,216,0.6)';
-  ctx.font='11px "JetBrains Mono",monospace';
+  ctx.fillStyle='rgba(240,232,216,0.6)'; ctx.font='11px "JetBrains Mono",monospace';
   ctx.textAlign='right';
-  [0,0.2,0.4,0.6,0.8,1.0].forEach(r=>{
-    ctx.fillText(r.toFixed(1), pad.l-6, toY(r)+4);
-  });
-
+  [0,0.2,0.4,0.6,0.8,1.0].forEach(r=>{ ctx.fillText(r.toFixed(1), pad.l-6, toY(r)+4); });
   ctx.textAlign='center';
-  [1,5,10,50,100,500,1000].forEach(L=>{
-    ctx.fillText(L, toX(L), pad.t+cH+18);
-  });
-
-  ctx.fillStyle='rgba(240,232,216,0.4)';
-  ctx.font='11px "Source Serif 4",serif';
-  ctx.textAlign='center';
+  [1,5,10,50,100,500,1000].forEach(L=>{ ctx.fillText(L, toX(L), pad.t+cH+18); });
+  ctx.fillStyle='rgba(240,232,216,0.4)'; ctx.font='11px "Source Serif 4",serif';
   ctx.fillText('Trials per condition (L) — log scale', pad.l+cW/2, H-8);
-  ctx.save();
-  ctx.translate(14, pad.t+cH/2);
-  ctx.rotate(-Math.PI/2);
-  ctx.fillText('Test-retest reliability', 0, 0);
-  ctx.restore();
-
-  const labelL=30, labelR=reliabilityAtL(g2,labelL);
-  ctx.fillStyle='#e8a020';
-  ctx.font='bold 12px "JetBrains Mono",monospace';
-  ctx.textAlign='left';
-  ctx.fillText('γ='+currentGamma.toFixed(2), toX(labelL)+8, toY(labelR)-8);
+  ctx.save(); ctx.translate(14,pad.t+cH/2); ctx.rotate(-Math.PI/2); ctx.fillText('Test-retest reliability',0,0); ctx.restore();
+  ctx.fillStyle='#e8a020'; ctx.font='bold 12px "JetBrains Mono",monospace';
+  ctx.textAlign='left'; ctx.fillText('γ='+currentGamma.toFixed(2), toX(30)+8, toY(reliabilityAtL(g2,30))-8);
 }
-
 document.getElementById('gammaSlider').addEventListener('input', function(){
-  currentGamma = +this.value;
-  document.getElementById('gamma-val').textContent = currentGamma.toFixed(2);
-  document.getElementById('gamma-sq-val').textContent = 'γ²=' + (currentGamma*currentGamma).toFixed(3);
-  drawReliabilityCurve();
-  updateCurveStats(currentGamma);
+  currentGamma=+this.value;
+  document.getElementById('gamma-val').textContent=currentGamma.toFixed(2);
+  document.getElementById('gamma-sq-val').textContent='γ²='+(currentGamma*currentGamma).toFixed(3);
+  drawReliabilityCurve(); updateCurveStats(currentGamma);
 });
-
-setTimeout(()=>{
-  drawReliabilityCurve();
-  updateCurveStats(currentGamma);
-}, 100);
-
+setTimeout(()=>{ drawReliabilityCurve(); updateCurveStats(currentGamma); },100);
+ 
 // ── WIDGET: RTM + ATTENUATION ──
 function updateRTM(){
-  const icc = +document.getElementById('rtmIcc').value;
-  const rtrue = +document.getElementById('rtmRtrue').value;
-  document.getElementById('rtm-icc-val').textContent = icc.toFixed(2);
-  document.getElementById('rtm-rtrue-val').textContent = rtrue.toFixed(2);
-
-  const robs = rtrue * icc;
-  const regressionPct = ((1-icc)*100).toFixed(0);
-  const signalLost = ((1 - robs/rtrue)*100).toFixed(0);
-
-  document.getElementById('rtm-formula').textContent = icc.toFixed(2) + ' × observed';
-  document.getElementById('att-result').textContent = robs.toFixed(2);
-  document.getElementById('rtm-regression').textContent = regressionPct + '%';
-  document.getElementById('rtm-obsR').textContent = robs.toFixed(2);
-  document.getElementById('rtm-signal-lost').textContent = signalLost + '%';
-
-  const obsCard = document.getElementById('rtm-obsR-card');
-  obsCard.className = 'result-card ' + (robs >= 0.6 ? 'good' : robs >= 0.3 ? 'mid' : 'bad');
-
-  drawRTMPanel(icc);
-  drawAttPanel(icc, rtrue, robs);
+  const icc=+document.getElementById('rtmIcc').value;
+  const rtrue=+document.getElementById('rtmRtrue').value;
+  document.getElementById('rtm-icc-val').textContent=icc.toFixed(2);
+  document.getElementById('rtm-rtrue-val').textContent=rtrue.toFixed(2);
+  const robs=rtrue*icc;
+  document.getElementById('rtm-formula').textContent=icc.toFixed(2)+' × observed';
+  document.getElementById('att-result').textContent=robs.toFixed(2);
+  document.getElementById('rtm-regression').textContent=((1-icc)*100).toFixed(0)+'%';
+  document.getElementById('rtm-obsR').textContent=robs.toFixed(2);
+  document.getElementById('rtm-signal-lost').textContent=((1-robs/rtrue)*100).toFixed(0)+'%';
+  document.getElementById('rtm-obsR-card').className='result-card '+(robs>=0.6?'good':robs>=0.3?'mid':'bad');
+  drawRTMPanel(icc); drawAttPanel(icc,rtrue,robs);
 }
-
 function drawRTMPanel(icc){
-  const canvas = document.getElementById('rtmCanvas');
-  if(!canvas) return;
-  const dpr = window.devicePixelRatio || 1;
-  canvas.width = canvas.offsetWidth*dpr;
-  canvas.height = 220*dpr;
-  const ctx = canvas.getContext('2d');
-  ctx.scale(dpr,dpr);
+  const canvas=document.getElementById('rtmCanvas'); if(!canvas)return;
+  const dpr=window.devicePixelRatio||1;
+  canvas.width=canvas.offsetWidth*dpr; canvas.height=220*dpr;
+  const ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
   const W=canvas.offsetWidth, H=220;
   ctx.clearRect(0,0,W,H);
-
   const pad={l:40,r:20,t:20,b:40};
   const cW=W-pad.l-pad.r, cH=H-pad.t-pad.b;
-
-  ctx.strokeStyle='rgba(255,255,255,0.06)';
-  ctx.lineWidth=1;
+  const toX=v=>pad.l+(v+2.5)/5*cW, toY=v=>pad.t+(2.5-v)/5*cH;
+  ctx.strokeStyle='rgba(255,255,255,0.06)'; ctx.lineWidth=1;
   [-2,-1,0,1,2].forEach(v=>{
-    const x=pad.l+(v+2)/4*cW;
-    const y=pad.t+(2-v)/4*cH;
-    ctx.beginPath(); ctx.moveTo(x,pad.t); ctx.lineTo(x,pad.t+cH); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cW,y); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(toX(v),pad.t); ctx.lineTo(toX(v),pad.t+cH); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(pad.l,toY(v)); ctx.lineTo(pad.l+cW,toY(v)); ctx.stroke();
   });
-
-  ctx.beginPath();
-  ctx.moveTo(pad.l, pad.t+cH);
-  ctx.lineTo(pad.l+cW, pad.t);
-  ctx.strokeStyle='rgba(255,255,255,0.15)';
-  ctx.lineWidth=1;
-  ctx.setLineDash([4,4]);
-  ctx.stroke();
-  ctx.setLineDash([]);
-
-  const toX = v => pad.l + (v+2.5)/5*cW;
-  const toY = v => pad.t + (2.5-v)/5*cH;
-
-  ctx.beginPath();
-  ctx.moveTo(toX(-2.5), toY(-2.5*icc));
-  ctx.lineTo(toX(2.5), toY(2.5*icc));
-  ctx.strokeStyle='#e8a020';
-  ctx.lineWidth=2.5;
-  ctx.stroke();
-
-  const testScore = 2.0;
-  const expectedRetest = icc * testScore;
-  ctx.beginPath();
-  ctx.arc(toX(testScore), toY(testScore), 6, 0, Math.PI*2);
-  ctx.fillStyle='rgba(240,232,216,0.4)';
-  ctx.fill();
-  ctx.beginPath();
-  ctx.arc(toX(testScore), toY(expectedRetest), 6, 0, Math.PI*2);
-  ctx.fillStyle='#e8a020';
-  ctx.fill();
-
-  ctx.beginPath();
-  ctx.moveTo(toX(testScore)+10, toY(testScore));
-  ctx.lineTo(toX(testScore)+10, toY(expectedRetest));
-  ctx.strokeStyle='rgba(232,160,32,0.6)';
-  ctx.lineWidth=1.5;
-  ctx.setLineDash([3,3]);
-  ctx.stroke();
-  ctx.setLineDash([]);
-
-  ctx.fillStyle='rgba(240,232,216,0.5)';
-  ctx.font='10px "JetBrains Mono",monospace';
-  ctx.textAlign='center';
+  ctx.beginPath(); ctx.moveTo(pad.l,pad.t+cH); ctx.lineTo(pad.l+cW,pad.t);
+  ctx.strokeStyle='rgba(255,255,255,0.15)'; ctx.lineWidth=1; ctx.setLineDash([4,4]); ctx.stroke(); ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(toX(-2.5),toY(-2.5*icc)); ctx.lineTo(toX(2.5),toY(2.5*icc));
+  ctx.strokeStyle='#e8a020'; ctx.lineWidth=2.5; ctx.stroke();
+  const ts=2.0, er=icc*ts;
+  ctx.beginPath(); ctx.arc(toX(ts),toY(ts),6,0,Math.PI*2); ctx.fillStyle='rgba(240,232,216,0.4)'; ctx.fill();
+  ctx.beginPath(); ctx.arc(toX(ts),toY(er),6,0,Math.PI*2); ctx.fillStyle='#e8a020'; ctx.fill();
+  ctx.fillStyle='rgba(240,232,216,0.5)'; ctx.font='10px "JetBrains Mono",monospace'; ctx.textAlign='center';
   ctx.fillText('Test 1 score (SDs)', pad.l+cW/2, H-8);
-  ctx.save();
-  ctx.translate(12, pad.t+cH/2);
-  ctx.rotate(-Math.PI/2);
-  ctx.fillText('Expected retest score', 0, 0);
-  ctx.restore();
-
-  ctx.fillStyle='rgba(240,232,216,0.4)';
-  ctx.font='9px "JetBrains Mono",monospace';
+  ctx.save(); ctx.translate(12,pad.t+cH/2); ctx.rotate(-Math.PI/2); ctx.fillText('Expected retest score',0,0); ctx.restore();
+  ctx.fillStyle='rgba(240,232,216,0.4)'; ctx.font='9px "JetBrains Mono",monospace';
   [-2,-1,0,1,2].forEach(v=>{
-    ctx.textAlign='right'; ctx.fillText(v, pad.l-4, toY(v)+3);
-    ctx.textAlign='center'; ctx.fillText(v, toX(v), pad.t+cH+14);
+    ctx.textAlign='right'; ctx.fillText(v,pad.l-4,toY(v)+3);
+    ctx.textAlign='center'; ctx.fillText(v,toX(v),pad.t+cH+14);
   });
-
-  ctx.fillStyle='#e8a020';
-  ctx.font='10px "Source Serif 4",serif';
-  ctx.textAlign='left';
+  ctx.fillStyle='#e8a020'; ctx.font='10px "Source Serif 4",serif'; ctx.textAlign='left';
   ctx.fillText(`slope = ICC = ${icc.toFixed(2)}`, pad.l+4, pad.t+14);
 }
-
-function drawAttPanel(icc, rtrue, robs){
-  const canvas = document.getElementById('attCanvas2');
-  if(!canvas) return;
-  const dpr = window.devicePixelRatio || 1;
-  canvas.width = canvas.offsetWidth*dpr;
-  canvas.height = 220*dpr;
-  const ctx = canvas.getContext('2d');
-  ctx.scale(dpr,dpr);
+function drawAttPanel(icc,rtrue,robs){
+  const canvas=document.getElementById('attCanvas2'); if(!canvas)return;
+  const dpr=window.devicePixelRatio||1;
+  canvas.width=canvas.offsetWidth*dpr; canvas.height=220*dpr;
+  const ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
   const W=canvas.offsetWidth, H=220;
   ctx.clearRect(0,0,W,H);
-
   const pad={l:40,r:20,t:20,b:40};
   const cW=W-pad.l-pad.r, cH=H-pad.t-pad.b;
-  const toX = r => pad.l + r*cW;
-  const toY = r => pad.t + (1-r)*cH;
-
-  ctx.strokeStyle='rgba(255,255,255,0.06)';
-  ctx.lineWidth=1;
+  const toX=r=>pad.l+r*cW, toY=r=>pad.t+(1-r)*cH;
+  ctx.strokeStyle='rgba(255,255,255,0.06)'; ctx.lineWidth=1;
   [0,0.2,0.4,0.6,0.8,1.0].forEach(v=>{
     ctx.beginPath(); ctx.moveTo(toX(0),toY(v)); ctx.lineTo(toX(1),toY(v)); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(toX(v),toY(0)); ctx.lineTo(toX(v),toY(1)); ctx.stroke();
   });
-
-  ctx.beginPath();
-  ctx.moveTo(toX(0), toY(0));
-  ctx.lineTo(toX(1), toY(icc));
-  ctx.strokeStyle='#5090e0';
-  ctx.lineWidth=2.5;
-  ctx.stroke();
-
-  ctx.beginPath();
-  ctx.moveTo(toX(0),toY(0));
-  ctx.lineTo(toX(1),toY(1));
-  ctx.strokeStyle='rgba(255,255,255,0.15)';
-  ctx.lineWidth=1;
-  ctx.setLineDash([4,4]);
-  ctx.stroke();
-  ctx.setLineDash([]);
-
-  ctx.beginPath();
-  ctx.arc(toX(rtrue), toY(rtrue), 5, 0, Math.PI*2);
-  ctx.fillStyle='rgba(240,232,216,0.3)';
-  ctx.fill();
-  ctx.beginPath();
-  ctx.arc(toX(rtrue), toY(robs), 6, 0, Math.PI*2);
-  ctx.fillStyle='#5090e0';
-  ctx.fill();
-
-  ctx.beginPath();
-  ctx.moveTo(toX(rtrue), toY(rtrue));
-  ctx.lineTo(toX(rtrue), toY(robs));
-  ctx.strokeStyle='rgba(80,144,224,0.5)';
-  ctx.lineWidth=1.5;
-  ctx.setLineDash([3,3]);
-  ctx.stroke();
-  ctx.setLineDash([]);
-
-  ctx.fillStyle='rgba(240,232,216,0.5)';
-  ctx.font='10px "JetBrains Mono",monospace';
-  ctx.textAlign='center';
+  ctx.beginPath(); ctx.moveTo(toX(0),toY(0)); ctx.lineTo(toX(1),toY(icc));
+  ctx.strokeStyle='#5090e0'; ctx.lineWidth=2.5; ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(toX(0),toY(0)); ctx.lineTo(toX(1),toY(1));
+  ctx.strokeStyle='rgba(255,255,255,0.15)'; ctx.lineWidth=1; ctx.setLineDash([4,4]); ctx.stroke(); ctx.setLineDash([]);
+  ctx.beginPath(); ctx.arc(toX(rtrue),toY(rtrue),5,0,Math.PI*2); ctx.fillStyle='rgba(240,232,216,0.3)'; ctx.fill();
+  ctx.beginPath(); ctx.arc(toX(rtrue),toY(robs),6,0,Math.PI*2); ctx.fillStyle='#5090e0'; ctx.fill();
+  ctx.fillStyle='rgba(240,232,216,0.5)'; ctx.font='10px "JetBrains Mono",monospace'; ctx.textAlign='center';
   ctx.fillText('True correlation', pad.l+cW/2, H-8);
-  ctx.save();
-  ctx.translate(12,pad.t+cH/2);
-  ctx.rotate(-Math.PI/2);
-  ctx.fillText('Observed correlation', 0, 0);
-  ctx.restore();
-
+  ctx.save(); ctx.translate(12,pad.t+cH/2); ctx.rotate(-Math.PI/2); ctx.fillText('Observed correlation',0,0); ctx.restore();
   [0,0.2,0.4,0.6,0.8,1.0].forEach(v=>{
-    ctx.textAlign='right'; ctx.fillText(v.toFixed(1), pad.l-4, toY(v)+3);
-    ctx.textAlign='center'; ctx.fillText(v.toFixed(1), toX(v), pad.t+cH+14);
+    ctx.textAlign='right'; ctx.fillText(v.toFixed(1),pad.l-4,toY(v)+3);
+    ctx.textAlign='center'; ctx.fillText(v.toFixed(1),toX(v),pad.t+cH+14);
   });
-
-  ctx.fillStyle='#5090e0';
-  ctx.font='10px "Source Serif 4",serif';
-  ctx.textAlign='left';
+  ctx.fillStyle='#5090e0'; ctx.font='10px "Source Serif 4",serif'; ctx.textAlign='left';
   ctx.fillText(`slope = ICC = ${icc.toFixed(2)}`, pad.l+4, pad.t+14);
 }
-
 document.getElementById('rtmIcc').addEventListener('input', updateRTM);
 document.getElementById('rtmRtrue').addEventListener('input', updateRTM);
 setTimeout(updateRTM, 150);
-
-// ── WIDGET: LMM BRIDGE TO γ² ──
+ 
+// ── WIDGET: LMM BRIDGE (updated with residual + overlap) ──
 const lmmBridge = {
   person: document.getElementById('lmmPerson'),
   item: document.getElementById('lmmItem'),
+  resid: document.getElementById('lmmResid'),
+  overlap: document.getElementById('lmmOverlap'),
   trials: document.getElementById('lmmTrials')
 };
-
+ 
+function getLMMDesignLabel(overlap) {
+  if (overlap >= 0.95) return 'Design: Fixed Items — item variance cancels (σ²residual only)';
+  if (overlap <= 0.05) return 'Design: Fully Random Items — recovers Rouder framework exactly';
+  return `Design: Partial Overlap (ρ=${overlap.toFixed(2)}) — item variance partially cancels`;
+}
+ 
 function updateLMMBridge(){
   const personVar = +lmmBridge.person.value;
-  const itemVar = +lmmBridge.item.value;
-  const L = +lmmBridge.trials.value;
-
-  document.getElementById('lmm-person-val').textContent = personVar.toFixed(2);
-  document.getElementById('lmm-item-val').textContent = itemVar.toFixed(2);
-  document.getElementById('lmm-L-val').textContent = L;
-
-  const gamma2 = personVar / itemVar;
-  const rL = reliabilityAtL(gamma2, L);
-  const t7 = trialsForR(gamma2, 0.70);
-  const t9 = trialsForR(gamma2, 0.90);
-
+  const itemVar   = +lmmBridge.item.value;
+  const residVar  = +lmmBridge.resid.value;
+  const overlap   = +lmmBridge.overlap.value;
+  const L         = +lmmBridge.trials.value;
+ 
+  document.getElementById('lmm-person-val').textContent  = personVar.toFixed(2);
+  document.getElementById('lmm-item-val').textContent    = itemVar.toFixed(2);
+  document.getElementById('lmm-resid-val').textContent   = residVar.toFixed(2);
+  document.getElementById('lmm-overlap-val').textContent = overlap.toFixed(2);
+  document.getElementById('lmm-L-val').textContent       = L;
+  document.getElementById('lmm-design-label').textContent = getLMMDesignLabel(overlap);
+ 
+  // Correct formula: denominator = residual + (1-overlap)*item
+  const effectiveNoise = residVar + (1 - overlap) * itemVar;
+  const gamma2 = personVar / effectiveNoise;
+  const rL     = reliabilityAtL(gamma2, L);
+  const t7     = trialsForR(gamma2, 0.70);
+  const t9     = trialsForR(gamma2, 0.90);
+ 
   document.getElementById('lmm-gamma').textContent = gamma2.toFixed(2);
-  document.getElementById('lmm-r').textContent = rL.toFixed(2);
-  document.getElementById('lmm-t7').textContent = t7 > 9999 ? '>10k' : t7.toLocaleString();
-  document.getElementById('lmm-t9').textContent = t9 > 9999 ? '>10k' : t9.toLocaleString();
-
-  document.getElementById('lmm-gamma-card').className =
-    'result-card ' + (gamma2 >= 1 ? 'good' : gamma2 >= 0.3 ? 'mid' : 'bad');
-
-  document.getElementById('lmm-r-card').className =
-    'result-card ' + (rL >= 0.7 ? 'good' : rL >= 0.4 ? 'mid' : 'bad');
-
-  drawLMMBridgeCanvas(personVar, itemVar, gamma2, L, rL);
+  document.getElementById('lmm-r').textContent     = rL.toFixed(2);
+  document.getElementById('lmm-t7').textContent    = t7>9999?'>10k':t7.toLocaleString();
+  document.getElementById('lmm-t9').textContent    = t9>9999?'>10k':t9.toLocaleString();
+  document.getElementById('lmm-gamma-card').className = 'result-card '+(gamma2>=1?'good':gamma2>=0.3?'mid':'bad');
+  document.getElementById('lmm-r-card').className    = 'result-card '+(rL>=0.7?'good':rL>=0.4?'mid':'bad');
+  document.getElementById('lmm-t7-card').className   = 'result-card '+(t7<=100?'good':t7<=400?'mid':'bad');
+  document.getElementById('lmm-t9-card').className   = 'result-card '+(t9<=100?'good':t9<=400?'mid':'bad');
+ 
+  drawLMMBridgeCanvas(personVar, itemVar, residVar, overlap, gamma2, L, rL);
 }
-
-function drawLMMBridgeCanvas(personVar, itemVar, gamma2, L, rL){
+ 
+function drawLMMBridgeCanvas(personVar, itemVar, residVar, overlap, gamma2, L, rL){
   const canvas = document.getElementById('lmmBridgeCanvas');
   if(!canvas) return;
-
   const ctx = canvas.getContext('2d');
   const dpr = window.devicePixelRatio || 1;
   canvas.width = canvas.offsetWidth * dpr;
-  canvas.height = 220 * dpr;
+  canvas.height = 260 * dpr;
   ctx.scale(dpr, dpr);
-
-  const W = canvas.offsetWidth;
-  const H = 220;
-  ctx.clearRect(0, 0, W, H);
-
-  const pad = {l: 30, r: 20, t: 20, b: 35};
-
-  const leftW = W * 0.42;
-  const barBaseY = H - 45;
-  const barMaxH = 120;
-  const vmax = Math.max(personVar, itemVar, 0.01);
-
-  function barH(v){ return (v / vmax) * barMaxH; }
-
-  const pH = barH(personVar);
-  const iH = barH(itemVar);
-
-  ctx.fillStyle = 'rgba(255,255,255,0.05)';
+  const W = canvas.offsetWidth, H = 260;
+  ctx.clearRect(0,0,W,H);
+ 
+  // LEFT: stacked bar showing variance decomposition
+  const leftW = W * 0.40;
+  ctx.fillStyle = 'rgba(255,255,255,0.03)';
   ctx.fillRect(0, 0, leftW, H);
-
+ 
+  const barMaxH = 160;
+  const totalVar = personVar + itemVar + residVar;
+  const barX = leftW/2 - 35;
+  const barBaseY = H - 50;
+ 
+  // Draw stacked bar
+  const persH = (personVar / totalVar) * barMaxH;
+  const itemH = (itemVar / totalVar) * barMaxH;
+  const residH = (residVar / totalVar) * barMaxH;
+  // Effective noise portion (grey out cancelled item variance)
+  const cancelledItemH = itemH * overlap;
+  const activeItemH = itemH * (1 - overlap);
+ 
+  // Residual (always noise) - red
+  ctx.fillStyle = '#e05050';
+  ctx.fillRect(barX, barBaseY - residH, 70, residH);
+  // Item - active (noise) - amber
+  ctx.fillStyle = '#e8a020';
+  ctx.fillRect(barX, barBaseY - residH - activeItemH, 70, activeItemH);
+  // Item - cancelled (signal due to overlap) - dimmed green
+  ctx.fillStyle = 'rgba(80,200,120,0.35)';
+  ctx.fillRect(barX, barBaseY - residH - itemH, 70, cancelledItemH);
+  // Person (signal) - green
   ctx.fillStyle = '#50c878';
-  ctx.fillRect(60, barBaseY - pH, 55, pH);
-
-  ctx.fillStyle = '#5090e0';
-  ctx.fillRect(145, barBaseY - iH, 55, iH);
-
-  ctx.fillStyle = 'rgba(240,232,216,0.85)';
-  ctx.font = '11px "JetBrains Mono", monospace';
-  ctx.textAlign = 'center';
-  ctx.fillText('person', 87.5, H - 20);
-  ctx.fillText('item', 172.5, H - 20);
-
+  ctx.fillRect(barX, barBaseY - residH - itemH - persH, 70, persH);
+ 
+  // Labels
+  ctx.font = '10px "JetBrains Mono",monospace'; ctx.textAlign = 'center';
+  // Person label
   ctx.fillStyle = '#50c878';
-  ctx.fillText(personVar.toFixed(2), 87.5, barBaseY - pH - 8);
-  ctx.fillStyle = '#5090e0';
-  ctx.fillText(itemVar.toFixed(2), 172.5, barBaseY - iH - 8);
-
-  ctx.fillStyle = 'rgba(240,232,216,0.5)';
-  ctx.font = '10px "Source Serif 4", serif';
-  ctx.fillText('LMM variance decomposition', leftW / 2, 16);
-
+  ctx.fillText('person', barX+35, barBaseY - residH - itemH - persH - 8);
+  ctx.fillText(personVar.toFixed(2), barX+35, barBaseY - residH - itemH - persH - 20);
+  // Item labels
+  ctx.fillStyle = '#e8a020';
+  ctx.fillText('item (noise)', barX+35, barBaseY - residH - activeItemH/2 + 4);
+  if (cancelledItemH > 14) {
+    ctx.fillStyle = 'rgba(80,200,120,0.7)';
+    ctx.fillText('item (cancel)', barX+35, barBaseY - residH - activeItemH - cancelledItemH/2 + 4);
+  }
+  // Residual label
+  ctx.fillStyle = '#e05050';
+  ctx.fillText('residual', barX+35, barBaseY - residH/2 + 4);
+  ctx.fillText(residVar.toFixed(2), barX+35, barBaseY + 14);
+ 
+  // Legend
+  ctx.fillStyle = 'rgba(240,232,216,0.5)'; ctx.font = '9px "Source Serif 4",serif';
+  ctx.fillText('LMM variance decomposition', leftW/2, 14);
+  ctx.fillText('(green = signal · amber/red = noise)', leftW/2, 26);
+ 
+  // X axis
+  ctx.fillStyle = 'rgba(240,232,216,0.4)';
+  ctx.fillText('→  overlap increases  →', leftW/2, H - 18);
+ 
+  // Divider
   ctx.strokeStyle = 'rgba(255,255,255,0.08)';
-  ctx.beginPath();
-  ctx.moveTo(leftW + 10, 12);
-  ctx.lineTo(leftW + 10, H - 12);
-  ctx.stroke();
-
-  const rightX = leftW + 25;
-  const rightW = W - rightX - pad.r;
-  const rightTop = 20;
-  const rightH = 145;
-
-  function toX(trials){
-    return rightX + (Math.log10(trials) / 3) * rightW;
-  }
-  function toY(r){
-    return rightTop + (1 - r) * rightH;
-  }
-
-  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
-  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(leftW+8,12); ctx.lineTo(leftW+8,H-12); ctx.stroke();
+ 
+  // RIGHT: reliability curve
+  const rightX = leftW + 22;
+  const rightW = W - rightX - 15;
+  const rightTop = 30, rightH = 160;
+  const toX = trials => rightX + (Math.log10(trials)/3)*rightW;
+  const toY = r => rightTop + (1-r)*rightH;
+ 
+  ctx.strokeStyle='rgba(255,255,255,0.06)'; ctx.lineWidth=1;
   [0.2,0.4,0.6,0.8,1.0].forEach(rv=>{
-    ctx.beginPath();
-    ctx.moveTo(rightX, toY(rv));
-    ctx.lineTo(rightX + rightW, toY(rv));
-    ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(rightX,toY(rv)); ctx.lineTo(rightX+rightW,toY(rv)); ctx.stroke();
   });
-
   [10,50,100,500,1000].forEach(tv=>{
-    ctx.beginPath();
-    ctx.moveTo(toX(tv), rightTop);
-    ctx.lineTo(toX(tv), rightTop + rightH);
-    ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(toX(tv),rightTop); ctx.lineTo(toX(tv),rightTop+rightH); ctx.stroke();
   });
-
-  [0.7, 0.9].forEach(target=>{
-    ctx.beginPath();
-    ctx.moveTo(rightX, toY(target));
-    ctx.lineTo(rightX + rightW, toY(target));
-    ctx.strokeStyle = 'rgba(255,255,255,0.22)';
-    ctx.setLineDash([5,4]);
-    ctx.stroke();
-    ctx.setLineDash([]);
+  [0.7,0.9].forEach(target=>{
+    ctx.beginPath(); ctx.moveTo(rightX,toY(target)); ctx.lineTo(rightX+rightW,toY(target));
+    ctx.strokeStyle='rgba(255,255,255,0.22)'; ctx.setLineDash([5,4]); ctx.stroke(); ctx.setLineDash([]);
   });
-
   ctx.beginPath();
-  for(let li=0; li<=250; li++){
-    const trials = Math.pow(10, (li/250) * 3);
-    const rr = reliabilityAtL(gamma2, trials);
-    const x = toX(trials);
-    const y = toY(rr);
-    li === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  for(let li=0;li<=250;li++){
+    const trials=Math.pow(10,(li/250)*3);
+    const rr=reliabilityAtL(gamma2,trials);
+    li===0?ctx.moveTo(toX(trials),toY(rr)):ctx.lineTo(toX(trials),toY(rr));
   }
-  ctx.strokeStyle = '#e8a020';
-  ctx.lineWidth = 2.5;
-  ctx.stroke();
-
-  ctx.beginPath();
-  ctx.arc(toX(L), toY(rL), 5, 0, Math.PI * 2);
-  ctx.fillStyle = '#e8a020';
-  ctx.fill();
-
-  ctx.fillStyle = 'rgba(240,232,216,0.5)';
-  ctx.font = '10px "Source Serif 4", serif';
-  ctx.textAlign = 'center';
-  ctx.fillText('Reliability implied by γ²', rightX + rightW/2, 16);
-  ctx.fillText('Trials (log scale)', rightX + rightW/2, H - 8);
-
-  ctx.save();
-  ctx.translate(rightX - 14, rightTop + rightH/2);
-  ctx.rotate(-Math.PI/2);
-  ctx.fillText('reliability', 0, 0);
-  ctx.restore();
-
-  ctx.font = '10px "JetBrains Mono", monospace';
-  ctx.textAlign = 'center';
-  [10,50,100,500,1000].forEach(tv=>{
-    ctx.fillText(tv, toX(tv), rightTop + rightH + 14);
-  });
-
-  ctx.textAlign = 'right';
-  [0.2,0.4,0.6,0.8,1.0].forEach(rv=>{
-    ctx.fillText(rv.toFixed(1), rightX - 5, toY(rv) + 3);
-  });
-
-  ctx.fillStyle = '#e8a020';
-  ctx.textAlign = 'left';
-  ctx.fillText(`γ² = ${gamma2.toFixed(2)}`, rightX + 8, rightTop + 14);
+  ctx.strokeStyle='#e8a020'; ctx.lineWidth=2.5; ctx.stroke();
+  ctx.beginPath(); ctx.arc(toX(L),toY(rL),5,0,Math.PI*2); ctx.fillStyle='#e8a020'; ctx.fill();
+ 
+  ctx.fillStyle='rgba(240,232,216,0.5)'; ctx.font='10px "Source Serif 4",serif'; ctx.textAlign='center';
+  ctx.fillText('Reliability curve (γ² = '+gamma2.toFixed(2)+')', rightX+rightW/2, 18);
+  ctx.fillText('Trials (log scale)', rightX+rightW/2, H-8);
+  ctx.save(); ctx.translate(rightX-14,rightTop+rightH/2); ctx.rotate(-Math.PI/2); ctx.fillText('reliability',0,0); ctx.restore();
+  ctx.font='10px "JetBrains Mono",monospace';
+  [10,50,100,500,1000].forEach(tv=>{ ctx.fillText(tv,toX(tv),rightTop+rightH+14); });
+  ctx.textAlign='right';
+  [0.2,0.4,0.6,0.8,1.0].forEach(rv=>{ ctx.fillText(rv.toFixed(1),rightX-5,toY(rv)+3); });
 }
-
-Object.values(lmmBridge).forEach(el => {
-  if(el) el.addEventListener('input', updateLMMBridge);
-});
+ 
+Object.values(lmmBridge).forEach(el => { if(el) el.addEventListener('input', updateLMMBridge); });
 setTimeout(updateLMMBridge, 200);
-
+ 
 // ── RESIZE ──
 window.addEventListener('resize', ()=>{
   updateAttenuation();
