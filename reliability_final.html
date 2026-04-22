@@ -426,41 +426,7 @@
   <p>A reliability of 1.0 means no error — every point of observed variance reflects genuine individual differences. A reliability of 0 means pure noise. Most psychological measures fall somewhere in between, and the practical consequences of that position are severe — not merely in the form of imprecision, but in the form of a systematic, one-directional bias in every effect we estimate. This systematic bias is what Spearman named <strong>attenuation</strong>, and quantifying it was his second major contribution of 1904.</p>
   <p>Reliability can be estimated in two broad ways: through <strong>test-retest reliability</strong> (correlating two administrations of the same measure) or through <strong>internal consistency</strong> (asking how well items within a single administration agree with each other, as indexed by Cronbach's α, introduced in 1951). Despite their different computational forms, both aim to estimate the same underlying ratio above, but they rely on different assumptions and can diverge in practice. The choice between them is often practical — internal consistency is cheaper to obtain — but they should not be treated as interchangeable in all contexts.</p>
   <p>A critical implication follows: reliability is not just a property of a measure, but of a design. Tasks that maximise within-person effects often minimise between-person variance, limiting the signal available for individual differences — a tension that becomes central in modern reliability work.</p>
-  <div class="widget" style="padding: 1.5rem 2rem;">
-    <div class="widget-title">The Historical Arc — A Century of Reliability Theory</div>
-    <div style="position:relative; padding-left: 2rem; margin-top:0.5rem;">
-      <div style="position:absolute; left:0.65rem; top:0; bottom:0; width:2px; background:linear-gradient(to bottom, var(--amber), var(--blue), #60b0a0, #9060d0); border-radius:1px;"></div>
-      <div style="margin-bottom:2rem; position:relative;">
-        <div style="position:absolute; left:-1.9rem; top:0.3rem; width:12px; height:12px; border-radius:50%; background:var(--amber); border:2px solid var(--navy);"></div>
-        <div style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--amber); letter-spacing:0.1em; margin-bottom:0.3rem;">1904 — SPEARMAN</div>
-        <div style="font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:var(--cream); margin-bottom:0.3rem;">The Problem Named and First Solution Proposed</div>
-        <div style="font-size:0.85rem; color:var(--cream-dim);">Introduces the correlation coefficient; immediately recognises that measurement error deflates it (attenuation); derives both the attenuation formula and the disattenuation correction r* = r_xy/√(r_xx·r_yy). Correct in direction — but unstable in practice, since the correction can yield r &gt; 1 when reliability estimates themselves contain sampling error.</div>
-      </div>
-      <div style="margin-bottom:2rem; position:relative;">
-        <div style="position:absolute; left:-1.9rem; top:0.3rem; width:12px; height:12px; border-radius:50%; background:var(--blue); border:2px solid var(--navy);"></div>
-        <div style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--blue); letter-spacing:0.1em; margin-bottom:0.3rem;">1951 — CRONBACH</div>
-        <div style="font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:var(--cream); margin-bottom:0.3rem;">Internal Consistency as a Practical Reliability Estimate</div>
-        <div style="font-size:0.85rem; color:var(--cream-dim);">Coefficient alpha provides a practical way to estimate reliability from a single administration — no retest required. The problem (attenuation) is still Spearman's; alpha simply gives a more convenient way to estimate the reliability values needed for his correction. Dominant for seven decades, but shares Spearman's blind spot: it tells you where you are on the reliability curve, not the shape of the curve itself.</div>
-      </div>
-      <div style="margin-bottom:2rem; position:relative;">
-        <div style="position:absolute; left:-1.9rem; top:0.3rem; width:12px; height:12px; border-radius:50%; background:#60b0a0; border:2px solid var(--navy);"></div>
-        <div style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#60b0a0; letter-spacing:0.1em; margin-bottom:0.3rem;">2018 — HEDGE, POWELL &amp; SUMNER</div>
-        <div style="font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:var(--cream); margin-bottom:0.3rem;">The Reliability Paradox Formally Demonstrated</div>
-        <div style="font-size:0.85rem; color:var(--cream-dim);">Show empirically that tasks producing robust group-level effects consistently yield poor test-retest reliability for individual differences. The paradox arises because tasks designed to maximise within-person condition differences minimise between-person variance — the very signal needed for individual differences research. Attenuation is not a theoretical worry; it is pervasive and severe.</div>
-      </div>
-      <div style="margin-bottom:2rem; position:relative;">
-        <div style="position:absolute; left:-1.9rem; top:0.3rem; width:12px; height:12px; border-radius:50%; background:#9060d0; border:2px solid var(--navy);"></div>
-        <div style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#9060d0; letter-spacing:0.1em; margin-bottom:0.3rem;">2024–2026 — ROUDER, MEHRVARZ &amp; SCHNUERCH</div>
-        <div style="font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:var(--cream); margin-bottom:0.3rem;">Reliability as Signal-to-Noise: The Full Curve Revealed</div>
-        <div style="font-size:0.85rem; color:var(--cream-dim);">Reframe reliability as γ² = σ²_B/σ²_W — a trial-size-invariant variance ratio independent of how many trials were run. From γ² alone you can derive the entire reliability curve as a function of trial size. Crucially, their 2026 paper argues that reliability itself is merely an intermediate quantity: the true goal is directly modelling uncertainty in correlations across tasks via hierarchical models, bypassing the reliability bottleneck entirely.</div>
-      </div>
-    </div>
   </div>
-  <div class="callout">
-    <div class="callout-label">The Thread Running Through Everything</div>
-    <p>From Spearman to Rouder, the underlying idea is identical: observed scores mix signal and noise, and any statistic computed from them inherits that mixture in predictable ways. What has changed across the century is the precision with which we can quantify that mixture — and therefore the precision with which we can diagnose problems and prescribe remedies. The next section makes the consequences concrete, starting with Spearman's own attenuation formula and what it implies for the effects we report every day.</p>
-  </div>
-</div>
 
 <hr class="section-divider">
 
@@ -475,7 +441,7 @@
   <h3>Attenuation of Group Differences</h3>
   <p>A critical and often overlooked point: <strong>attenuation affects mean differences just as severely as it affects correlations</strong>. This is frequently misunderstood — researchers sometimes assume that poor reliability "only matters for individual differences research." This is wrong. Karvelis and Diaconescu (2025) demonstrate mathematically that observed standardised mean differences follow the same reliability-based scaling:</p>
   <div class="formula">δ_observed = δ_true × √ICC<div class="formula-label">Attenuation formula for standardised group differences (Cohen's d), assuming equal reliability across groups</div></div>
-  <p>A true effect of d = 0.8 measured with an instrument of reliability .5 yields an observed d of 0.8 × √.5 ≈ <strong>0.57</strong>. A "large" effect becomes a "medium" effect — not because the effect is smaller in reality, but because measurement error inflates the denominator of the effect size formula.</p>
+  <p>A true effect of d = 0.8 measured with an instrument of reliability .5 yields an observed d of 0.8 × √.5 ≈ <strong>0.57</strong>. A "large" effect becomes a "medium" effect — not because the effect is smaller in reality, but because of how Cohen's d is constructed. Cohen's d is the mean difference between groups divided by the pooled standard deviation: <em>d = (μ₁ − μ₂) / σ_pooled</em>. Measurement error leaves the mean difference in the numerator unaffected — random noise cancels when averaged across participants. But that same noise inflates the pooled standard deviation in the denominator, making it larger than the true population SD. A larger denominator with an unchanged numerator always produces a smaller d. The effect is real and unchanged; the ruler has simply been made noisier, stretching the scale against which the difference is expressed.</p>
   <h3>Why Attenuation Is Always a Lower Bound — Never an Upper One</h3>
   <p>At this point a reasonable question arises: if measurement error is <em>random</em>, why does it always push effects downward? If errors are equally likely to be positive or negative, shouldn't they sometimes inflate an observed correlation and sometimes deflate it — producing a noisy estimate centred on the true value rather than a systematically lower one?</p>
   <p>This intuition is correct for means — random error cancels across people, leaving group means unbiased. But a correlation is not a mean. It is a <em>ratio</em> of covariance to variance, and error affects the numerator and denominator very differently:</p>
@@ -529,37 +495,9 @@
       <div class="result-card bad"><div class="val" id="rtm-signal-lost">—</div><div class="lbl">Signal lost to error (%)</div></div>
     </div>
   </div>
-  <div class="widget">
-    <div class="widget-title">Interactive: Attenuation Explorer</div>
-    <p style="font-size:0.85rem; color:var(--cream-dim); margin-bottom:1.5rem;">Adjust the sliders to see how reliability attenuates both correlations and group differences simultaneously.</p>
-    <div class="slider-row">
-      <div class="slider-label">True correlation r<sub>true</sub>: <span id="rTrue-val">0.70</span></div>
-      <input type="range" id="rTrue" min="0.1" max="0.99" step="0.01" value="0.70">
-    </div>
-    <div class="slider-row">
-      <div class="slider-label">True effect δ<sub>true</sub>: <span id="dTrue-val">0.80</span></div>
-      <input type="range" id="dTrue" min="0.1" max="2.0" step="0.05" value="0.80">
-    </div>
-    <div class="slider-row">
-      <div class="slider-label">Reliability ICC<sub>x</sub>: <span id="iccX-val">0.70</span></div>
-      <input type="range" id="iccX" min="0.05" max="1.0" step="0.05" value="0.70">
-    </div>
-    <div class="slider-row">
-      <div class="slider-label">Reliability ICC<sub>y</sub>: <span id="iccY-val">0.70</span></div>
-      <input type="range" id="iccY" min="0.05" max="1.0" step="0.05" value="0.70">
-    </div>
-    <div class="results-grid">
-      <div class="result-card" id="obsR-card"><div class="val" id="obsR-val">—</div><div class="lbl">Observed r</div></div>
-      <div class="result-card" id="lossR-card"><div class="val" id="lossR-val">—</div><div class="lbl">Signal lost (%)</div></div>
-      <div class="result-card" id="obsD-card"><div class="val" id="obsD-val">—</div><div class="lbl">Observed d</div></div>
-      <div class="result-card" id="lossD-card"><div class="val" id="lossD-val">—</div><div class="lbl">Signal lost (%)</div></div>
-    </div>
-    <canvas id="attenuationCanvas" height="200" style="margin-top:1.5rem;"></canvas>
-    <p style="font-size:0.75rem; color:var(--cream-dim); margin-top:0.5rem; text-align:center;">Observed values (coloured bars) versus true values (outline bars). Both are attenuated by the same reliability mechanism.</p>
-  </div>
   <div class="callout red">
     <div class="callout-label">Critical Point</div>
-    <p>Attenuation does <strong>not</strong> diminish as sample size increases. Adding more participants makes you increasingly confident in a badly attenuated value — not in the true value. The only remedy is better measurement (higher reliability), not larger samples. This asymptotic property of attenuation is one of the most important and underappreciated facts in psychological methodology.</p>
+    <p>Attenuation does <strong>not</strong> diminish as you add more <em>participants</em>. Adding more people makes you increasingly confident in a badly attenuated value — not in the true value. What can help is adding more <em>trials per person</em> (which reduces trial noise and raises reliability) or using a hierarchical model that explicitly accounts for that noise. The distinction between more participants and more trials — and why they have such different consequences — is developed in detail in Section 4.</p>
   </div>
 </div>
 
@@ -608,14 +546,8 @@
   <h3>The Problem with Conventional Reliability Coefficients</h3>
   <p>Cronbach's alpha and test-retest ICC are the workhorses of reliability assessment. Both are widely reported and widely interpreted. But they share a critical limitation: <strong>they are not fixed properties of a task — they depend on how many trials or items you administer.</strong></p>
   <p>Consider two labs both studying the Stroop task. Lab A runs 200 trials per person per condition; Lab B runs 20 trials per person per condition. Lab A will report much higher test-retest reliability than Lab B — but the task is identical. The reliability coefficient has told us something about the experimental implementation, not about the task itself.</p>
-  <table class="compare">
-    <tr><th>Property</th><th>Cronbach's α / ICC</th><th>Signal-to-Noise Ratio γ²</th></tr>
-    <tr><td>Trial-size invariant?</td><td>✗ Changes with L</td><td>✓ Fixed property of the task</td></tr>
-    <tr><td>Comparable across studies?</td><td>✗ Only if L is matched</td><td>✓ Always comparable</td></tr>
-    <tr><td>Can plan required trial size?</td><td>✗ No</td><td>✓ Directly, via formula</td></tr>
-    <tr><td>Reveals reliability ceiling?</td><td>✗ No</td><td>✓ Yes — shape of full curve</td></tr>
-    <tr><td>Estimable from summary statistics?</td><td>✓ Yes</td><td>✓ Yes, γ̂² = Var(d)/MSE − 2/L</td></tr>
-  </table>
+
+
 
   <h3>The Signal-to-Noise Ratio γ²</h3>
   <p>Rouder and Mehrvarz propose replacing the reliability coefficient with a <strong>signal-to-noise variance ratio</strong>:</p>
@@ -656,75 +588,25 @@
     </div>
   </div>
 
-  <h3>Bridging to Linear Mixed Models — and What the Bridge Reveals</h3>
 
-  <p>A useful way to understand Rouder's framework is to recognise how it maps onto the variance decomposition estimated in linear mixed models — and, crucially, where the two framings diverge in ways that are practically important.</p>
+  <h3>The Connection Back to Attenuation</h3>
 
-  <p>Rouder's data model is explicitly:</p>
+  <p>The interactive curve above makes visible what a single ICC value completely conceals: the Stroop effect (γ ≈ .12) needs ~158 trials per condition to reach r = .70 and over 600 for r = .90 — yet most studies run 20–50. The Poggendorf illusion (γ ≈ 1.41) exceeds r = .90 with just 15 trials. The ceiling is set by γ², not by N. And since the ICC values in the attenuation formula are themselves determined by γ² and L, the degree of attenuation in any reported correlation is:</p>
 
-  <div class="formula">Y<sub>ikℓ</sub> ~ Normal(α<sub>i</sub> + x<sub>k</sub>θ<sub>i</sub>, τ²)<div class="formula-label">Rouder's model: person effect, condition contrast, and trial noise — no item subscript</div></div>
+  <div class="formula">r_observed ≈ r_true × γ²/(γ² + 2/L)<div class="formula-label">Attenuation as a direct function of task signal-to-noise and trial size</div></div>
 
-  <p>Notice there is <em>no item subscript</em> anywhere in this model. The index ℓ runs over replicate trials, and τ² is simply the variance of each trial around the person-by-condition mean. <strong>Items do not exist as a modelled entity — they are absorbed entirely into τ².</strong> This is not an oversight but a deliberate simplification appropriate for the paradigms Rouder considers (Stroop, flanker), where trials are effectively independent random draws from a large pool. The derivation of the test-retest reliability formula requires that noise on Day 1 and Day 2 be statistically independent — random item sampling across occasions is the assumption baked into the whole framework.</p>
+  <p>For contrast-based paradigms — such as the face inversion effect — observed γ is characteristically low because the subtraction cancels much of the between-person variance while doubling the noise. Poor cross-task correlations in such paradigms are not evidence of construct fragmentation; they are the mathematically predictable consequence of using a ruler too noisy to distinguish nearby positions.</p>
 
-  <p>A linear mixed model separates that lumped noise term into distinct components:</p>
+  <h3>Bridging to Linear Mixed Models</h3>
 
-  <div class="formula">y<sub>pi</sub> = μ + u<sub>p</sub> + v<sub>i</sub> + ε<sub>pi</sub><div class="formula-label">Crossed LMM: between-person variance (σ²<sub>person</sub>), item intercept variance (σ²<sub>item</sub>), and residual trial noise (σ²<sub>residual</sub>)</div></div>
-
-  <p>This decomposition is richer — but it also introduces a subtlety that matters for reliability. <strong>Standard item intercepts (v<sub>i</sub>) are shared across all participants.</strong> They shift item difficulty, but they do not by themselves create instability in people's rank ordering across occasions. If everyone is presented with the same items on a given occasion, item intercepts largely shift the grand mean rather than adding noise to person scores. What actually drives person-score instability is different: it is the <em>item-sampling variance</em> — the unpredictability introduced when different subsets of items are drawn on different occasions — plus any <em>person-by-item interaction</em> variance that makes some people systematically better or worse on particular items.</p>
+  <p>Rouder's model contains no item subscript. His τ² absorbs everything — item difficulty, item-by-person interactions, and pure trial noise — into a single lump. This works cleanly for the paradigms he has in mind, where trials are essentially random draws from a large pool. But many experimental paradigms in psychology use a finite set of stimuli created by the experimenter, and those stimuli vary: some items are harder than others, some items discriminate between people better than others, and the degree of overlap between what was tested on occasion 1 and occasion 2 will depend on how the materials were sampled. A linear mixed model already partitions τ² into its constituents — between-person variance, between-item variance, and residual noise — and those components have different implications for reliability:</p>
 
   <div class="callout blue">
     <div class="callout-label">What Actually Enters the Noise Denominator</div>
-    <p>The noise denominator for a Rouder-style γ² should include components that generate <em>instability in person scores across occasions</em>. This means:</p>
-    <p style="margin-top:0.6rem;"><strong>Always contributes:</strong> σ²<sub>residual</sub> — irreducible within-person trial noise, independent across occasions by definition.</p>
-    <p style="margin-top:0.4rem;"><strong>Contributes when items are resampled:</strong> σ²<sub>item-sampling</sub> — the variance attributable to drawing a different item subset each time. This is not simply the LMM's σ²<sub>item</sub> intercept variance, but rather the person-score-level instability introduced by item sampling.</p>
-    <p style="margin-top:0.4rem;"><strong>May contribute:</strong> σ²<sub>person×item</sub> — if people interact differently with specific items, this adds instability that does not average away even with fixed item sets.</p>
-    <p style="margin-top:0.4rem;">Plain item intercept variance (σ²<sub>item</sub> from a crossed LMM) does <em>not</em> directly enter the denominator when items are fixed across occasions, because it is shared structure, not noise.</p>
+    <p><strong>Always contributes:</strong> σ²<sub>residual</sub> — irreducible within-person trial noise. <strong>Contributes when items are resampled:</strong> σ²<sub>item-sampling</sub> — instability from drawing a different item subset each occasion. <strong>May contribute:</strong> σ²<sub>person×item</sub> — if people respond differently to specific items. Plain item intercept variance does <em>not</em> enter the denominator when items are fixed across occasions — it is shared structure, not noise. The LMM framing is not a correction to Rouder but an elaboration: it makes visible <em>why</em> a task has low SNR and what lever — more trials, better items, or a different sampling strategy — is most likely to raise it.</p>
   </div>
 
-  <h3>Three Designs — Three Noise Structures</h3>
-
-  <p>With this clearer picture of what counts as noise, the three design cases can be stated more precisely:</p>
-
-  <div class="scenario-grid">
-    <div class="scenario-card fixed">
-      <div class="scenario-label">Design A · Fixed Items</div>
-      <p>The same item set used on all occasions. Item intercepts are shared structure — they cancel from the test-retest covariance. Only residual and person×item interaction contribute to noise.</p>
-      <div class="formula" style="font-size:0.85rem; padding: 0.75rem 1rem; margin: 0.75rem 0;">γ² ≈ σ²<sub>person</sub> / (σ²<sub>residual</sub> + σ²<sub>p×i</sub>)</div>
-      <p style="font-size:0.8rem; color:var(--green);">Highest γ² — item difficulty is "free" shared structure</p>
-    </div>
-    <div class="scenario-card random">
-      <div class="scenario-label">Design B · Random Items</div>
-      <p>Fresh items sampled each occasion from a large pool. Item-sampling introduces occasion-specific noise at the person-score level, on top of residual variance.</p>
-      <div class="formula" style="font-size:0.85rem; padding: 0.75rem 1rem; margin: 0.75rem 0;">γ² ≈ σ²<sub>person</sub> / (σ²<sub>residual</sub> + σ²<sub>item-sampling</sub>)</div>
-      <p style="font-size:0.8rem; color:var(--red);">Lowest γ² — recovers Rouder's τ² when item-sampling noise dominates</p>
-    </div>
-    <div class="scenario-card partial">
-      <div class="scenario-label">Design C · Partial Overlap</div>
-      <p>Finite pool of N items; L sampled per occasion. Item-sampling noise scales with the non-overlapping fraction (1 − L/N) of items, giving an intermediate noise level.</p>
-      <div class="formula" style="font-size:0.85rem; padding: 0.75rem 1rem; margin: 0.75rem 0;">γ² ≈ σ²<sub>person</sub> / (σ²<sub>residual</sub> + (1−ρ)·σ²<sub>item-sampling</sub>)</div>
-      <p style="font-size:0.8rem; color:var(--amber);">Intermediate — most realistic design in practice</p>
-    </div>
-  </div>
-
-  <div class="callout">
-    <div class="callout-label">What Rouder's Framework Can and Cannot Express</div>
-    <p>Rouder's τ² lumps all of these noise sources together into a single within-person trial variance. The LMM can unpack them — but doing so correctly requires identifying which components are stable shared structure (item intercepts, when fixed) and which generate genuine person-score instability (residual noise, item-sampling variance, person×item interactions). The LMM framing is not a correction to Rouder but an elaboration that becomes useful once you want to ask <em>why</em> a task has low SNR and what can be done about it.</p>
-  </div>
-
-  <h3>From Fitted Model to Planning Diagnostic: The Practical Workflow</h3>
-
-  <p>This is where the LMM bridge becomes genuinely actionable. Once a hierarchical model has been fitted and converged, the estimated variance components are already in hand. Rather than simply reporting a reliability coefficient that conflates task quality with trial count, a researcher can compute a Rouder-style signal-to-noise index directly from those components — and use it as a planning diagnostic.</p>
-
-  <div class="callout green">
-    <div class="callout-label">Practical Workflow: From Model Output to Trial Planning</div>
-    <p><strong>Step 1 — Fit the hierarchical model.</strong> A crossed LMM (or Bayesian hierarchical model) yields variance components for persons, items, and residual noise.</p>
-    <p style="margin-top:0.6rem;"><strong>Step 2 — Identify the noise denominator.</strong> Decide which components act as measurement noise for your inferential target: residual variance always counts; item-sampling variance counts if items are resampled across occasions; person×item interaction counts if present.</p>
-    <p style="margin-top:0.6rem;"><strong>Step 3 — Compute γ².</strong> Form the ratio of person signal variance to effective noise variance.</p>
-    <p style="margin-top:0.6rem;"><strong>Step 4 — Consult the reliability curve.</strong> Use E(r) ≈ γ²/(γ² + 2/L) to see what reliability your current trial count achieves, and how many more trials would be needed to reach a target.</p>
-    <p style="margin-top:0.6rem;"><strong>Step 5 — Interpret diagnostically.</strong> Low γ² from high residual noise suggests brute-force trial addition may help. Low γ² from low person signal suggests the task may not discriminate individuals well regardless of trial count — redesign of items may be more effective than simply adding more of them.</p>
-  </div>
-
-  <p>This workflow is very much in the spirit of Rouder's recommendation that task goodness should be expressed in a trial-size-invariant way. The reliability coefficient tells you where you currently are; γ² tells you the shape of the entire curve and whether any practical trial count can get you where you need to be.</p>
+  <p>Once a hierarchical model has been fitted, the estimated variance components are already in hand. A Rouder-style γ² can be computed directly from model output, plugged into the reliability curve, and used to ask how many more trials — or better-calibrated items — would be needed to reach a measurement target. The following example makes this concrete.</p>
 
   <h3>A Worked Example: Face Recognition with a 2×2 Design</h3>
 
@@ -785,10 +667,7 @@
 
   <p>Consulting the reliability curve for each γ²: overall ability (γ² = 0.50) achieves r ≈ .96 at L = 100 trials, meaning very few additional items are needed. The inversion effect (γ² = 0.15) achieves only r ≈ .88 — still useful, but considerably more fragile. The interaction (γ² = 0.038) achieves r ≈ .66 — below the conventional threshold of .70 even with 100 trials per condition, and would require over 450 trials to reach .90. No amount of modest sample-size increase rescues this; only more items or a fundamentally different task design will help.</p>
 
-  <div class="callout green">
-    <div class="callout-label">Item Design Is a Reliability Design Decision</div>
-    <p>Two further lessons from this example. First: the choice of fixed versus sampled items matters. Using the same 100 faces on both occasions was what made item intercept variance "free" — if different face sets were drawn each time, item-sampling variance would enter the noise denominator and every γ² would drop. Second: low SNR may reflect not just too few items but poorly discriminating ones. If the inversion effect shows low person slope variance (σ²<sub>p-A</sub> = 0.12), the task structure itself limits what can be recovered — brute-force item addition is less effective than redesigning items to amplify between-person differences in the contrast of interest.</p>
-  </div>
+
 
   <div class="widget">
     <div class="widget-title">Interactive: From LMM Variance Components to γ² and Trial Planning</div>
@@ -828,102 +707,104 @@
     <p style="font-size:0.75rem; color:var(--cream-dim); margin-top:0.75rem; text-align:center;">Left: variance decomposition showing signal (green) vs noise components. Right: reliability curve implied by γ². Try setting overlap to 1.0 (face task) vs 0.0 (Stroop) to see how item design shifts the curve.</p>
   </div>
 
-  <h3>Why This Matters: The Curve Reveals What the Coefficient Hides</h3>
+  <h3>Correcting for Attenuation — Then and Now</h3>
 
-  <p>The reliability curve makes visible something that a single ICC value completely conceals: the shape of the curve — and therefore exactly how many trials are needed to reach any reliability target. Consider the Stroop effect (γ ≈ .12). Plugging into the formula, achieving r = .70 requires approximately 158 trials per condition; achieving r = .90 requires over 600. Most studies run 20–50 trials per condition. No amount of increased sample size changes this — the ceiling is set by γ², not by N.</p>
+  <p>Section 2 introduced Spearman's correction as the classical remedy for attenuation: divide the observed correlation by the square root of the product of the two reliabilities. This works, and Haines (2026) confirms it is approximately unbiased (see below for details on his website) — across many simulations it centres on the true ρ. But it is fragile: reliability must be estimated and is itself noisy, so dividing two uncertain quantities inflates variance and produces impossible values above 1.0 in roughly 13% of cases. Most critically, it requires reliability as a known input to do anything at all.</p>
 
-  <p>Contrast this with the Poggendorf visual illusion (γ ≈ 1.41). With just 15 trials per person, test-retest reliability exceeds .90. The task is intrinsically high-signal: individual differences in susceptibility to the illusion are large relative to trial noise. The individual differences research programme built on this task is on solid ground regardless of how few trials are used.</p>
+  <p>The more modern approach — fitting a hierarchical model directly to trial-level data — arrives at the same disattenuated estimate through a fundamentally different route. Rather than estimating reliability and then applying a correction, it partitions the observed variance into its components (person signal, trial noise, item contributions) and estimates ρ as a direct parameter of the population covariance structure. No reliability figure is needed. No post-hoc correction is applied. Disattenuation is a natural consequence of modelling the data-generating process correctly. Haines shows that multivariate shrinkage and Bayesian hierarchical models all converge on the same answer — but with correctly calibrated uncertainty and no impossible values.</p>
 
   <div class="callout green">
-    <div class="callout-label">The Unifying Principle</div>
-    <p>Both Cronbach's α / ICC and Rouder's γ² are expressions of the same underlying variance logic: stable person signal relative to competing sources of variability. Mixed models make that decomposition explicit by partitioning variance linked to persons, items, and residual fluctuation. Rouder's framework then turns that decomposition into a design tool — and the LMM lens extends it by making item design a quantifiable lever.</p>
+    <div class="callout-label">The Central Insight: Same Answer, Without Needing Reliability</div>
+    <p>Spearman gets to the right answer on average — but needs reliability as input, and that input is noisy. The hierarchical model gets to the same right answer without reliability ever entering the calculation — and as a bonus, the variance components it estimates along the way are exactly the ingredients needed to compute Rouder's γ², consult the reliability curve, and reason about how many more trials or better-calibrated items would be needed. The modern approach does not just fix the correlation estimate; it generates the diagnostic information needed to improve the measurement itself.</p>
   </div>
 
-  <h3>The Connection Back to Attenuation</h3>
+  <h3>Beyond Reliability: Consistency, Uncertainty, and Statistical Hell</h3>
 
-  <p>The full circle closes here. Recall from Section 2 that attenuation of correlations follows r_observed = r_true × √(ICC_x × ICC_y). The ICC values in that formula are themselves determined by γ² and L. So for any task in any study, the degree of attenuation in reported correlations is:</p>
+  <p>Section 2 flagged that adding more participants does not reduce attenuation — the bias is in the measurement, not the sampling. Rouder's 2026 paper formalises exactly why this is so troubling. The naive sample correlation between contrast scores is not merely attenuated — it is an <em>inconsistent</em> estimator of the true latent correlation. Most biased estimators are at least consistent: as sample size grows, the bias shrinks toward zero. Not here. The estimator converges to the attenuated value and stays there regardless of how many participants are added, creating what Rouder calls <strong>"statistical hell"</strong>: as N grows, the confidence interval narrows around the wrong answer, and researchers become increasingly certain of an incorrect conclusion.</p>
 
-  <div class="formula">r_observed ≈ r_true × γ²/(γ² + 2/L)<div class="formula-label">Attenuation as a direct function of the task's signal-to-noise ratio and trial size</div></div>
-
-  <p>Importantly, this also means that for <em>contrast-based paradigms</em> — such as the well documented face inversion effect — observed γ will also be characteristically low, because the subtraction (i.e., upright − inverted) cancels much of the between-person variance while doubling the noise. As a result, poor cross-task correlations across different inversion tasks or paradigms are not simply evidence of construct fragmentation. They are the mathematically predictable consequence of attempting to localise individuals in a distribution using a ruler too noisy to distinguish nearby positions. In signal-to-noise terms, low γ² directly constrains the maximum observable reliability, and therefore the upper bound on any cross-task association.</p>
-
-  <h3>Beyond Reliability: Statistical Hell and the Inconsistency Problem</h3>
-
-  <p>Rouder's 2026 paper (with Mehrvarz and Schnuerch) makes a striking further argument that goes beyond the attenuation story told in Section 2. It is not just that conventional sample correlations between contrast scores are deflated — it is that they are <em>inconsistent</em> estimators of the true latent correlation, and that this inconsistency creates what Rouder calls <strong>"statistical hell."</strong></p>
-
-  <h3>Bias, Inconsistency, and Why They Matter Together</h3>
-
-  <p>To understand what makes this situation especially troubling, two technical terms need to be separated. An estimator is <strong>biased</strong> if its expected value across repeated samples does not equal the true parameter it is trying to estimate. Many estimators carry some bias, and this is normally tolerable because most biased estimators are also <strong>consistent</strong> — meaning that as sample size grows, the bias shrinks and eventually vanishes. The law of large numbers is the intuition behind this: gather enough data and any well-behaved estimator converges to the truth.</p>
-
-  <p>The sample correlation between noisy contrast scores is different. It is biased downward — its expected value is the attenuated correlation, not the true latent correlation — and it is also <strong>inconsistent with respect to increasing numbers of participants</strong>. Adding more people does not reduce the attenuation. The estimator converges not to the true correlation but to the attenuated value. No amount of participant recruitment closes that gap.</p>
-
-  <div class="callout red">
-    <div class="callout-label">Why Inconsistency Is the Deeper Problem</div>
-    <p>With a biased-but-consistent estimator, a researcher can in principle mitigate the problem by collecting more data — the bias dissolves asymptotically. With an <em>inconsistent</em> estimator, no such mitigation exists. The attenuated value is where the estimator converges, and it stays there regardless of how many participants are added. More data makes the estimate more stable — but stably wrong.</p>
-  </div>
-
-  <h3>The Precision Trap: How SE Compression Creates False Confidence</h3>
-
-  <p>This is where the situation becomes particularly insidious. Standard errors measure sampling variability: how much would this estimate jump around across repeated experiments? As N grows, this variability shrinks. The CI narrows. The p-value drops. The result looks increasingly robust.</p>
-
-  <p>But the standard error is computed conditional on the model being correct. If trial noise is not modelled — if the noisy contrast score is treated as if it were a perfect measure of the latent quantity — then the SE reflects only sampling variability around the attenuated estimate. It contains no information about the systematic downward bias. The CI becomes narrower and narrower around the wrong value. MLE is optimal given a correctly specified model; when the model ignores trial noise, MLE faithfully reports precision around a biased target.</p>
+  <p>The standard error compounds this: it is computed conditional on the model being correct, so if trial noise is omitted, the SE reflects only sampling variability around the attenuated estimate — it contains no information about the systematic downward bias. A study with N = 800 reporting r = 0.10 with a tight CI looks like reliable evidence of a weak relationship, when in reality the measurement was simply too noisy to recover the true association.</p>
 
   <div class="callout red">
     <div class="callout-label">Statistical Hell: Precision Around the Wrong Number</div>
     <p>Suppose the true latent correlation between two tasks is 0.50. Because of noisy difference scores, the observed correlation converges near 0.10. Then:</p>
-    <p style="margin-top:0.75rem; font-family:'JetBrains Mono',monospace; font-size:0.85rem; line-height:2;">
+    <p style="margin-top:0.75rem; font-family:'JetBrains Mono',monospace; font-size:0.85rem; line-height:2.2;">
       N = 40 &nbsp;&nbsp;&nbsp; → &nbsp; estimate ≈ 0.10, &nbsp; wide CI<br>
       N = 400 &nbsp;&nbsp; → &nbsp; estimate ≈ 0.10, &nbsp; narrow CI<br>
       N = 4000 &nbsp; → &nbsp; estimate ≈ 0.10, &nbsp; extremely narrow CI
     </p>
-    <p style="margin-top:0.75rem;">The large study gives high confidence in an estimate that is five times smaller than the truth. The more participants recruited, the more precisely wrong the conclusion. This is what Rouder means by "statistical hell": precision improves while validity does not.</p>
+    <p style="margin-top:0.75rem;">Precision improves while validity does not. The large study gives high confidence in an estimate five times smaller than the truth.</p>
   </div>
 
-  <p>This dynamic is especially dangerous because large sample sizes are treated as a mark of quality. A study with N = 800 reporting r = 0.10 with a tight CI will likely survive peer review as reliable evidence that two constructs are weakly related — when in reality the measurement instrument was simply too noisy to recover the true association. The bias does not appear in any diagnostic: the fit indices look fine, the SE is correctly computed for the specified model, and nothing flags that the target parameter has been missed entirely.</p>
-
-  <h3>The IRT Route Out of Statistical Hell</h3>
-
-  <p>Item Response Theory offers one principled route out of this situation. Rather than computing a noisy person contrast score and treating it as error-free, IRT models the full item response process — estimating latent person ability directly from the pattern of responses across items, with explicit uncertainty attached to each person estimate.</p>
-
-  <p>The key advantage is that IRT-derived person ability estimates are calibrated against the information carried by each item. Items that are well-targeted to a person's ability level contribute more to the estimate; items at the floor or ceiling contribute less. This is precisely the kind of signal extraction that Rouder's γ² framework calls for: improving γ² can come from adding trials <em>or</em> from improving item quality. IRT makes item quality explicit and measurable through the discrimination parameter, which directly indexes how steeply an item's response probability rises with latent ability. A test built from high-discrimination items concentrated near the ability levels of interest achieves a higher effective γ² than a same-length test of poorly targeted items — meaning better reliability at the same trial count, or the same reliability at fewer trials.</p>
-
-  <p>Where Rouder's framework diagnoses the problem — low γ² means the item set is not generating enough signal relative to noise — IRT provides the design toolkit for addressing it: identify which items discriminate poorly, where the test information function peaks relative to the population of interest, and whether the item pool is generating redundant rather than complementary information about individual differences.</p>
-
-  <div class="callout green">
-    <div class="callout-label">IRT as a Remedy: Better Signal, Honest Uncertainty</div>
-    <p>A Bayesian hierarchical model that incorporates IRT-derived ability estimates — or that jointly models item responses and latent person abilities — can recover correlations that are substantially less attenuated than those based on raw contrast scores. Crucially, the uncertainty in each person estimate is explicit and propagatable: the posterior for the between-task correlation reflects both how many people were tested and how informative the items were. This is the honest alternative to SE compression — wider intervals, but around the right quantity.</p>
-  </div>
-
-  <h3>The Right Endpoint: Uncertainty on Correlations Directly</h3>
-
-  <p>The hierarchical modelling approach Rouder advocates does not simply <em>fix</em> attenuation — it <em>dissolves</em> the problem by building the measurement process into the model from the start. The conventional pipeline treats reliability as a post-hoc correction: compute noisy observed scores, correlate them, then attempt to adjust upward using a disattenuation formula. The generative modelling alternative skips the intermediate step entirely. By fitting a bivariate hierarchical model directly to trial-level data, it estimates the true between-task correlation ρ simultaneously with all the noise parameters — trial variance, person variance, cross-task covariance — propagating uncertainty from both sources (finite participants, finite trials) into the posterior automatically. Reliability is not corrected for; it never enters the analysis as a separate quantity. The model simply describes the data-generating process, and ρ falls out of it with appropriate uncertainty already attached.</p>
-
-  <p>This distinction matters because disattenuation via reliability correction is inherently unstable. The Spearman correction r* = r/√(r_xx · r_yy) can exceed 1.0 when reliability estimates contain sampling error, and its variance is difficult to propagate cleanly. The generative approach avoids these instabilities entirely — it works directly with what was measured (trial-level responses) rather than with derived scores that have already discarded information about measurement precision.</p>
+  <p>The hierarchical model resolves both problems at once. It is a consistent estimator — as N grows it converges to the true ρ, not the attenuated value. And its credible intervals incorporate both sources of uncertainty: finite participants and finite trials. The Stroop–Flanker example from Rouder et al. (2026) makes this concrete:</p>
 
   <div class="callout purple">
     <div class="callout-label">The Stroop–Flanker Example: What the Numbers Actually Look Like</div>
-    <p>Rouder et al. (2026) make this concrete with Stroop and Flanker data from Rey-Mermet et al. (2018), N = 253 participants, ~93 trials per condition each.</p>
-    <p style="margin-top:0.75rem;">The conventional approach — form sample contrast scores, correlate them:</p>
-    <p style="font-family:'JetBrains Mono',monospace; font-size:0.9rem; margin-top:0.5rem; padding:0.75rem 1rem; background:var(--slate); border-radius:4px;">
-      r<sub>sample</sub> = .045 &nbsp;|&nbsp; 95% CI: ±.123 &nbsp;(narrow, looks precise)
+    <p>N = 253 participants, ~93 trials per condition each (Rey-Mermet et al., 2018).</p>
+    <p style="margin-top:0.75rem;">Conventional approach — sample contrast scores correlated:</p>
+    <p style="font-family:'JetBrains Mono',monospace; font-size:0.88rem; margin-top:0.5rem; padding:0.75rem 1rem; background:var(--slate); border-radius:4px;">
+      r<sub>sample</sub> = .045 &nbsp;|&nbsp; 95% CI: ±.123 &nbsp;&nbsp;(narrow, looks precise)
     </p>
-    <p style="margin-top:0.75rem;">The bivariate hierarchical model fitted to trial-level data:</p>
-    <p style="font-family:'JetBrains Mono',monospace; font-size:0.9rem; margin-top:0.5rem; padding:0.75rem 1rem; background:var(--slate); border-radius:4px;">
+    <p style="margin-top:0.75rem;">Bivariate hierarchical model fitted to trial-level data:</p>
+    <p style="font-family:'JetBrains Mono',monospace; font-size:0.88rem; margin-top:0.5rem; padding:0.75rem 1rem; background:var(--slate); border-radius:4px;">
       ρ<sub>model</sub> = .17 &nbsp;&nbsp;|&nbsp; 95% CI: ±.45 &nbsp;&nbsp;(~4× wider, honestly uncertain)
     </p>
-    <p style="margin-top:0.75rem;">The sample correlation is not just smaller — it is accompanied by a CI that is far too narrow, because it reflects only uncertainty from finite participants and treats trial noise as if it does not exist. The model posterior is four times larger and four times wider. The narrow CI on the sample correlation is not a sign of precision — it is a sign that a major source of uncertainty has been omitted from the calculation entirely.</p>
+    <p style="margin-top:0.75rem;">The narrow CI on the sample correlation is not a sign of precision — it is a sign that trial noise was omitted from the uncertainty calculation entirely. The model is four times larger and four times wider, with both corrections going in the right direction simultaneously.</p>
   </div>
 
-  <p>The wider credible interval from the model is not a weakness — it is the honest answer. It reflects what the data actually support given the number of people tested and the number of trials each contributed. A researcher who sees ±.45 and concludes the design was underpowered is reading the situation correctly. A researcher who sees ±.123 and concludes the result is well-established is being misled by a model that forgot to include trial noise.</p>
-
-  <p>γ² and reliability remain valuable for planning — they tell you how many trials are needed to achieve a target credible interval width before data collection begins. But once data are in hand, the reliability coefficient is tangential to interpretation. Fit the hierarchical model, report the posterior on ρ directly, and let the uncertainty speak for itself.</p>
+  <p>γ² and reliability remain useful for planning — they tell you how many trials are needed to achieve a target credible interval width before data collection. But for interpretation, the reliability coefficient is tangential. Fit the hierarchical model, report the posterior on ρ directly, and let the uncertainty speak for itself.</p>
 
   <div class="callout">
     <div class="callout-label">Summary: The Full Chain of Measurement Error</div>
-    <p>Poor γ² → low reliability at any practical trial count → biased and inconsistent observed correlation estimates → SE compression creating false confidence around the wrong value → misleading conclusions about construct structure, test validity, and theoretical models. Every link in this chain is quantifiable. The remedies are: better items (higher γ² via IRT-informed design), more trials, or statistical modelling that explicitly partitions trial noise from true ability variance and reports uncertainty accordingly.</p>
+    <p>Poor γ² → low reliability at any practical trial count → biased and inconsistent observed correlation estimates → SE compression creating false confidence around the wrong value → misleading conclusions about construct structure, test validity, and theoretical models. Every link in this chain is quantifiable. The remedies are: better items (higher γ² via IRT-informed design), more trials per person, <em>and</em> — most powerfully — a hierarchical model that estimates the true correlation directly from trial-level data, requiring no reliability input and producing correctly calibrated uncertainty as a natural output.</p>
   </div>
 
+  <div class="widget" style="padding: 1.75rem 2rem; margin-bottom: 2rem;">
+    <div class="widget-title">Key Takeaways — The Full Argument in Summary</div>
+
+    <div style="margin-bottom: 1.5rem;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--amber); margin-bottom:0.6rem;">§1 · Foundations</div>
+      <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:0.45rem;">
+        <li style="color:var(--cream-dim); font-size:0.9rem; padding-left:1.1rem; position:relative;"><span style="position:absolute; left:0; color:var(--amber);">·</span>Every observed score = true score + random error. Reliability quantifies the signal-to-noise ratio of that mixture.</li>
+        <li style="color:var(--cream-dim); font-size:0.9rem; padding-left:1.1rem; position:relative;"><span style="position:absolute; left:0; color:var(--amber);">·</span>Reliability is not just a property of a measure — it depends on how individual scores are estimated from it.</li>
+      </ul>
+    </div>
+
+    <div style="margin-bottom: 1.5rem;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--blue); margin-bottom:0.6rem;">§2 · Attenuation</div>
+      <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:0.45rem;">
+        <li style="color:var(--cream-dim); font-size:0.9rem; padding-left:1.1rem; position:relative;"><span style="position:absolute; left:0; color:var(--blue);">·</span>Measurement error leaves the covariance numerator unbiased but inflates the variance denominator — so every observed correlation is smaller than the true value.</li>
+        <li style="color:var(--cream-dim); font-size:0.9rem; padding-left:1.1rem; position:relative;"><span style="position:absolute; left:0; color:var(--blue);">·</span>The same mechanism deflates Cohen's d: error inflates the pooled SD in the denominator without touching the mean difference.</li>
+<li style="color:var(--cream-dim); font-size:0.9rem; padding-left:1.1rem; position:relative;"><span style="position:absolute; left:0; color:var(--blue);">·</span>Adding more participants does not reduce attenuation — only more trials per person, <em>and</em> better statistical modelling, can do that.</li>
+      </ul>
+    </div>
+
+    <div style="margin-bottom: 1.5rem;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase; color:#60b0a0; margin-bottom:0.6rem;">§3 · Dichotomisation</div>
+      <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:0.45rem;">
+        <li style="color:var(--cream-dim); font-size:0.9rem; padding-left:1.1rem; position:relative;"><span style="position:absolute; left:0; color:#60b0a0;">·</span>Cutting a continuous measure into groups discards information and compounds attenuation — the two penalties are multiplicative, not additive.</li>
+        <li style="color:var(--cream-dim); font-size:0.9rem; padding-left:1.1rem; position:relative;"><span style="position:absolute; left:0; color:#60b0a0;">·</span>Continuous predictors in regression or mixed models are almost always preferable to dichotomised groups in ANOVA.</li>
+      </ul>
+    </div>
+
+    <div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--purple); margin-bottom:0.6rem;">§4 · Signal-to-Noise &amp; Modern Remedies</div>
+      <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:0.45rem;">
+        <li style="color:var(--cream-dim); font-size:0.9rem; padding-left:1.1rem; position:relative;"><span style="position:absolute; left:0; color:var(--purple);">·</span>γ² = σ²_person / τ² is a trial-size-invariant measure of task goodness. It determines the entire reliability curve — not just one point on it.</li>
+        <li style="color:var(--cream-dim); font-size:0.9rem; padding-left:1.1rem; position:relative;"><span style="position:absolute; left:0; color:var(--purple);">·</span>Low γ² from contrast paradigms is not a paradox — the subtraction cancels between-person variance while doubling noise. Poor cross-task correlations follow mathematically.</li>
+        <li style="color:var(--cream-dim); font-size:0.9rem; padding-left:1.1rem; position:relative;"><span style="position:absolute; left:0; color:var(--purple);">·</span>A fitted LMM already contains the ingredients to compute γ² — partitioning person signal from item and residual noise reveals <em>why</em> a task has low SNR, not just that it does.</li>
+        <li style="color:var(--cream-dim); font-size:0.9rem; padding-left:1.1rem; position:relative;"><span style="position:absolute; left:0; color:var(--purple);">·</span>The same task can simultaneously measure overall ability well and individual contrast effects poorly — a single reliability coefficient conceals this; separate γ² values per random effect reveal it.</li>
+        <li style="color:var(--cream-dim); font-size:0.9rem; padding-left:1.1rem; position:relative;"><span style="position:absolute; left:0; color:var(--purple);">·</span>Spearman's correction and hierarchical models both disattenuate correlations — Haines (2026) shows they converge on the same answer. But the hierarchical model does so without needing reliability as input, produces correctly calibrated uncertainty, and generates the variance components needed for γ² and trial planning as a natural by-product.</li>
+        <li style="color:var(--cream-dim); font-size:0.9rem; padding-left:1.1rem; position:relative;"><span style="position:absolute; left:0; color:var(--purple);">·</span>Adding more participants to a study with noisy contrast scores makes you more certain of the wrong answer — the sample correlation is an inconsistent estimator of the true latent correlation. The fix is modelling trial noise explicitly, not recruiting more people.</li>
+      </ul>
+    </div>
   </div>
+
+    <div class="callout blue">
+    <div class="callout-label">Further Reading</div>
+    <p>Nathaniel Haines' (2026) post <em>"How to Estimate a Correlation, and What It Means for Science"</em> at <a href="https://haines-lab.com/post/how-to-estimate-a-correlation-and-what-it-means-for-science/" style="color:var(--amber);">haines-lab.com</a> provides the definitive worked demonstration of everything discussed here — with R code, animated visualisations showing why univariate shrinkage cannot fix the correlation, and simulation results comparing Spearman, multivariate shrinkage, lme4, and brms side by side. The striking convergence of all four methods on the same disattenuated answer — despite their very different starting points — is the empirical punchline this section has been building toward.</p>
+  </div>
+
+</div>
 
 <footer>
   <p>Based on: <strong>Karvelis &amp; Diaconescu (2025)</strong> · <em>Front. Psychol.</em> · Attenuation of group differences &nbsp;|&nbsp; <strong>Rouder &amp; Mehrvarz (2024)</strong> · <em>Curr. Dir. Psychol. Sci.</em> · Signal-to-noise reliability &nbsp;|&nbsp; <strong>Rouder, Mehrvarz &amp; Schnuerch (2026)</strong> · <em>Br. J. Math. Stat. Psychol.</em> · The role of reliability in experiments — with thanks to my silicon AI friends Claude and ChatGPT</p>
@@ -956,68 +837,6 @@ function colorForVal(val, lo, hi){
   if(val >= lo) return '#e8a020';
   return '#e05050';
 }
-
-// ── WIDGET: ATTENUATION EXPLORER ──
-const w1 = {
-  rTrue: document.getElementById('rTrue'),
-  dTrue: document.getElementById('dTrue'),
-  iccX: document.getElementById('iccX'),
-  iccY: document.getElementById('iccY'),
-};
-function updateAttenuation(){
-  const rt = +w1.rTrue.value, dt = +w1.dTrue.value;
-  const ix = +w1.iccX.value, iy = +w1.iccY.value;
-  document.getElementById('rTrue-val').textContent = rt.toFixed(2);
-  document.getElementById('dTrue-val').textContent = dt.toFixed(2);
-  document.getElementById('iccX-val').textContent = ix.toFixed(2);
-  document.getElementById('iccY-val').textContent = iy.toFixed(2);
-  const ro = rt * Math.sqrt(ix * iy);
-  const dobs = dt * Math.sqrt(ix);
-  const lossR = ((1 - ro/rt) * 100).toFixed(0);
-  const lossD = ((1 - dobs/dt) * 100).toFixed(0);
-  document.getElementById('obsR-val').textContent = ro.toFixed(2);
-  document.getElementById('lossR-val').textContent = lossR + '%';
-  document.getElementById('obsD-val').textContent = dobs.toFixed(2);
-  document.getElementById('lossD-val').textContent = lossD + '%';
-  const obsRC = document.getElementById('obsR-card');
-  obsRC.className = 'result-card ' + (ro >= 0.6 ? 'good' : ro >= 0.3 ? 'mid' : 'bad');
-  const obsDC = document.getElementById('obsD-card');
-  obsDC.className = 'result-card ' + (dobs >= 0.8 ? 'good' : dobs >= 0.5 ? 'mid' : 'bad');
-  const canvas = document.getElementById('attenuationCanvas');
-  const ctx = canvas.getContext('2d');
-  const dpr = window.devicePixelRatio || 1;
-  canvas.width = canvas.offsetWidth * dpr;
-  canvas.height = 200 * dpr;
-  ctx.scale(dpr, dpr);
-  const W = canvas.offsetWidth, H = 200;
-  ctx.clearRect(0,0,W,H);
-  const pad = 40, barW = 60, gap = 40;
-  const groups = [
-    { label: 'Correlation (r)', true: rt, obs: ro, color: '#5090e0' },
-    { label: "Cohen's d", true: Math.min(dt,2)/2, obs: Math.min(dobs,2)/2, color: '#e8a020' }
-  ];
-  const chartH = H - 60;
-  groups.forEach((g, i) => {
-    const x = pad + i * (barW*2 + gap + 30);
-    const trueH = (g.true / 1.0) * chartH;
-    ctx.strokeStyle = 'rgba(240,232,216,0.4)';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(x, H-40-trueH, barW, trueH);
-    const obsH = (g.obs / 1.0) * chartH;
-    ctx.fillStyle = g.color;
-    ctx.fillRect(x, H-40-obsH, barW, obsH);
-    ctx.fillStyle = 'rgba(240,232,216,0.5)';
-    ctx.font = '11px "Source Serif 4", serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(g.label, x + barW/2, H-10);
-    ctx.fillStyle = '#f0e8d8';
-    ctx.fillText(g.obs.toFixed(2), x + barW/2, H-42-obsH);
-    ctx.fillStyle = 'rgba(240,232,216,0.4)';
-    ctx.fillText(g.true.toFixed(2) + ' (true)', x + barW/2, H-42-trueH-14);
-  });
-}
-Object.values(w1).forEach(el => el.addEventListener('input', updateAttenuation));
-updateAttenuation();
 
 // ── WIDGET: DICHOTOMISATION ──
 function normalPDF(x){ return Math.exp(-0.5*x*x) / Math.sqrt(2*Math.PI); }
@@ -1409,7 +1228,6 @@ setTimeout(updateLMMBridge, 200);
 
 // ── RESIZE ──
 window.addEventListener('resize', ()=>{
-  updateAttenuation();
   updateDichotomisation();
   drawReliabilityCurve();
   updateRTM();
