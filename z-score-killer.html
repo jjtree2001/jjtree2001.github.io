@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Is that score really extreme? — from z-scores to Bayes</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {delimiters: [
+    {left: '$$', right: '$$', display: true},
+    {left: '\\[', right: '\\]', display: true},
+    {left: '$', right: '$', display: false},
+    {left: '\\(', right: '\\)', display: false}
+  ]});"></script>
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --ink-soft: #3a3a3a;
+    --muted: #6a6a6a;
+    --rule: #d8d2c4;
+    --paper: #fbfaf5;
+    --callout-ex: #eef3ee;
+    --callout-ex-border: #4a6b4a;
+    --callout-pitfall: #f6ebe6;
+    --callout-pitfall-border: #8a4a3a;
+    --callout-aside: #eef0f5;
+    --callout-aside-border: #4a5a7a;
+    --callout-key: #f7f1de;
+    --callout-key-border: #8a6f2a;
+    --accent: #4a2a3a;
+    --prior: #2a5a8a;
+    --lik: #c86a2a;
+    --post: #7a2a4a;
+  }
+  html { background: var(--paper); }
+  body {
+    font-family: "Iowan Old Style", "Charter", "Georgia", "Times New Roman", serif;
+    color: var(--ink);
+    line-height: 1.62;
+    font-size: 17.5px;
+    max-width: 740px;
+    margin: 0 auto;
+    padding: 3.5rem 1.3rem 6rem;
+    background: var(--paper);
+  }
+  header.title-block {
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 1.6rem;
+    margin-bottom: 2.2rem;
+  }
+  header.title-block .kicker {
+    font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.8rem;
+  }
+  h1 {
+    font-size: 2.1rem;
+    line-height: 1.2;
+    margin: 0 0 0.8rem;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  h2 {
+    font-size: 1.35rem;
+    margin: 3.2rem 0 0.9rem;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: -0.005em;
+  }
+  h2 .num {
+    color: var(--muted);
+    font-weight: 400;
+    margin-right: 0.6em;
+    font-variant-numeric: tabular-nums;
+  }
+  h3 {
+    font-size: 1.08rem;
+    margin: 2.1rem 0 0.6rem;
+    font-weight: 600;
+    color: var(--ink);
+    font-style: italic;
+  }
+  h4 {
+    font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-size: 0.88rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 0.8rem;
+    font-weight: 600;
+  }
+  p { margin: 0 0 1.05rem; }
+  a { color: var(--accent); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  em { font-style: italic; }
+  strong { font-weight: 600; }
+  .lede {
+    font-size: 1.08rem;
+    color: var(--ink-soft);
+    font-style: italic;
+    margin: 1.3rem 0 1.8rem;
+  }
+  .callout {
+    border-left: 3px solid;
+    padding: 0.9rem 1.1rem 0.4rem;
+    margin: 1.5rem 0;
+    border-radius: 0 4px 4px 0;
+    font-size: 0.97rem;
+  }
+  .callout.example { background: var(--callout-ex); border-color: var(--callout-ex-border); }
+  .callout.pitfall { background: var(--callout-pitfall); border-color: var(--callout-pitfall-border); }
+  .callout.aside { background: var(--callout-aside); border-color: var(--callout-aside-border); }
+  .callout.key { background: var(--callout-key); border-color: var(--callout-key-border); }
+  .callout .label {
+    font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.35rem;
+  }
+  .callout p:last-child { margin-bottom: 0.7rem; }
+  .widget {
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 1.2rem 1.3rem 1.4rem;
+    margin: 2rem 0;
+    background: #fff;
+    font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-size: 0.92rem;
+  }
+  .widget h4 {
+    margin: 0 0 1rem;
+    color: var(--accent);
+  }
+  .widget-controls {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.7rem;
+    margin-bottom: 1rem;
+  }
+  .widget-controls label {
+    display: grid;
+    grid-template-columns: 10.5rem 1fr 3.2rem;
+    align-items: center;
+    gap: 0.7rem;
+    font-size: 0.88rem;
+  }
+  .widget-controls input[type="range"] {
+    width: 100%;
+  }
+  .widget-controls .val {
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    font-weight: 600;
+    text-align: right;
+  }
+  .widget-output {
+    background: #fafaf5;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 0.9rem 1rem;
+    margin-top: 0.4rem;
+  }
+  .widget-output .hero {
+    font-size: 1.15rem;
+    margin-bottom: 0.6rem;
+    color: var(--ink);
+  }
+  .widget-output .hero b {
+    color: var(--post);
+    font-variant-numeric: tabular-nums;
+  }
+  .widget-output .narr {
+    font-size: 0.86rem;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+  .widget svg { display: block; width: 100%; height: auto; }
+  .widget .legend {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 0.4rem;
+    display: flex;
+    gap: 1.1rem;
+    flex-wrap: wrap;
+  }
+  .widget .legend span::before {
+    content: "";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    margin-right: 0.3em;
+    vertical-align: baseline;
+  }
+  .widget .legend .sw-prior::before { background: var(--prior); }
+  .widget .legend .sw-lik::before { background: var(--lik); }
+  .widget .legend .sw-post::before { background: var(--post); }
+  .widget .legend .sw-tp::before { background: #4a6b4a; }
+  .widget .legend .sw-fp::before { background: #c86a2a; }
+  .eq {
+    display: block;
+    margin: 1.2rem 0;
+    text-align: center;
+    overflow-x: auto;
+  }
+  details {
+    margin: 1.2rem 0;
+    font-size: 0.95rem;
+    background: #f4f1e8;
+    border-left: 3px solid var(--rule);
+    padding: 0.6rem 0.9rem;
+    border-radius: 0 4px 4px 0;
+  }
+  details summary {
+    cursor: pointer;
+    font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-size: 0.82rem;
+    letter-spacing: 0.03em;
+    color: var(--muted);
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  details[open] summary { margin-bottom: 0.6rem; }
+  hr.rule {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 2.5rem 0;
+  }
+  footer.page-foot {
+    margin-top: 4rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--rule);
+    font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  ol.refs {
+    padding-left: 1.2rem;
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+  }
+  ol.refs li { margin-bottom: 0.35rem; }
+  nav.toc {
+    font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-size: 0.88rem;
+    background: #f4f1e8;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 0.9rem 1.2rem;
+    margin-bottom: 2.5rem;
+  }
+  nav.toc ol { margin: 0; padding-left: 1.3rem; }
+  nav.toc li { margin: 0.15rem 0; }
+  nav.toc a { color: var(--ink-soft); text-decoration: none; }
+  nav.toc a:hover { color: var(--accent); text-decoration: underline; }
+  .note-small { font-size: 0.85rem; color: var(--muted); }
+  .tbl-2x2 {
+    border-collapse: collapse;
+    margin: 1rem auto 1.3rem;
+    font-size: 0.9rem;
+    font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  }
+  .tbl-2x2 th, .tbl-2x2 td {
+    border: 1px solid var(--rule);
+    padding: 0.45rem 0.8rem;
+    text-align: center;
+  }
+  .tbl-2x2 th { background: #f4f1e8; font-weight: 600; }
+  .tbl-2x2 td.tp { background: #e6eee6; }
+  .tbl-2x2 td.fn { background: #f0e6d9; }
+  .tbl-2x2 td.fp { background: #f5e0d0; }
+  .tbl-2x2 td.tn { background: #ededea; }
+  @media (max-width: 600px) {
+    body { font-size: 16.5px; padding: 2rem 1rem 4rem; }
+    h1 { font-size: 1.7rem; }
+    .widget-controls label {
+      grid-template-columns: 1fr 3rem;
+      grid-template-areas: "lbl val" "slider slider";
+    }
+    .widget-controls label > :nth-child(1) { grid-area: lbl; }
+    .widget-controls label > .val { grid-area: val; }
+    .widget-controls label > input { grid-area: slider; }
+  }
+</style>
+</head>
+<body>
+
+<header class="title-block">
+  <div class="kicker">Teaching resource · Clinical psychology · Draft v2</div>
+  <h1>Is that score really extreme?</h1>
+  <p class="lede">From z-score cutoffs to Crawford's corrections to Bayes — a walking tour of what we are actually asking when we call a score "abnormal", and why the Bayesian framing answers the question we meant to ask in the first place.</p>
+</header>
+
+<nav class="toc" aria-label="Contents">
+  <strong style="display:block; font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:0.5rem;">Contents</strong>
+  <ol>
+    <li><a href="#question">The question</a></li>
+    <li><a href="#freq">The frequentist route: z-scores and p-values</a></li>
+    <li><a href="#crawford">Crawford's corrections</a></li>
+    <li><a href="#bayes-discrete">Bayes I: is this person in the extreme group?</a></li>
+    <li><a href="#bayes-continuous">Bayes II: what is this person's true score?</a></li>
+    <li><a href="#stacking">Stacking observations — and where multivariate distributions come in</a></li>
+    <li><a href="#hierarchical">Where did the prior come from? Hierarchical models and borrowing strength</a></li>
+    <li><a href="#connections">Generative-model choices and their consequences</a></li>
+    <li><a href="#takeaway">Three ingredients, three questions, one framework</a></li>
+  </ol>
+</nav>
+
+<section id="question">
+<h2><span class="num">§1</span>The question</h2>
+<p>You have tested a patient. They score $-3$ on some standardised measure — memory, face recognition, motor speed, whatever it happens to be. The question you actually care about is almost always one of these, often without you noticing which:</p>
+
+<p><em>Is this score far enough from what I'd expect in a typical person to matter?</em></p>
+<p><em>Does a score this low mean this person belongs to some clinically distinct group — a taxon — rather than to the general population?</em></p>
+<p><em>What's this person's <strong>true</strong> ability, given that all I can see is a noisy observation of it?</em></p>
+
+<p>These are three different questions and they ask for three different kinds of answer. The conventional statistical pipeline taught to most of us — standardise the score, compare to a critical value, call it abnormal if $p<.05$ — implicitly pretends they are all the same question, and gives us an answer that is (at best) oblique to any of them.</p>
+
+<p>The rest of this piece unpicks why that is and what a Bayesian alternative looks like. We'll use developmental prosopagnosia (DP) as the running clinical example, because it's a condition where both framings — "is this person in the DP taxon?" and "what is this person's true face-recognition ability?" — get asked routinely, often interchangeably and often sloppily.</p>
+</section>
+
+<section id="freq">
+<h2><span class="num">§2</span>The frequentist route: z-scores and p-values</h2>
+
+<p>The default move, when confronted with an observed score $x$ against a reference population with mean $\mu$ and standard deviation $\sigma$, is to standardise:</p>
+
+<div class="eq">$$z = \dfrac{x - \mu}{\sigma}$$</div>
+
+<p>We then look $z$ up (such as in the earlier $-3$ example) in a standard normal table and report a $p$-value — the tail probability of a score at least this extreme, under the assumption that $x$ came from $\mathcal{N}(\mu, \sigma^2)$.</p>
+
+<p>This is not a bad move. It does several things in one step: it puts scores from different tests on a common scale, it encodes the intuition that the same raw difference from the mean carries less weight when the population is very variable and more weight when it isn't (the denominator is doing signal-to-noise work), and it gives a single number that can be ranked against a convention.</p>
+
+<h3>What the SD is doing that the SE isn't</h3>
+
+<p>One thing worth pausing on is that this is not the same kind of inference as "is my estimated mean different from zero?" Crawford and colleagues have been making this point for twenty years: a case-control comparison isn't a comparison of two means, it's <em>a comparison of one observation to the spread of observations in a reference sample</em>. The relevant measure of spread is the standard deviation (how variable are individuals?), not the standard error of the mean (how precisely do I know the population mean?). Collecting more controls makes $\mu$ and $\sigma$ better estimated but it does not shrink the SD itself — so the "power" to detect an abnormal individual is bounded by how extreme the patient would have to be relative to typical variation, no matter how huge your control sample gets.<sup><a href="#ref-crawford2010">1</a></sup></p>
+
+<h3>What the p-value actually tells you</h3>
+
+<p>The $p$-value from a z-score is the probability of observing a score at least this extreme <em>if the null model were true</em> — that is, if the score really did come from $\mathcal{N}(\mu, \sigma^2)$. That definition is correct. What's <em>not</em> correct — and what gets absorbed almost by osmosis — is the inference that $p$ answers any of the three questions we actually asked.</p>
+
+<p>It is not:</p>
+<p>(a) the probability that the score is "really normal" — that would be $P(H_0 \mid \text{data})$, which is a posterior, not a $p$-value;<br>
+(b) the probability that the person is not in the DP group;<br>
+(c) a measure of effect size or clinical importance.</p>
+
+<p>The correct reading — "a tail area under the null sampling distribution" — is the right definition but feels like a non-answer to anyone holding a clinical question in their head, because it isn't answering that question. It is answering a different, narrower one.</p>
+
+<h3>Three problems worth stating plainly</h3>
+
+<p>So, setting aside matters of taste, here are three concrete problems with the default pipeline:</p>
+
+<p><strong>(i) The p-value answers the wrong question.</strong> We wanted to know the probability that this person is in some extreme group, or what their true ability is, given the score. We got the probability of seeing a score at least this extreme assuming they aren't. These are not the same, and treating them as if they were is the most durable of statistical confusions.</p>
+
+<p><strong>(ii) The answer is hostage to the reference sample and the distributional assumption.</strong> The whole machinery leans on $\mu$ and $\sigma$ from a finite reference population, and on the assumption that the distribution of observations is well-approximated by a Normal. Both can be wrong, and neither gets represented as an uncertainty in the $p$-value.</p>
+
+<div class="callout pitfall">
+<div class="label">Common mistake</div>
+<p>People sometimes justify the normality assumption by appealing to the central limit theorem. The CLT tells you that the <em>sampling distribution of a mean</em> is approximately normal for large $n$. It does <em>not</em> tell you that individual observations — someone's score on a test — are normally distributed. Z-scoring a single patient is an inference about an individual, not a mean, and it needs the population of scores itself to be approximately normal, not the population of averages.</p>
+</div>
+
+<p><strong>(iii) Measurement error is nowhere.</strong> The process treats $x$ as if it were a perfect readout of the latent ability. But if we tested the same patient again tomorrow, we'd get a different $x$. How much should we trust the $-3$ in the first place? Nothing in the standardise-and-look-up ritual makes room for that question. To be fair, standardised scoring is the approach underpinning some extremely well-validated clinical assessment tools — the WAIS (Wechsler Adult Intelligence Scale) being the canonical example — where enormous psychometric effort has gone into pinning down the reference distribution and the measurement noise. But more often than not, the instruments people are actually reaching for "in the wild" of experimental studies with clinical samples don't have anything like that level of backing, and the ritual gets applied anyway.</p>
+</section>
+
+<section id="crawford">
+<h2><span class="num">§3</span>Crawford's corrections</h2>
+
+<p>John Crawford and colleagues spent years trying to fix at least some of these problems while staying inside the frequentist framework. Their contributions are elegant and still under-used.</p>
+
+<p>First, they pointed out that when $\mu$ and $\sigma$ are estimated from a finite control sample of size $n$, the right reference distribution isn't the standard normal but a Student's $t$, because we're pushing an individual's score against sample estimates rather than population truths. The Student's $t$ earns its keep here by having <strong>fatter tails</strong> than the standard normal — that is, more of its probability mass sits further out from the middle. Fat tails are the honest thing to have when the SD in the denominator is itself uncertain, because they amount to saying <em>"a score that looks extreme might be genuinely extreme, or it might be that our estimate of the spread was a bit too tight — so we'll hold a little extra probability out in the tails until the data tell us otherwise"</em>. As $n$ grows, the SD estimate stabilises, the tails of the $t$ thin out, and the distribution converges onto the standard normal. The natural test statistic is:</p>
+
+<div class="eq">$$t = \dfrac{x - \bar{x}_\text{controls}}{s_\text{controls}\sqrt{\dfrac{n+1}{n}}}, \quad \text{df} = n-1$$</div>
+
+<p>When $n$ is large, this reduces to the familiar z-score. When $n$ is small, the correction matters — and it matters <em>in the right direction</em>: small reference samples give wider intervals, which is exactly what honesty about uncertainty demands.</p>
+
+<p>Second, since it was flagged earlier as missing, we need some way to feed information about measurement error into the machinery. Measurement error in psychometrics is typically captured through the idea of <strong>reliability</strong> — a summary of how much of the variance in observed scores is genuine signal rather than noise — which shows up most directly in things like the <strong>test–retest correlation</strong>. After all, if someone is impaired today you'd expect them to be similarly impaired tomorrow, so the extent to which two observations of the same patient agree is a rough index of how cleanly the test is measuring what it claims to. If we have a test–retest correlation $r$ and two observations of the same patient, Crawford's modified statistic uses the standard deviation of the <em>difference</em> rather than the raw SD, and $r$ enters directly:</p>
+
+<div class="eq">$$s_\text{diff} = s\sqrt{2(1-r)}$$</div>
+
+<p>Low reliability inflates $s_\text{diff}$ and shrinks the test statistic, pulling us toward "don't get too excited". High reliability lets the data speak more loudly. This is the same intuition we'll see again in the Bayesian version, just living in a denominator rather than in a prior.</p>
+
+<h3>What is still a challenge</h3>
+
+<p>Crawford's contributions attempt to patch problems (ii) and (iii). But the $p$-value is still a $p$-value — it is still answering "how surprising is this score under the null?" rather than "how probable is the thing I want to know?". The reference mean and SD are still fixed at whatever the control sample we have to hand happens to produce. And perhaps most importantly, there is no way inside this framework to talk about the <em>prior</em> probability of the clinical state itself — that is, <em>how rare is this clinical condition in the first place?</em>. We'll see in a moment that this is the single biggest thing missing.</p>
+</section>
+
+<section id="bayes-discrete">
+<h2><span class="num">§4</span>Bayes I: is this person in the extreme group?</h2>
+
+<p>Let's change the question. Instead of asking "how surprising is this score?", we ask: <em>given the score, how probable is it that this person is a member of the clinical group?</em></p>
+
+<p>This framing comes with one substantive commitment. It assumes there are two qualitatively distinct groups in the population — a taxon (say, people with DP) and its complement (everyone else) — and that membership is binary. You're either in one or the other. In taxometric terms this is the <em>taxon</em>/<em>complement</em> contrast, and whether it is empirically true of any given condition (DP, depression, ADHD) is itself a real empirical question with its own methods — that is, some people would say DP is just the bottom end of the normal distribution of face-processing latent ability, while others might argue DP is a separate neurodivergent population with its own underlying mechanism. We'll return to this.</p>
+
+<p>Bayes' theorem, for binary group membership, takes a particularly clean form:</p>
+
+<div class="eq">$$P(A \mid B) = \dfrac{P(B \mid A)\,P(A)}{P(B \mid A)\,P(A) + P(B \mid \neg A)\,P(\neg A)}$$</div>
+
+<p>where $A$ is "in the DP group", $\neg A$ is "not in the DP group", and $B$ is "observed an extreme score on this test". Every piece of that formula has a familiar interpretation:</p>
+
+<p>$P(A)$ is the <strong>base rate</strong> — the prior probability of being in group $A$ before any testing.<br>
+$P(B \mid A)$ is the <strong>sensitivity</strong> of the test — the true positive rate.<br>
+$P(B \mid \neg A)$ is $1 - $ the "specificity of the test" — the false positive rate.<br>
+$P(\neg A)$ is the complement base rate, $1 - P(A)$.</p>
+
+<p>The denominator is the marginal probability of the extreme score across both groups, and acts as a normalising constant.</p>
+
+<div class="callout example">
+<div class="label">Worked example — developmental prosopagnosia</div>
+<p>Suppose DP has a base rate of about 5% in the population, so $P(A) = 0.05$. Our face-recognition test has sensitivity $0.95$ and specificity $0.80$. A patient scores in the extreme range. Is this person a DP?</p>
+<p>Numerator: $P(B \mid A)\,P(A) = 0.95 \times 0.05 = 0.0475$.<br>
+Other arm: $P(B \mid \neg A)\,P(\neg A) = 0.20 \times 0.95 = 0.1900$.<br>
+Marginal: $0.0475 + 0.1900 = 0.2375$.<br>
+Posterior: $P(A \mid B) = 0.0475 / 0.2375 \approx 0.20$.</p>
+<p>So an "extreme" score (what the field conventionally treats as a positive indication of the condition) on a test with 95% sensitivity, applied to someone from a population where DP affects 5%, carries only about a <strong>1-in-5 chance</strong> that the person actually has DP. The test has moved the probability — which in this setting is called the <strong>positive predictive value</strong>, or PPV — from 5% to 20%. That's a fourfold increase, but the posterior is still well below a coin flip. In other words, even though our test appears to have perfectly respectable sensitivity, because the condition is rare a single positive result is nowhere near a definitive conclusion that the person has it. Most people find this surprising the first time they see it!</p>
+</div>
+
+<h3>The base-rate fallacy, spelled out</h3>
+
+<p>The worked example is the classical face of the base-rate fallacy. "My test has 95% sensitivity and the patient tested positive — they must have it!" is a near-universal clinical intuition. It is wrong whenever the condition is rare, because the much larger non-affected group has a non-trivial false positive rate and that pool dwarfs the smaller true-positive pool. The surest way to intuit this is to imagine a population of 10,000 people:</p>
+
+<table class="tbl-2x2">
+  <tr><th></th><th>Has DP (500)</th><th>Doesn't have DP (9,500)</th></tr>
+  <tr><th>Test +</th><td class="tp">475 (TP)</td><td class="fp">1,900 (FP)</td></tr>
+  <tr><th>Test −</th><td class="fn">25 (FN)</td><td class="tn">7,600 (TN)</td></tr>
+</table>
+
+<p>Of the 2,375 people who test positive, only 475 actually have DP. That's exactly the 20% posterior we calculated.</p>
+
+<h3>A counterintuitive implication: specificity often matters more than sensitivity</h3>
+
+<p>Clinicians who have been taught "we need high sensitivity to catch cases" are often surprised by what happens when you play with the numbers. Let's flip: suppose we could retune the test to sensitivity $0.80$ and specificity $0.95$ instead. With the same 5% base rate:</p>
+
+<p>Numerator: $0.80 \times 0.05 = 0.0400$.<br>
+Other arm: $0.05 \times 0.95 = 0.0475$.<br>
+Marginal: $0.0875$.<br>
+Posterior: $0.0400 / 0.0875 \approx 0.46$.</p>
+
+<p>The positive predictive value has more than doubled — from 20% to 46% — even though the headline sensitivity went down. The lesson: <strong>when the condition is rare, boosting specificity does more for the posterior probability than boosting sensitivity does</strong>, because it prunes the large pool of false positives from the much larger non-affected group. Sensitivity matters for not missing cases (you care about this for different reasons); specificity matters for being able to believe a positive result.</p>
+
+<p>You can play with this directly:</p>
+
+<div class="widget" id="widget-discrete">
+  <h4>Widget 1 — Discrete Bayes: group membership from a single test</h4>
+  <div class="widget-controls">
+    <label><span>Base rate $P(A)$</span>
+      <input type="range" min="0.001" max="0.999" step="0.001" value="0.05" id="br-slider">
+      <span class="val" id="br-val">0.050</span>
+    </label>
+    <label><span>Sensitivity $P(B \mid A)$</span>
+      <input type="range" min="0.50" max="1.00" step="0.01" value="0.95" id="sens-slider">
+      <span class="val" id="sens-val">0.95</span>
+    </label>
+    <label><span>Specificity $P(\neg B \mid \neg A)$</span>
+      <input type="range" min="0.50" max="1.00" step="0.01" value="0.80" id="spec-slider">
+      <span class="val" id="spec-val">0.80</span>
+    </label>
+  </div>
+  <div class="widget-output">
+    <div class="hero">Posterior $P(A \mid B) = $ <b id="post-val">0.200</b> <span class="note-small" id="post-factor">(moved prior by ×4.0)</span></div>
+    <svg id="discrete-svg" viewBox="0 0 400 70" preserveAspectRatio="none"></svg>
+    <div class="legend"><span class="sw-tp">True positives (have $A$, test +)</span><span class="sw-fp">False positives (don't have $A$, test +)</span></div>
+    <div class="narr" id="disc-narr">Out of 10,000 people: 475 are true positives; 1,900 are false positives. Among the 2,375 who test positive, 20% actually have $A$.</div>
+  </div>
+</div>
+
+<h3>Stacking: today's posterior is tomorrow's prior</h3>
+
+<p>One beautiful property of Bayes is that the output of one test becomes the input of the next. After that first test, the patient's prior probability of being a DP is no longer 0.05 — it's 0.20. If we now run a second independent test with its own sensitivity and specificity, we use 0.20 as the base rate in the same formula. Two moderately informative tests combined can land you in much more confident territory than either alone, which is something practising clinicians do implicitly but rarely formalise.</p>
+
+<div class="callout example">
+<div class="label">Try it in Widget 1</div>
+<p>You can demonstrate stacking directly in the widget above, because the "base rate" slider is just "whatever you believe <em>before</em> seeing this observation", and nothing cares whether that belief came from population prevalence or from a previous test.</p>
+<p><strong>Step 1.</strong> Set base rate $= 0.05$, sensitivity $= 0.95$, specificity $= 0.80$. The widget reports posterior $\approx 0.20$. This is the patient's updated probability after one positive test.</p>
+<p><strong>Step 2.</strong> Now pretend this patient comes back for a second, independent test with the same characteristics. Reset the base-rate slider to $0.20$ (because that's where we are now) and leave sensitivity and specificity as they were. The widget now reports posterior $\approx 0.54$. Two consecutive positives on a moderately informative test have moved you from 5% → 20% → 54%.</p>
+<p><strong>Step 3.</strong> What if the second test is a better one? Leave base rate at $0.20$ but set sensitivity $= 0.90$, specificity $= 0.95$. Posterior jumps to $\approx 0.82$. A high-specificity follow-up is exactly the thing you reach for when you want to confirm a tentative positive — and the widget shows you why.</p>
+</div>
+
+<p>The qualifier "independent" matters, in this "stacking" example. The degree to which each piece of evidence we have obtained is providing <em>entirely novel</em> information — rather than just rehearsing what a previous piece of evidence was already telling us — is a key assumption in many statistical models, Bayesian or otherwise. When two observations, say from two tests, share their sources of error — the same examiner, the same construct tapped from almost the same angle, the same mood on the same morning — then they violate the independence assumption, and their results shouldn't be stacked as if they were giving you two bites at fresh information. This is a key issue to always bear in mind when doing statistics, and we'll come back to it in the continuous case in §6.</p>
+</section>
+
+<section id="bayes-continuous">
+<h2><span class="num">§5</span>Bayes II: what is this person's true score?</h2>
+
+<p>So the discrete framing example (i.e., DP or not) works when you have genuine reason to believe there are two distinct groups. For many clinical and psychological traits, the honest answer is that there probably aren't — there is a single general population with a distribution of abilities, and "extreme" just means "far along the tail". If this is your assumption then the question changes shape.</p>
+
+<p>Let $\theta$ (pronounced <em>theta</em> — the Greek letter statisticians conventionally use for an unknown parameter we're trying to estimate; in psychometrics and item response theory it's also the standard symbol for the <em>latent ability</em> or <em>true score</em>, and in classical test theory you'll sometimes meet it under the name $T$ for "true score") be the person's latent true ability, and let $X$ be the observed score. We'd like $P(\theta \mid X)$, a <strong>posterior density</strong> over the true score given what we observed. Bayes' theorem is still our tool, just in continuous form:</p>
+
+<div class="eq">$$p(\theta \mid X) = \dfrac{p(X \mid \theta)\,p(\theta)}{\int p(X \mid \theta)\,p(\theta)\,d\theta}$$</div>
+
+<p>The three ingredients map onto very intuitive things:</p>
+
+<p>$p(\theta)$ is the <strong>prior</strong> — the distribution of true scores in the population. Something like "on this test, people's abilities are distributed $\mathcal{N}(0, \tau^2)$". You'll be familiar with the idea that any population of observed scores has a <em>mean</em> (the most typical value) and a <em>standard deviation</em> (how spread out the scores are around that mean). The notation $\mathcal{N}(0, \tau^2)$ is the formal way of saying "this quantity is normally distributed, with mean $0$ and variance $\tau^2$" — so here the prior is asserting that the population of true scores on this test is centred on zero (where most people sit), with a spread governed by $\tau$. Put plainly, the prior is the distribution you'd expect someone's latent ability to be drawn from if you knew absolutely nothing else about them.</p>
+
+<p>$p(X \mid \theta)$ is the <strong>likelihood</strong> — how the observed score behaves around the true score, given the test's measurement error. Something like "on this test, an observation $X$ given a true score $\theta$ is distributed $\mathcal{N}(\theta, \sigma^2)$". The thing worth sitting with here is that when we try to estimate someone's true ability from their observed score, our best guess is not a single point but itself a <em>distribution</em> — there is uncertainty around it, and the width of that uncertainty is captured by $\sigma$. A smaller $\sigma$ means tighter spread, higher precision, a more reliable test, and a more confident estimate; a larger $\sigma$ means the observation could plausibly have come from a wide range of true scores, and the estimate has to be correspondingly humble. This is the direct link between how reliable your measurement instrument is and how wide your uncertainty about the true score has to be — and it will become the engine of everything that follows.</p>
+
+<p>The denominator is the <strong>marginal</strong> — the integral that normalises the numerator into a proper distribution. It is often the technically hard part: in general, computing it requires integrating over every possible value of $\theta$, which can be analytically miserable or require numerical machinery. But we're about to use a special case called a <strong>conjugate</strong> pairing. "Conjugate", in Bayesian parlance, means that the prior and the likelihood belong to families whose product — when run through Bayes' rule — yields a posterior in the same family as the prior. Updating stays closed-form, and the ugly integral falls out analytically. The normal-normal case is the canonical example: a Gaussian prior combined with a Gaussian likelihood produces a Gaussian posterior, and the parameters of that posterior have an explicit formula. That is what makes this case the pedagogical workhorse — and the thing we're about to use.</p>
+
+<h3>The normal-normal conjugate — three parameters, one beautiful formula</h3>
+
+<p>Assume both prior and likelihood are Gaussian:</p>
+
+<div class="eq">$$\theta \sim \mathcal{N}(\mu_0, \tau^2), \qquad X \mid \theta \sim \mathcal{N}(\theta, \sigma^2)$$</div>
+
+<p>Then the posterior is also Gaussian:</p>
+
+<div class="eq">$$\theta \mid X \sim \mathcal{N}\!\left(\mu_\text{post},\, \tau_\text{post}^2\right)$$</div>
+
+<p>with</p>
+
+<div class="eq">$$\dfrac{1}{\tau_\text{post}^2} = \dfrac{1}{\tau^2} + \dfrac{1}{\sigma^2}, \qquad \mu_\text{post} = \tau_\text{post}^2\left(\dfrac{\mu_0}{\tau^2} + \dfrac{X}{\sigma^2}\right)$$</div>
+
+<p>These formulas look forbidding at first glance, but they are saying something intuitive. We have introduced a new word, <strong>precision</strong>, which is simply the reciprocal of variance. Small variance means high precision; large variance means low precision. If variance is the width of a bell curve, precision is its narrowness — a natural way to measure how sharp a belief or a measurement is. (One notational warning: some Bayesian textbooks also use the letter $\tau$ to denote precision, which would collide horribly with our use of $\tau$ for the prior SD. To keep it clean, <em>in this document</em> $\tau$ always means the prior SD, the prior variance is always written out as $\tau^2$, and wherever we need the precision we'll simply write $1/\tau^2$ or $1/\sigma^2$ instead of inventing a symbol for it.) With that vocabulary in hand, the two equations above say exactly what they sound like they should: the posterior's precision is the sum of the prior's and the likelihood's precisions, and the posterior's mean is a precision-weighted average of the prior mean and the observation.</p>
+
+<p>The two remarkable things it says are:</p>
+
+<p>(i) <strong>Posterior precision = prior precision + likelihood precision.</strong> You <em>add</em> precisions when combining independent sources of information, and uncertainty shrinks. This is the Gaussian version of the stacking move we used back in §4 — same underlying principle (independent evidence accumulates), just a different currency: log-odds <em>added</em> there, precisions <em>add</em> here. We'll see in §6 that this logic also extends naturally to multiple observations: each new independent reading contributes its own dollop of precision, and the posterior precision keeps climbing.</p>
+
+<p>(ii) <strong>Posterior mean is a precision-weighted average</strong> of the prior mean and the observation. Pull goes toward whichever of the two is more precise. This is the tug-of-war between whether our observed score should stand as an accurate read on the latent ability, or whether it needs to be pulled back toward the population mean — the regression-to-the-mean correction that a rational estimator makes automatically whenever the measurement is noisy.</p>
+
+<h3>Where reliability lives</h3>
+
+<p>In classical test theory, reliability $r$ is the proportion of the observed variance that is true-score variance:</p>
+
+<div class="eq">$$r = \dfrac{\tau^2}{\tau^2 + \sigma^2}$$</div>
+
+<p>So reliability is a statement about <em>the ratio of signal to signal-plus-noise</em>. Given a population true-score SD $\tau$ and a reliability $r$, the measurement error SD falls out as $\sigma = \tau\sqrt{(1-r)/r}$. Conversely, given $\sigma$, you can infer $\tau$. Either way, <strong>reliability directly controls the relative precision of prior and likelihood, which is to say, it controls the direction of the tug-of-war over our estimate of the true score.</strong></p>
+
+<p>Rather than crunch two worked examples by hand, we can now go straight to Widget 2, which does exactly this computation live for any settings you pick — high-reliability, low-reliability, or anything in between. Push the reliability slider around and you'll see the tug-of-war play out: a reliable test pulls the posterior hard toward the observation; an unreliable test pulls it back toward the prior mean.</p>
+
+<div class="widget" id="widget-continuous">
+  <h4>Widget 2 — The tug-of-war: prior, likelihood, posterior</h4>
+  <div class="widget-controls">
+    <label><span>Prior mean $\mu_0$</span>
+      <input type="range" min="-3" max="3" step="0.1" value="0" id="mu-slider">
+      <span class="val" id="mu-val">0.0</span>
+    </label>
+    <label><span>Prior SD $\tau$</span>
+      <input type="range" min="0.2" max="3" step="0.05" value="1" id="tau-slider">
+      <span class="val" id="tau-val">1.00</span>
+    </label>
+    <label><span>Observed score $x$</span>
+      <input type="range" min="-6" max="6" step="0.1" value="-3" id="x-slider">
+      <span class="val" id="x-val">-3.0</span>
+    </label>
+    <label><span>Reliability $r$</span>
+      <input type="range" min="0.05" max="0.99" step="0.01" value="0.80" id="r-slider">
+      <span class="val" id="r-val">0.80</span>
+    </label>
+  </div>
+  <div class="widget-output">
+    <div class="hero">Posterior $\mathcal{N}(\mu_\text{post}, \sigma_\text{post}^2)$: mean <b id="post-mu">-2.40</b>, SD <b id="post-sd">0.447</b>, 95% credible interval <b id="post-ci">[-3.28, -1.52]</b></div>
+    <svg id="continuous-svg" viewBox="0 0 420 190" preserveAspectRatio="none"></svg>
+    <div class="legend"><span class="sw-prior">Prior</span><span class="sw-lik">Likelihood</span><span class="sw-post">Posterior</span></div>
+    <div class="narr" id="cont-narr">The posterior is pulled strongly toward the data when reliability is high; it is pulled toward the prior mean when reliability is low. Try dragging $r$ down and watch the posterior drift back toward $\mu_0$.</div>
+  </div>
+</div>
+
+<div class="callout example">
+<div class="label">Try it in Widget 2 — what a useless test does to your best guess</div>
+<p>Quick recap before you start dragging sliders, because the widget has four of them. The <em>prior mean</em> $\mu_0$ is what we think the most typical value of the latent trait is in the population we're drawing from — in this document's running setup, $\mu_0 = 0$, because we're on a standardised scale. The <em>prior SD</em> $\tau$ is how spread out those true scores are around that mean — bigger $\tau$ means the population is more variable, so a given extreme observation is less surprising. The <em>observed score</em> $x$ is the noisy measurement we obtained from the patient. And the <em>reliability</em> $r$ controls how trustworthy that measurement is as a readout of the underlying true score, exactly as we've just defined it.</p>
+<p>Set the observed score to something extreme — say $x = -3$ — and leave the prior at $\mu_0 = 0$, $\tau = 1$. Now drag the reliability slider slowly from $0.99$ down toward $0.05$ and watch the posterior mean.</p>
+<p>At $r = 0.99$ the posterior mean sits essentially on top of $-3$: the test is almost perfect, so the observation is trusted almost completely. As $r$ drops, the posterior mean creeps toward $0$ — toward the prior mean. By $r = 0.20$ it's at about $-0.6$; by $r = 0.05$ it's within touching distance of $0$, even though the observation is still $-3$.</p>
+<p>The lesson lands harder than the algebra does: <strong>the worse the test, the more your best estimate of someone's true score collapses onto the population average</strong>, no matter how dramatic the observed score looks. In the limit of a completely unreliable test — one that's pure noise — an observation contains no information about $\theta$ at all, so the only rational posterior belief is whatever you believed before testing. Zero reliability, zero update. The posterior just <em>is</em> the prior.</p>
+<p>This is why <em>"we don't have a great test for this yet, but their score was extreme"</em> is a much weaker clinical argument than it sounds. A noisy-enough instrument, applied to a rare-enough condition, is essentially telling you what you already knew.</p>
+</div>
+
+<p>Before we move on, it's worth pausing on a phrase that has been quietly cropping up throughout §5 — including in Widget 2's output panel, where the posterior is reported alongside its <em>95% credible interval</em>. A credible interval is shorthand for "the range over which we believe the true score $\theta$ plausibly sits, given the data we've observed". It is a genuinely Bayesian object, and it deserves not to be confused with the more familiar <em>confidence interval</em> you'll have met in frequentist statistics. The two phrases sound interchangeable; they aren't, and the difference is a nice microcosm of the framework contrast we've been drawing all along. So it is worth pinning down before we go any further.</p>
+
+<div class="callout aside">
+<div class="label">Credible interval ≠ confidence interval</div>
+<p>A <strong>95% credible interval</strong> says: <em>"given the data, there is a 95% probability that the true value of $\theta$ lies in this interval."</em> It is a direct probability statement about the unknown parameter. This is legal in a Bayesian framework because the parameter has a posterior distribution, so probability statements over ranges of $\theta$ are well-defined.</p>
+<p>A <strong>95% confidence interval</strong> says something a frequentist is allowed to say, which is more contorted: <em>"if we were to repeat this whole estimation procedure many times on fresh samples, 95% of the intervals we constructed this way would contain the true parameter."</em> It's a statement about the long-run behaviour of the <em>procedure</em>, not about the particular interval in front of you. Strictly speaking, a frequentist is <em>not</em> allowed to say "there is a 95% probability that $\theta$ lies in [a, b]" — because $\theta$ is a fixed-but-unknown number, not a random variable, so it either is or isn't in the interval, with probability 1 or 0. We just don't know which.</p>
+<p>In practice almost everyone — including almost every clinician — uses the credible-interval interpretation for their confidence intervals anyway, because the credible-interval reading is the one they actually wanted. The Bayesian framing lets you have it honestly: the 95% credible interval means what you hoped the 95% confidence interval meant all along.</p>
+</div>
+
+<h3>When Bayes and an adjusted $z$ reach different verdicts</h3>
+
+<p>It's tempting to think that once we've patched the frequentist pipeline with Crawford's corrections — small-sample $t$, reliability in the denominator — we've closed the gap with Bayes. The two frameworks must at least <em>agree on the call</em>, even if they disagree on the philosophy. In the easy cases they do. But the cases that really matter are the ones where they don't, and it is worth walking through one of those explicitly.</p>
+
+<div class="callout example">
+<div class="label">A worked disagreement — same data, opposite verdicts</div>
+<p>A patient is tested on a measure with population mean $0$ and SD $1$, calibrated against a control sample of $n = 40$. The patient scores $x = -2$. Reliability of the test is $r = 0.5$ — unremarkable for a lot of clinical neuropsychology.</p>
+<p><strong>Frequentist route (Crawford's modified $t$).</strong> We compute</p>
+<p style="text-align:center;">$t = \dfrac{-2 - 0}{1 \cdot \sqrt{(41/40)}} \approx -1.975$, &nbsp; df $= 39$, &nbsp; one-tailed $p \approx 0.028$.</p>
+<p>By any textbook convention this clears $\alpha = 0.05$. The finding is "statistically significant"; the patient is flagged as abnormal; the clinical report writes itself.</p>
+<p><strong>Bayesian route (normal-normal conjugate, reliability-aware).</strong> With prior $\theta \sim \mathcal{N}(0, 1)$ and $r = 0.5$, the measurement-error variance is $\sigma^2 = 1 \cdot (1-0.5)/0.5 = 1$. The posterior is</p>
+<p style="text-align:center;">$\theta \mid x \sim \mathcal{N}\!\left(-1.0,\, 0.5\right)$, &nbsp; posterior SD $\approx 0.707$, &nbsp; 95% CI $[-2.39,\, 0.39]$.</p>
+<p>The posterior mean has been dragged halfway back to zero. The 95% credible interval comfortably includes zero and even mildly positive true scores. The probability that the true score is genuinely in "abnormal" territory — say $\theta < -2$ — is only $P(\theta < -2 \mid x) \approx 0.08$. By any reasonable Bayesian standard, this is not a case you'd confidently flag as impaired.</p>
+<p><strong>Why the credible interval earns its keep here.</strong> It's worth pausing on what the interval $[-2.39,\, 0.39]$ is telling us, because it is doing work the $p$-value simply cannot. Crawford's $p \approx 0.028$ is a single pass-or-fail number: it clears the conventional $\alpha = 0.05$ threshold, so the patient gets flagged. The Bayesian side offers two things instead of one. First, the tail probability $P(\theta < -2 \mid x) \approx 0.08$ is already the equivalent Bayesian "how surprising is this level of impairment?" number, and by a 5% standard it would <em>not</em> clear the bar — the two frameworks have already parted company on the call. Second, and more importantly, the credible interval displays our uncertainty about the true score <em>directly</em>. Plausible values of $\theta$ run from mildly impaired ($-2.39$) all the way up to mildly above average ($+0.39$). A clinician looking at that range can see at a glance that declaring this person "impaired" on the basis of a single noisy observation is stretching the evidence. The $p$-value hides exactly this uncertainty by compressing it into a binary verdict; the credible interval puts it front and centre, and together with the tail probability it turns a seemingly clean "abnormal" finding into an honest "we don't yet have enough information to say".</p>
+<p><strong>The two verdicts.</strong> Crawford says <em>reject the null, this person differs from controls</em>. Bayes says <em>the best estimate of their true ability is about $-1$, the uncertainty covers most of the normal range, and we're nowhere near confident enough to call them impaired</em>. These are not just different wordings of the same conclusion. They are different clinical calls, on the same numbers.</p>
+<p><strong>Where the gap comes from.</strong> Crawford's $(n+1)/n$ correction handles uncertainty about the reference <em>mean and SD</em>; it doesn't shrink the observation toward the prior. The reliability-corrected two-observation version handles measurement error <em>between two observations</em>, but there's no second observation here. So the one-observation Crawford test, good as it is at what it does, treats $x = -2$ as a clean readout of the patient's latent ability. The Bayesian posterior doesn't — it treats $x = -2$ as a noisy signal whose most plausible explanation, given the population and the instrument, is a somewhat more moderate true score with a lot of residual uncertainty.</p>
+<p>This is the case the frequentist framework can't reach, even with every correction bolted on. It isn't that one is "right" and the other "wrong" — it's that they're answering different questions, and at $r = 0.5$ the two questions have different answers even on the same data.</p>
+</div>
+
+<p>A footnote on Crawford's own trajectory: in the mid-2000s he developed a Bayesian version of his single-case approach — the <strong>Bayesian Standardised Difference Test (BSDT)</strong><sup><a href="#ref-bsdt">2</a></sup> — which takes the same reliability-correction logic and builds a proper posterior around the deficit estimate. If you like his earlier work you'll recognise all the moving parts; the framework is different, the concerns are the same.</p>
+
+<details>
+<summary>Where does the posterior formula come from?</summary>
+<p>Multiplying a Gaussian prior $\mathcal{N}(\mu_0,\tau^2)$ by a Gaussian likelihood $\mathcal{N}(\theta; X, \sigma^2)$ and collecting terms in $\theta$ gives another Gaussian. The precision of the product is the sum of the individual precisions (because the quadratic term in the exponent is $-\tfrac{1}{2}(1/\tau^2 + 1/\sigma^2)\theta^2$), and the mean is whatever makes the linear term vanish on expansion, which works out to the precision-weighted average. Normality is preserved through the update — which is exactly the closed-form property we flagged earlier as the meaning of "conjugate": prior and posterior live in the same family, so the update has an explicit formula rather than an integral you have to evaluate.</p>
+</details>
+</section>
+
+<section id="stacking">
+<h2><span class="num">§6</span>Stacking observations — and where multivariate distributions come in</h2>
+
+<p>The discrete-case stacking story — today's posterior is tomorrow's prior — carries over to the continuous case essentially unchanged. But the machinery underneath is worth looking at, because it reveals exactly when the simple picture breaks and a multivariate distribution has to enter the room.</p>
+
+<h3>The easy case: conditionally independent observations</h3>
+
+<p>Suppose we observe two scores $X_1$ and $X_2$ on the same measure. If we're willing to assume that, <em>given the true score $\theta$</em>, the two observations are independent — that is, the only reason they're related at all is that they share $\theta$ — then the joint likelihood factorises:</p>
+
+<div class="eq">$$p(X_1, X_2 \mid \theta) = p(X_1 \mid \theta)\,p(X_2 \mid \theta)$$</div>
+
+<p>and the posterior after both observations is just what you'd get by applying the one-observation update twice:</p>
+
+<div class="eq">$$\dfrac{1}{\tau_\text{post}^2} = \dfrac{1}{\tau^2} + \dfrac{2}{\sigma^2}, \qquad \mu_\text{post} = \tau_\text{post}^2\!\left(\dfrac{\mu_0}{\tau^2} + \dfrac{X_1 + X_2}{\sigma^2}\right)$$</div>
+
+<p>Each additional observation contributes a fixed dollop of precision $1/\sigma^2$; after $n$ of them, the posterior precision is $1/\tau^2 + n/\sigma^2$. <strong>Precisions just add.</strong> You never have to write down a joint distribution over the observations explicitly — each one drops in iteratively.</p>
+
+<p>This is the direct analogue of the discrete stacking move — in fact it is <em>exactly</em> what you were doing by hand back in Widget 1, when you typed the posterior from test 1 ($0.20$) into the base-rate slider as the prior for test 2 and watched the new posterior land at $0.54$. The continuous formula above is doing the same bookkeeping automatically: the posterior after test 1 becomes the prior for test 2, precisions accumulate, and the updated posterior falls out. Same mechanism, same conceptual move; just Gaussians instead of base rates.</p>
+
+<h3>The hard case: correlated observations — enter the multivariate distribution</h3>
+
+<p>Conditional independence is a strong claim. In real test-retest data it is nearly always false. Two observations of the same person on the same test share sources of error that go beyond $\theta$: the same examiner, the same time of day, practice effects, fatigue, attentional state, item-level idiosyncrasies, whatever mood the patient was in. These shared errors induce a correlation between $X_1$ and $X_2$ that isn't explained by $\theta$ alone.</p>
+
+<p>The independence assumption is worth pausing on because it's exactly the qualifier we flagged back in §4, now in continuous dress. Remember how we said stacking two tests multiplicatively — typing the posterior from test 1 into the base-rate slot for test 2 — only works if the two tests share no sources of error beyond the thing we're trying to infer? That is the same assumption showing up here: we can write the joint likelihood as a product of two independent Gaussians in $X_1$ and $X_2$ only if all the dependence between them is routed through $\theta$. If the two observations are also correlated <em>beyond</em> what $\theta$ induces — shared examiner, shared time of day, shared mood — then the independence assumption is broken and the product form of the likelihood over-counts the evidence, just as stacking two non-independent tests would have done in the discrete case. You'll notice that all these examples of non-independence speak to different kinds of <em>error</em> that can impact our measurements. The word "independence" here is really shorthand for the claim that those errors are random and unrelated to one another; when they <em>are</em> related, they distort how we should interpret the critical covariance of interest — in our case, the covariance between observations and $\theta$.</p>
+
+<p>And this isn't a Bayesian technicality. Independence is a cornerstone of frequentist inferential statistics too: virtually every formula a student meets in a first stats course, from the standard error of a mean to the degrees of freedom in a $t$-test, silently assumes that observations are independent of one another. When they aren't, the effective sample size shrinks, standard errors are under-estimated, and $p$-values get misleadingly small. Correlated observations are a quiet inflator of false confidence, and treating them as if they were independent is one of the commonest ways to over-claim from data — whether you're in the discrete Bayesian world of §4, the continuous Bayesian world of §6, or the frequentist world of §2.</p>
+
+<div class="callout aside">
+<div class="label">Why independence matters — a detective's intuition</div>
+<p>Imagine building a case against a suspect. Two pieces of evidence arrive: an <strong>eyewitness identification</strong> and a <strong>DNA match</strong>. There is no reason to expect a shared source of error between these — the things that might have misled the eyewitness (bad lighting, familiarity bias, confidence inflation) tell you nothing about whether the DNA sample was contaminated. Because the two lines of evidence are essentially independent, they genuinely multiply each other's weight. The case gets much stronger.</p>
+<p>Now imagine the evidence is instead <strong>two eyewitnesses</strong> — both elderly, both standing together at the scene, both looking in the same direction, with the same poor lighting and the same angle of view. Their reports are not independent in any useful sense: the factors that might have misled one would have misled the other in the same way. Two corroborating statements from that pair are barely more information than one. The arithmetic that made eyewitness + DNA powerful makes eyewitness + matching-eyewitness weak, for exactly the reason that independence failed in the second case.</p>
+<p>Test-retest data on the same patient is far closer to the two grannies than to the eyewitness-and-DNA pairing. The first observation and the second share an examiner, a location, a room, a mood, a set of distracting thoughts, an attentional baseline. Treating them as two independent shots at $\theta$ over-counts the evidence in the same way, and for the same underlying reason.</p>
+</div>
+
+<p>Formally, the observations are jointly distributed:</p>
+
+<div class="eq">$$\begin{pmatrix}X_1 \\ X_2\end{pmatrix} \bigg| \theta \sim \mathcal{N}\!\left(\begin{pmatrix}\theta\\\theta\end{pmatrix},\, \Sigma\right), \quad \Sigma = \sigma^2\begin{pmatrix}1 & \rho \\ \rho & 1\end{pmatrix}$$</div>
+
+<p>where $\rho$ is the within-person residual correlation — the chunk of covariance between $X_1$ and $X_2$ that lives in the shared error, not in the shared $\theta$. Once you admit $\rho > 0$, the posterior update is no longer "one observation's worth of precision, doubled". The effective sample size of two correlated observations is less than two. If $\rho$ is very high, two observations may barely be worth more than one (as in our grannies example with the detective above).</p>
+
+<div class="callout aside">
+<div class="label">The link back to Crawford</div>
+<p>This is <em>exactly</em> what Crawford's reliability-corrected two-observation formula is handling — just wearing different clothes. The test-retest correlation $r$ that enters $s_\text{diff} = s\sqrt{2(1-r)}$ is doing the same job that $\rho$ does in the covariance matrix above. Both are the quantity that tells you how much genuinely new information the second observation is adding. High $r$ = tight coupling = less fresh information = wider uncertainty per observation. Crawford solved the problem by inflating the denominator of his test statistic; the Bayesian framing solves it by refusing to treat the joint likelihood as a product. Same physics, different notation.</p>
+</div>
+
+<h3>A further wrinkle: what if $\theta$ itself drifts?</h3>
+
+<p>Everything so far has assumed the true score is static — the patient has some fixed $\theta$ and we're just getting noisier or cleaner views of it. For many clinical settings (degenerative disease, recovery after stroke, training-driven change, developmental trajectories) that is the wrong model. The true score is itself moving over time.</p>
+
+<p>In that case the right machinery is a <strong>state-space model</strong>: $\theta_t$ evolves over time according to some transition process, and each observation $X_t$ is a noisy snapshot of the current state. The Kalman filter and its descendants are the workhorses here. It is beyond the scope of this page, but worth signposting — if you find yourself reaching for stacking and your substantive question is about change, not ability, you're in this territory.</p>
+</section>
+
+<section id="hierarchical">
+<h2><span class="num">§7</span>Where did the prior come from? Hierarchical models and borrowing strength</h2>
+
+<p>There is a key additional piece of statistical machinery that hasn't yet been clearly outlined. Throughout §5 and §6 the prior example discussed was already estimated: $\theta \sim \mathcal{N}(\mu_0, \tau^2)$, with $\mu_0$ and $\tau$ just <em>known</em>. But it's worth explaining the machinery that generates this key prior estimate — which is typically based on the same kind of reference sample the frequentist pipeline draws upon. So let's unpack this a bit further.</p>
+
+<h3>Two levels, one model</h3>
+
+<p>The setup. Suppose we have a cohort of $N$ patients. Each patient $i$ has a true score $\theta_i$, and we observe one (or more) noisy readings $X_{ij}$ of it. Instead of fixing a prior on $\theta_i$ a priori, we write down a model at <em>two levels</em>:</p>
+
+<div class="eq">$$\text{Group level:}\quad \theta_i \sim \mathcal{N}(\mu_g,\, \tau_g^2), \qquad \text{Person level:}\quad X_{ij} \mid \theta_i \sim \mathcal{N}(\theta_i,\, \sigma^2)$$</div>
+
+<p>The group-level parameters $\mu_g$ and $\tau_g$ describe the population of true scores — that is, the mean and spread of the scores as a distribution. The person-level parameter $\theta_i$ is the true score for a single individual, the key estimate we are always trying to target. And as usual this estimate is also on a distribution — captured by $\sigma$, the within-person measurement noise we've been discussing since §5. All of it — the group means, the group SD, the individual $\theta_i$'s — gets estimated jointly from the data. The prior on any one person's $\theta_i$ is no longer a stand-alone commitment; it emerges from what the <em>rest of the cohort</em> looks like.</p>
+
+<p>The key term in statistics for this is <em>borrowing strength</em>: each individual's estimate is informed not <em>only</em> by their own observation but by what is observed by the rest of the population they are in. A patient whose single observation is extreme can be interpreted in the light of how variable people in the reference group actually are. If the group is tight ($\tau_g$ small), an extreme observation is pulled hard toward the group mean. If the group is very spread out ($\tau_g$ large), the same observation is allowed to stand closer to where it fell.</p>
+
+<h3>Partial pooling: the shrinkage factor reappears</h3>
+
+<p>Before we lay out the machinery, it's worth flagging that <em>how we handle between-person variance is a modelling decision</em> — not a fact of nature — and the decision has real consequences for the estimates we get out the other end. When we observe a cohort of patients, we have to choose how much of the spread we see between individuals we are willing to treat as <em>real differences in true ability</em> versus how much we are willing to treat as <em>noise</em>. That choice lives on a spectrum, and where you place yourself on the spectrum changes every individual estimate. The three pooling strategies below are the three canonical places people stand on it.</p>
+
+<p>In practice, almost nobody who is being careful ends up fully at either extreme — no-pooling and complete-pooling are usually shown as the two cautionary outer walls of the spectrum rather than as serious contenders. No-pooling ignores the fact that some of the extremeness of any one score has to be noise, and so it overfits the individual. Complete-pooling ignores the fact that people genuinely do differ, and so it erases the individual. <em>Partial pooling</em> is the sensible compromise that is based on the fact you tend to believe both things are true at once: that people really do differ in ability, <em>and</em> that any single noisy observation is a biased readout of that ability. Most serious statistical work in this space — classical test theory, Bayesian hierarchical models, normative modelling, mixed-effects regression — is some version of partial pooling dressed up in different vocabulary. With that context in mind:</p>
+
+<p><strong>No pooling.</strong> Use each person's raw observation as their estimate: $\hat\theta_i = X_i$. Treats every patient as an island; gives measurement error a free pass.</p>
+
+<p><strong>Complete pooling.</strong> Ignore individual differences entirely; everyone gets the same estimate, namely the group mean $\bar X$. Treats the cohort as one blob; throws away all between-person information.</p>
+
+<p><strong>Partial pooling.</strong> Sit between the two:</p>
+
+<div class="eq">$$\hat\theta_i = \bar X + B\,(X_i - \bar X), \qquad B = \dfrac{\tau_g^2}{\tau_g^2 + \sigma^2}$$</div>
+
+<p>where $B$ is the <strong>shrinkage factor</strong> — the fraction of the observed deviation from the group mean you keep. If most of the spread is real between-person variation ($\tau_g^2 \gg \sigma^2$), $B$ is close to $1$ and the raw observations survive almost untouched. If most of the spread is measurement noise ($\sigma^2 \gg \tau_g^2$), $B$ is close to $0$ and everyone gets pulled toward $\bar X$. Sound familiar? It should: this is the same precision-weighted estimator we met in §5, now with $\bar X$ playing the role of $\mu_0$ and an explicitly hierarchical interpretation of reliability doing the work.</p>
+
+<div class="callout key">
+<div class="label">One formula, many faces</div>
+<p>The quantity $\tau^2/(\tau^2+\sigma^2)$ has now shown up three times in this document under three different names: as <em>reliability</em> in classical test theory (§5), as the <em>Bayesian precision weight</em> in the conjugate posterior (§5 again), and now as the <em>shrinkage factor</em> in a hierarchical model. These are not three different quantities that happen to look the same. They are the <em>same</em> quantity. Namely, the proportion of observed variance that's actually signal.</p>
+</div>
+
+<h3>Why partial pooling almost always wins</h3>
+
+<p>There is a beautiful empirical-Bayes result that formalises this intuition: the partial-pooled estimates have lower average squared error than the raw ones, as long as you're estimating three or more $\theta_i$ simultaneously (this is the Stein/James–Stein phenomenon, famous for being surprising). Intuitively: the group mean is almost always closer to any individual's true score than the group mean is to their <em>observation</em>, because observations carry noise the true scores don't. Using the group to discipline individual estimates isn't a concession to parsimony; it's better statistics.</p>
+
+<p>Notice this is the same pattern we have been seeing all the way through: the estimate of any one individual's true score ends up <em>attenuated</em> toward the group mean. That phrase — "attenuated toward the mean" — has now turned up as Crawford's shrinkage in §3, as regression-to-the-mean in the continuous Bayes tug-of-war in §5, and again here in the hierarchical estimator. The reason it keeps showing up is the same each time: noise sits in the denominator of whatever signal-to-noise ratio we care about, so as measurement becomes less reliable the ratio shrinks, and our best estimate gets dragged from wherever the raw observation fell back toward whatever reference point the model has on offer (the population mean, the prior mean, the group mean). The recurring lesson is that <em>any</em> estimator that takes measurement error seriously has to do this; it isn't a quirk of Bayes or of any one framework, it's just what honest inference looks like when the denominator has noise in it.</p>
+
+<p>Play with the widget to see the pull of <em>shrinkage</em>.</p>
+
+<div class="widget" id="widget-hierarchical">
+  <h4>Widget 3 — Partial pooling: raw observations vs pooled estimates</h4>
+  <div class="widget-controls">
+    <label><span>Between-person SD $\tau_g$</span>
+      <input type="range" min="0.1" max="3" step="0.05" value="1.0" id="tg-slider">
+      <span class="val" id="tg-val">1.00</span>
+    </label>
+    <label><span>Within-person SD $\sigma$</span>
+      <input type="range" min="0.1" max="3" step="0.05" value="1.0" id="sg-slider">
+      <span class="val" id="sg-val">1.00</span>
+    </label>
+  </div>
+  <div class="widget-output">
+    <div class="hero">Shrinkage factor $B = $ <b id="B-val">0.50</b> &nbsp;<span class="note-small" id="B-narr">(keep half of each deviation from the group mean)</span></div>
+    <svg id="hier-svg" viewBox="0 0 420 220" preserveAspectRatio="none"></svg>
+    <div class="legend"><span class="sw-lik">Raw observation $X_i$</span><span class="sw-post">Partial-pooled $\hat\theta_i$</span><span class="sw-prior">Group mean $\bar X$</span></div>
+    <div class="narr" id="hier-narr">Each horizontal line connects one patient's raw observation (orange) to their partial-pooled estimate (dark red), with the group mean (blue dashed) as the target the shrinkage is pulling toward. Notice that the patients whose raw observations sit farthest from the group mean have the longest lines: the movement under partial pooling is proportional to distance from the mean, so extreme observations shift most in absolute terms. Push the within-person SD up relative to the between-person SD and every line lengthens at once — a noisier test is a blurrier readout of the underlying true score, and the pooled estimate responds by leaning more heavily on what the cohort as a whole has already taught us. This is the same signal-versus-measurement tug-of-war you saw in Widget 2, now applied to a whole cohort simultaneously.</div>
+  </div>
+</div>
+
+<h3>Regression to the mean, made mechanical</h3>
+
+<p>It is worth stopping to name what the widget is actually showing, because it is the same mechanism we have already met twice in this piece, just wearing new clothes. In §3, Crawford's reliability correction inflated the denominator of his test statistic when the measure was unreliable, making the patient harder to flag as extreme. In §5 (and Widget 2), the Bayesian tug-of-war shrank the posterior mean toward the prior when the likelihood was imprecise. Here, partial pooling shrinks each patient's estimate toward the cohort mean when the within-person SD is large relative to the between-person SD. All three are the same trade-off between <em>how much signal there is to be had</em> and <em>how faithfully our instrument is recording it</em>. When the instrument is precise, we trust the number in front of us. When the instrument is blurry, we retreat toward what we already knew — the reference sample in Crawford's case, the explicit prior in Bayes, the group mean in partial pooling. The arithmetic differs; the physics does not.</p>
+
+<p>This is also, worth saying plainly, the honest generative face of <strong>regression to the mean</strong>. If you are a clinician and the single most abnormal-looking score in your cohort is also the score you most suspect will look more typical on retest, you have been noticing exactly this phenomenon in the wild. The partial-pooling formula formalises the intuition: a patient's estimated shift under pooling is $(1 - B) \times (X_i - \bar X)$, which is to say, the farther the raw observation sits from the group mean, the bigger its absolute shrinkage as a function of the level of measurement error. This is not a quirk of Bayesian bookkeeping — it follows from the fact that a raw observation that sits far from the mean is the observation most likely to contain a large chunk of measurement noise rather than genuine signal. Correcting for the noise therefore pulls that observation most. The extremes move most, exactly because they have the most to be corrected. Partial pooling just writes this into the first estimate instead of making you discover it on a retest.</p>
+
+<p>Practically this means two things. First, <em>be suspicious of the most extreme number in your cohort</em> — it is also the number most likely to regress. Second, <em>a noisier test justifies more aggressive shrinkage</em>, so a single impressive-looking score from an unreliable instrument should update you less, and partial pooling (or the equivalent Bayesian machinery from §5) is the right discipline to encode that less-updating rather than trusting gut feel.</p>
+
+</section>
+
+<section id="connections">
+<h2><span class="num">§8</span>Generative-model choices and their consequences</h2>
+
+<h3>Taxonicity is an empirical question, not a modelling convenience</h3>
+
+<p>We've quietly used two different generative models in this piece — a mixture of two groups (§4) and a single general population (§5). These aren't interchangeable and the choice between them is a substantive claim about nature. <strong>Taxometric methods</strong> (Meehl, Waller, Ruscio) exist precisely to test whether a putative categorical distinction has empirical support or whether the "group" is just the tail of a continuum. For DP specifically — and for many conditions in clinical and personality psychology — the taxon-versus-continuum status is genuinely contested. Your choice of model is a scientific commitment and should be defended as such.</p>
+
+<p>The stakes of getting this wrong are larger than they sound. A single observation produces one number; but that number answers a very different question under a continuum model than under a taxon model, and the two answers can disagree wildly about the same patient.</p>
+
+<p>It's worth being clear on exactly what the two candidate output numbers are. They aren't two attempts at answering the same question — they are answers to <em>different questions</em>:</p>
+
+<p><strong>The "continuum" number</strong> is a tail probability under a single-population $\mathcal{N}(0,1)$ model: $P(Z \le x)$. In this case we have likely made a decision that someone with very low performance (or very high) is of some key interest. You'll note though that where one chooses to draw the line for "extremity" is largely up to the field: $\pm 2$ SDs? $\pm 3$ SDs? It's up to you. In physics they often choose $\pm 5$ SDs. In any case, in the continuum case, we are asking: <em>"if everyone in the population comes from one big distribution and we happen to have pulled this person from the lower tail, how extreme is that?"</em> There is no group membership claim anywhere in it, because the model it's computed under only has one group to begin with.</p>
+
+<p><strong>The "taxon model" number</strong> is a posterior: $P(\text{in taxon} \mid x)$ under a mixture where a small clinical subgroup sits alongside a larger reference population. It says <em>"given that there are two groups out there — a rare clinical taxon with its own mean and SD, and everybody else — which one is this observation more likely to have come from?"</em> It's a membership claim about the individual patient.</p>
+
+<p>One useful way to keep the two numbers straight: the continuum tail probability asks <em>"is this score unusual?"</em>, while the taxon posterior asks <em>"is this person one of them?"</em>. A naive reader sees two probabilities, both about the same patient, and assumes they must be comparing notes on a single question. They aren't. The continuum number never mentions a clinical group because its model doesn't contain one; the taxon number makes an explicit claim about group membership because its model does. If you accidentally read the continuum tail as a membership probability — <em>"only a 0.62% chance this is real DP"</em>, say — you've smuggled a taxon assumption into an interpretation that the continuum model refuses to license. This is the sort of slippage that sneaks into clinical reports constantly, and the distinction is worth holding on to.</p>
+
+<h3>The posterior is not a decision</h3>
+
+<p>One last thing that a purely statistical treatment tends to leave unsaid. Even with a clean posterior — "there's a 46% probability this person has DP" — you still have to <em>decide</em>: refer them for further assessment, inform them of the finding, start an intervention, wait and test again. The posterior is a summary of evidence. Turning it into an action requires a <strong>loss function</strong> — what's the cost of a false positive versus a false negative in <em>this</em> clinical context? For a screening test where follow-up is cheap and safe, you might accept a low threshold for "act positively". For a treatment with serious side effects, you want a much higher posterior before pulling the trigger. Decision theory is where this conversation continues, and the Bayesian framing is especially comfortable there because the posterior is already the right input to a decision rule.</p>
+
+<p>It's worth looping back to §4 for a moment, because this is where the sensitivity/specificity discussion we set up there finds its proper home. When you pick a test — or a cutoff on a continuous test — you are implicitly picking a sensitivity/specificity trade-off, and that trade-off <em>is</em> a loss function that has already been baked in on your behalf. A highly sensitive test with middling specificity has effectively declared that false negatives are much worse than false positives; a highly specific test with middling sensitivity has declared the opposite. The question is whether those built-in weights are the weights that fit your clinical setting. A virus screen where a missed case can seed an outbreak lives in a world where false negatives are catastrophic and you should accept a lot of false positives to drive them down. A first-line anxiety questionnaire in primary care lives in a world where a false positive can itself harm the patient — unnecessary referral, iatrogenic labelling, insurance consequences — so a more specific instrument, even at the cost of some sensitivity, is the right default. The same posterior, run through those two loss functions, licenses very different actions. And that is why Bayes and decision theory are natural partners: once you have the posterior, the remaining job is to be honest about what the costs of being wrong actually are.</p>
+</section>
+
+<section id="takeaway">
+<h2><span class="num">§9</span>Three ingredients, three questions, one framework</h2>
+
+<p>The Bayesian framing for "is this score really extreme?" boils down to a surprisingly short list of ingredients — and this is where the three-numbers bookkeeping we have been doing throughout §5, §6, and §7 finally pays off. In the continuous case you need three numbers: the prior mean $\mu_0$ (where most true scores live in the population), the prior SD $\tau$ (how variable true scores are), and the likelihood SD $\sigma$ (how noisy the test is). In the discrete case you need three probabilities: the base rate, the sensitivity, and the specificity. In both cases the posterior falls out and directly answers the question you actually care about.</p>
+
+<p>The frequentist z-score pipeline, for all its ubiquity, omits the priors (there is no base rate anywhere), fixes $\mu_0$ and $\tau$ to whatever a finite control sample gave you without representing the uncertainty, and — in its textbook form — ignores measurement error entirely. Crawford's corrections patch the last of these while staying inside the framework, but they don't address the first two. Bayes handles all three at once, as a single consistent piece of machinery.</p>
+
+<p>The three things worth walking away with:</p>
+
+<p><strong>(1) The question matters.</strong> "Is this score surprising?" and "is this person in the DP group?" and "what's this person's true ability?" are different questions. Pick the one you mean. The choice commits you to a generative model (single-population continuous? two-group discrete?), and that commitment is a scientific claim.</p>
+
+<p><strong>(2) Base rates move the answer more than people expect.</strong> A positive test on a rare condition can still be more likely a false positive than a true one. This is not a bug in testing; it's a property of the world. Specificity is typically the lever to boost for rare conditions.</p>
+
+<p><strong>(3) Reliability controls how much your estimate gets pulled toward the prior.</strong> A <em>noisy</em> observation should update you less and end up shrunk back toward the population mean; a <em>reliable</em> observation earns the right to move the estimate closer to the raw data. The Bayesian machinery does this automatically through precision-weighting — the more precise of the two sources (prior or likelihood) wins the tug-of-war. Crawford's corrections and the normal-normal posterior are different faces of this same dial. Ignoring reliability means pretending a noisy observation is a clean one, which is the most avoidable of all the mistakes on offer.</p>
+
+<p>A parish priest called Bayes in the 1700s didn't solve clinical neuropsychology, but he did leave behind a piece of arithmetic that, three centuries on, happens to answer the question we were always trying to ask.</p>
+</section>
+
+<footer class="page-foot">
+<h4>References and further reading</h4>
+<ol class="refs">
+  <li id="ref-crawford2010">Crawford, J. R. &amp; Garthwaite, P. H. (2012). Single-case research in neuropsychology: A comparison of five forms of $t$-test for comparing a case to controls. <em>Cortex</em>, 48, 1009–1016.</li>
+  <li id="ref-bsdt">Crawford, J. R. &amp; Garthwaite, P. H. (2007). Comparison of a single case to a control or normative sample in neuropsychology: Development of a Bayesian approach. <em>Cognitive Neuropsychology</em>, 24, 343–372.</li>
+  <li>Meehl, P. E. (1995). Bootstraps taxometrics: Solving the classification problem in psychopathology. <em>American Psychologist</em>, 50, 266–275. — for the taxonicity question.</li>
+  <li>Haines, N. et al. (2020). Learning from the reliability paradox: How theoretically informed generative models can advance the measurement of behaviour. (on generative modelling of behaviour)</li>
+</ol>
+<p class="note-small" style="margin-top:1.4rem;">Draft v2 — comments welcome. v2 additions since v1: (i) a worked case in §5 where Bayes and Crawford's adjusted $t$ reach opposite verdicts on the same data; (ii) an expanded §8 treatment of the taxon-versus-continuum contrast, clarifying why a single observation can mean very different things under the two generative stories; (iii) a full §7 on hierarchical models and partial pooling, with Widget 3 for the shrinkage factor.</p>
+</footer>
+
+<script>
+/* ========== Widget 1: Discrete Bayes ========== */
+(function() {
+  const br = document.getElementById('br-slider');
+  const sens = document.getElementById('sens-slider');
+  const spec = document.getElementById('spec-slider');
+  const brVal = document.getElementById('br-val');
+  const sensVal = document.getElementById('sens-val');
+  const specVal = document.getElementById('spec-val');
+  const postVal = document.getElementById('post-val');
+  const postFactor = document.getElementById('post-factor');
+  const narr = document.getElementById('disc-narr');
+  const svg = document.getElementById('discrete-svg');
+
+  function update() {
+    const p = parseFloat(br.value);
+    const s = parseFloat(sens.value);
+    const sp = parseFloat(spec.value);
+    const fpr = 1 - sp;
+    const tp = s * p;
+    const fp = fpr * (1 - p);
+    const post = tp / (tp + fp);
+    const factor = post / p;
+
+    brVal.textContent = p.toFixed(3);
+    sensVal.textContent = s.toFixed(2);
+    specVal.textContent = sp.toFixed(2);
+    postVal.textContent = post.toFixed(3);
+    postFactor.textContent = '(moved prior by ×' + factor.toFixed(1) + ')';
+
+    const N = 10000;
+    const TP = Math.round(tp * N);
+    const FP = Math.round(fp * N);
+    const POS = TP + FP;
+    const PPV = POS > 0 ? (TP / POS * 100).toFixed(1) : '—';
+    narr.innerHTML = 'Out of ' + N.toLocaleString() + ' people: <b>' + TP.toLocaleString() + '</b> true positives and <b>' + FP.toLocaleString() + '</b> false positives. Among the <b>' + POS.toLocaleString() + '</b> who test positive, <b>' + PPV + '%</b> actually have the condition.';
+
+    // SVG: stacked bar of the "tested positive" group, split TP/FP
+    const W = 400, H = 50, y = 10, h = 30;
+    const total = tp + fp;
+    const tpW = total > 0 ? (tp / total) * W : 0;
+    svg.innerHTML = '';
+    const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    bg.setAttribute('x', 0); bg.setAttribute('y', y); bg.setAttribute('width', W); bg.setAttribute('height', h);
+    bg.setAttribute('fill', '#f4f1e8'); bg.setAttribute('rx', 3);
+    svg.appendChild(bg);
+
+    const tpRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    tpRect.setAttribute('x', 0); tpRect.setAttribute('y', y);
+    tpRect.setAttribute('width', tpW); tpRect.setAttribute('height', h);
+    tpRect.setAttribute('fill', '#4a6b4a'); tpRect.setAttribute('rx', 3);
+    svg.appendChild(tpRect);
+
+    const fpRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    fpRect.setAttribute('x', tpW); fpRect.setAttribute('y', y);
+    fpRect.setAttribute('width', W - tpW); fpRect.setAttribute('height', h);
+    fpRect.setAttribute('fill', '#c86a2a'); fpRect.setAttribute('rx', 3);
+    svg.appendChild(fpRect);
+
+    const cap = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    cap.setAttribute('x', W / 2); cap.setAttribute('y', 63);
+    cap.setAttribute('text-anchor', 'middle');
+    cap.setAttribute('font-family', 'ui-sans-serif, system-ui, sans-serif');
+    cap.setAttribute('font-size', '9');
+    cap.setAttribute('fill', '#6a6a6a');
+    cap.textContent = 'Everyone who tests positive';
+    svg.appendChild(cap);
+  }
+
+  [br, sens, spec].forEach(el => el.addEventListener('input', update));
+  update();
+})();
+
+/* ========== Widget 2: Continuous Gaussian tug-of-war ========== */
+(function() {
+  const muS = document.getElementById('mu-slider');
+  const tauS = document.getElementById('tau-slider');
+  const xS = document.getElementById('x-slider');
+  const rS = document.getElementById('r-slider');
+  const muV = document.getElementById('mu-val');
+  const tauV = document.getElementById('tau-val');
+  const xV = document.getElementById('x-val');
+  const rV = document.getElementById('r-val');
+  const postMu = document.getElementById('post-mu');
+  const postSd = document.getElementById('post-sd');
+  const postCi = document.getElementById('post-ci');
+  const narr = document.getElementById('cont-narr');
+  const svg = document.getElementById('continuous-svg');
+
+  const W = 420, H = 190;
+  const padL = 30, padR = 15, padT = 15, padB = 30;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+  const xMin = -8, xMax = 8;
+
+  function normpdf(x, mu, sigma) {
+    const z = (x - mu) / sigma;
+    return Math.exp(-0.5 * z * z) / (sigma * Math.sqrt(2 * Math.PI));
+  }
+  function xPix(x) { return padL + (x - xMin) / (xMax - xMin) * plotW; }
+  function yPix(y, yMax) { return padT + plotH - (y / yMax) * plotH; }
+
+  function curvePath(mu, sigma, yMax) {
+    const pts = [];
+    const N = 140;
+    for (let i = 0; i <= N; i++) {
+      const x = xMin + (xMax - xMin) * i / N;
+      const y = normpdf(x, mu, sigma);
+      pts.push([xPix(x), yPix(y, yMax)]);
+    }
+    return 'M ' + pts.map(p => p[0].toFixed(2) + ',' + p[1].toFixed(2)).join(' L ');
+  }
+
+  function update() {
+    const mu0 = parseFloat(muS.value);
+    const tau = parseFloat(tauS.value);
+    const x = parseFloat(xS.value);
+    const r = parseFloat(rS.value);
+    const tau2 = tau * tau;
+    const sigma2 = tau2 * (1 - r) / r;
+    const sigma = Math.sqrt(sigma2);
+    const postPrec = 1 / tau2 + 1 / sigma2;
+    const postVar = 1 / postPrec;
+    const postMean = postVar * (mu0 / tau2 + x / sigma2);
+    const postSD = Math.sqrt(postVar);
+    const ciLo = postMean - 1.96 * postSD;
+    const ciHi = postMean + 1.96 * postSD;
+
+    muV.textContent = mu0.toFixed(1);
+    tauV.textContent = tau.toFixed(2);
+    xV.textContent = x.toFixed(1);
+    rV.textContent = r.toFixed(2);
+    postMu.textContent = postMean.toFixed(2);
+    postSd.textContent = postSD.toFixed(3);
+    postCi.textContent = '[' + ciLo.toFixed(2) + ', ' + ciHi.toFixed(2) + ']';
+
+    const wPrior = (1 / tau2) / postPrec;
+    const wData = (1 / sigma2) / postPrec;
+    let msg = '';
+    if (wData > 0.75) msg = 'The likelihood dominates (weight ' + (wData*100).toFixed(0) + '% on the data). The posterior is pulled close to the observation: a reliable-ish test with an extreme observation moves you.';
+    else if (wPrior > 0.75) msg = 'The prior dominates (weight ' + (wPrior*100).toFixed(0) + '% on the prior mean). An unreliable observation doesn\'t get to overrule the population mean.';
+    else msg = 'A genuine tug-of-war: the posterior sits between the prior mean and the observed score, weighted by precision (' + (wPrior*100).toFixed(0) + '% prior, ' + (wData*100).toFixed(0) + '% data).';
+    narr.innerHTML = msg;
+
+    // Pick a common y-scale that keeps all three curves on the plot
+    const yMax = Math.max(
+      normpdf(mu0, mu0, tau),
+      normpdf(x, x, sigma),
+      normpdf(postMean, postMean, postSD)
+    ) * 1.08;
+
+    svg.innerHTML = '';
+    // axis
+    const ax = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    ax.setAttribute('x1', padL); ax.setAttribute('x2', W - padR);
+    ax.setAttribute('y1', padT + plotH); ax.setAttribute('y2', padT + plotH);
+    ax.setAttribute('stroke', '#b0a894'); ax.setAttribute('stroke-width', '1');
+    svg.appendChild(ax);
+    // tick labels
+    for (let t = -8; t <= 8; t += 2) {
+      const tx = xPix(t);
+      const tick = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      tick.setAttribute('x1', tx); tick.setAttribute('x2', tx);
+      tick.setAttribute('y1', padT + plotH); tick.setAttribute('y2', padT + plotH + 4);
+      tick.setAttribute('stroke', '#b0a894');
+      svg.appendChild(tick);
+      const lbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      lbl.setAttribute('x', tx); lbl.setAttribute('y', padT + plotH + 15);
+      lbl.setAttribute('text-anchor', 'middle');
+      lbl.setAttribute('font-family', 'ui-sans-serif, system-ui, sans-serif');
+      lbl.setAttribute('font-size', '9');
+      lbl.setAttribute('fill', '#6a6a6a');
+      lbl.textContent = t;
+      svg.appendChild(lbl);
+    }
+
+    // CI shaded strip under posterior
+    const ciRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    ciRect.setAttribute('x', xPix(ciLo));
+    ciRect.setAttribute('y', padT);
+    ciRect.setAttribute('width', Math.max(1, xPix(ciHi) - xPix(ciLo)));
+    ciRect.setAttribute('height', plotH);
+    ciRect.setAttribute('fill', '#7a2a4a');
+    ciRect.setAttribute('opacity', '0.07');
+    svg.appendChild(ciRect);
+
+    // curves
+    const curves = [
+      { mu: mu0, sig: tau, color: '#2a5a8a', label: 'prior' },
+      { mu: x, sig: sigma, color: '#c86a2a', label: 'likelihood' },
+      { mu: postMean, sig: postSD, color: '#7a2a4a', label: 'posterior', width: 2.4 }
+    ];
+    curves.forEach(c => {
+      const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      p.setAttribute('d', curvePath(c.mu, c.sig, yMax));
+      p.setAttribute('stroke', c.color);
+      p.setAttribute('stroke-width', c.width || 1.6);
+      p.setAttribute('fill', 'none');
+      svg.appendChild(p);
+    });
+
+    // vertical markers for observed x and posterior mean
+    const markers = [
+      { x: x, color: '#c86a2a', label: 'x' },
+      { x: postMean, color: '#7a2a4a', label: 'μ_post' },
+      { x: mu0, color: '#2a5a8a', label: 'μ₀' }
+    ];
+    markers.forEach(m => {
+      const px = xPix(m.x);
+      if (px < padL || px > W - padR) return;
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', px); line.setAttribute('x2', px);
+      line.setAttribute('y1', padT); line.setAttribute('y2', padT + plotH);
+      line.setAttribute('stroke', m.color);
+      line.setAttribute('stroke-width', '0.8');
+      line.setAttribute('stroke-dasharray', '2 3');
+      line.setAttribute('opacity', '0.6');
+      svg.appendChild(line);
+    });
+  }
+
+  [muS, tauS, xS, rS].forEach(el => el.addEventListener('input', update));
+  update();
+})();
+
+/* ========== Widget 3: Hierarchical partial pooling ========== */
+(function() {
+  const tgS = document.getElementById('tg-slider');
+  const sgS = document.getElementById('sg-slider');
+  const tgV = document.getElementById('tg-val');
+  const sgV = document.getElementById('sg-val');
+  const Bv  = document.getElementById('B-val');
+  const Bn  = document.getElementById('B-narr');
+  const narr= document.getElementById('hier-narr');
+  const svg = document.getElementById('hier-svg');
+
+  // Fixed illustrative cohort: 12 patients with evenly spaced true scores
+  // and deterministic "noise" based on index, so the picture is reproducible
+  // and slider moves are interpretable (no reshuffle on every drag).
+  const trueScores = [-2.3, -1.8, -1.4, -0.9, -0.5, -0.1, 0.3, 0.7, 1.1, 1.5, 2.0, 2.4];
+  const noiseUnit  = [ 0.8, -0.6,  1.1, -0.4,  0.9, -1.0, 0.5, -0.9, 0.7, -0.3, 1.2, -0.8];
+
+  const W = 420, H = 220;
+  const padL = 45, padR = 15, padT = 20, padB = 30;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+  const xMin = -5, xMax = 5;
+
+  function xPix(v) { return padL + (v - xMin) / (xMax - xMin) * plotW; }
+
+  function update() {
+    const tg = parseFloat(tgS.value);
+    const sg = parseFloat(sgS.value);
+    const B  = (tg*tg) / (tg*tg + sg*sg);
+
+    tgV.textContent = tg.toFixed(2);
+    sgV.textContent = sg.toFixed(2);
+    Bv.textContent  = B.toFixed(2);
+
+    if (B > 0.75) Bn.textContent = '(keep ' + (B*100).toFixed(0) + '% of each deviation — most of the spread is genuine between-person variation, so partial pooling is gentle)';
+    else if (B < 0.25) Bn.textContent = '(keep only ' + (B*100).toFixed(0) + '% of each deviation — most of the spread is noise, so estimates collapse toward the group mean)';
+    else Bn.textContent = '(keep ' + (B*100).toFixed(0) + '% of each deviation — a genuine trade-off between trusting the observation and trusting the group)';
+
+    // Observations: true score + scaled noise
+    const obs = trueScores.map((t,i) => t + noiseUnit[i] * sg);
+    const xbar = obs.reduce((a,b) => a+b, 0) / obs.length;
+    // Partial pooled estimates
+    const pp = obs.map(x => xbar + B * (x - xbar));
+
+    // Decide axis scale based on observations (keep things readable)
+    const obsMin = Math.min(...obs, -3);
+    const obsMax = Math.max(...obs,  3);
+    const curMin = Math.min(obsMin - 0.3, -4);
+    const curMax = Math.max(obsMax + 0.3,  4);
+    const xRange = curMax - curMin;
+    function xp(v) { return padL + (v - curMin) / xRange * plotW; }
+
+    svg.innerHTML = '';
+
+    // axis
+    const ax = document.createElementNS('http://www.w3.org/2000/svg','line');
+    ax.setAttribute('x1', padL); ax.setAttribute('x2', W - padR);
+    ax.setAttribute('y1', padT + plotH); ax.setAttribute('y2', padT + plotH);
+    ax.setAttribute('stroke','#b0a894'); ax.setAttribute('stroke-width','1');
+    svg.appendChild(ax);
+
+    // tick labels at integer positions
+    const lo = Math.ceil(curMin), hi = Math.floor(curMax);
+    for (let t = lo; t <= hi; t++) {
+      const tx = xp(t);
+      const tick = document.createElementNS('http://www.w3.org/2000/svg','line');
+      tick.setAttribute('x1', tx); tick.setAttribute('x2', tx);
+      tick.setAttribute('y1', padT + plotH); tick.setAttribute('y2', padT + plotH + 4);
+      tick.setAttribute('stroke','#b0a894');
+      svg.appendChild(tick);
+      const lbl = document.createElementNS('http://www.w3.org/2000/svg','text');
+      lbl.setAttribute('x', tx); lbl.setAttribute('y', padT + plotH + 15);
+      lbl.setAttribute('text-anchor','middle');
+      lbl.setAttribute('font-family','ui-sans-serif, system-ui, sans-serif');
+      lbl.setAttribute('font-size','9'); lbl.setAttribute('fill','#6a6a6a');
+      lbl.textContent = t;
+      svg.appendChild(lbl);
+    }
+
+    // group mean vertical line
+    const gm = document.createElementNS('http://www.w3.org/2000/svg','line');
+    gm.setAttribute('x1', xp(xbar)); gm.setAttribute('x2', xp(xbar));
+    gm.setAttribute('y1', padT);     gm.setAttribute('y2', padT + plotH);
+    gm.setAttribute('stroke','#2a5a8a'); gm.setAttribute('stroke-width','1.2');
+    gm.setAttribute('stroke-dasharray','3 3'); gm.setAttribute('opacity','0.7');
+    svg.appendChild(gm);
+
+    const gmLbl = document.createElementNS('http://www.w3.org/2000/svg','text');
+    gmLbl.setAttribute('x', xp(xbar)); gmLbl.setAttribute('y', padT - 6);
+    gmLbl.setAttribute('text-anchor','middle');
+    gmLbl.setAttribute('font-family','ui-sans-serif, system-ui, sans-serif');
+    gmLbl.setAttribute('font-size','9'); gmLbl.setAttribute('fill','#2a5a8a');
+    gmLbl.textContent = 'group mean';
+    svg.appendChild(gmLbl);
+
+    // patient rows
+    const rowH = plotH / (obs.length + 1);
+    for (let i = 0; i < obs.length; i++) {
+      const rowY = padT + rowH * (i + 1);
+      // row label
+      const rlbl = document.createElementNS('http://www.w3.org/2000/svg','text');
+      rlbl.setAttribute('x', padL - 8); rlbl.setAttribute('y', rowY + 3);
+      rlbl.setAttribute('text-anchor','end');
+      rlbl.setAttribute('font-family','ui-sans-serif, system-ui, sans-serif');
+      rlbl.setAttribute('font-size','8'); rlbl.setAttribute('fill','#888');
+      rlbl.textContent = 'P' + (i+1);
+      svg.appendChild(rlbl);
+
+      // line from observation to partial-pooled
+      const conn = document.createElementNS('http://www.w3.org/2000/svg','line');
+      conn.setAttribute('x1', xp(obs[i])); conn.setAttribute('x2', xp(pp[i]));
+      conn.setAttribute('y1', rowY); conn.setAttribute('y2', rowY);
+      conn.setAttribute('stroke','#a0887a'); conn.setAttribute('stroke-width','1.3');
+      svg.appendChild(conn);
+
+      // raw observation dot
+      const rawD = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      rawD.setAttribute('cx', xp(obs[i])); rawD.setAttribute('cy', rowY);
+      rawD.setAttribute('r','3.2'); rawD.setAttribute('fill','#c86a2a');
+      svg.appendChild(rawD);
+
+      // partial-pooled dot
+      const ppD = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      ppD.setAttribute('cx', xp(pp[i])); ppD.setAttribute('cy', rowY);
+      ppD.setAttribute('r','3.2'); ppD.setAttribute('fill','#7a2a4a');
+      svg.appendChild(ppD);
+    }
+  }
+
+  [tgS, sgS].forEach(el => el.addEventListener('input', update));
+  update();
+})();
+</script>
+
+</body>
+</html>
