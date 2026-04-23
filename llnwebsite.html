@@ -1,0 +1,1583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Why We Average — From Large Numbers to Gaussian Distributions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&family=Epilogue:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1714;
+    --paper: #f7f3ee;
+    --paper-mid: #ede8e1;
+    --paper-dark: #ddd6cb;
+    --amber: #c07c2a;
+    --amber-light: #e8a44a;
+    --amber-pale: #f5e8d0;
+    --teal: #2a6b6e;
+    --teal-light: #4a9b9e;
+    --red-acc: #b84040;
+    --muted: #7a7068;
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --sans: 'Epilogue', sans-serif;
+    --mono: 'DM Mono', monospace;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 19px;
+    line-height: 1.75;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.5;
+  }
+  header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 5rem 2rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--amber), var(--teal-light), var(--amber));
+  }
+  .header-grid {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2rem;
+    align-items: end;
+  }
+  .header-eyebrow {
+    font-family: var(--sans);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--amber-light);
+    margin-bottom: 1.2rem;
+  }
+  header h1 {
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  header h1 em { font-style: italic; color: var(--amber-light); }
+  .header-subtitle {
+    margin-top: 1.2rem;
+    font-size: 1.1rem;
+    font-weight: 300;
+    color: #b8b0a5;
+    max-width: 560px;
+    font-style: italic;
+  }
+  .header-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    align-self: start;
+    padding-top: 0.5rem;
+  }
+  .nav-item {
+    font-family: var(--sans);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #888;
+    text-decoration: none;
+    padding: 0.25rem 0.6rem;
+    border-left: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .nav-item:hover { color: var(--amber-light); border-left-color: var(--amber); }
+  .section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+  }
+  .section + .section { border-top: 1px solid var(--paper-dark); }
+  .section-number {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--amber);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.6rem;
+    display: block;
+  }
+  .section h2 {
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    font-weight: 600;
+    line-height: 1.15;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.01em;
+  }
+  .section h3 {
+    font-size: 1.35rem;
+    font-weight: 600;
+    margin: 2rem 0 0.8rem;
+    color: var(--teal);
+  }
+  p { margin-bottom: 1.1rem; }
+  strong { font-weight: 600; }
+  em { font-style: italic; }
+  .lead {
+    font-size: 1.15rem;
+    font-style: italic;
+    color: #4a4540;
+    border-left: 3px solid var(--amber);
+    padding-left: 1.2rem;
+    margin: 1.5rem 0;
+  }
+  .math-inline {
+    font-family: var(--mono);
+    font-size: 0.85em;
+    background: var(--paper-mid);
+    padding: 0.1em 0.4em;
+    border-radius: 3px;
+  }
+  .equation-block {
+    background: var(--paper-mid);
+    border: 1px solid var(--paper-dark);
+    border-left: 4px solid var(--teal);
+    padding: 1.2rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .equation-block .eq-label {
+    display: block;
+    font-family: var(--sans);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.6rem;
+  }
+  .equation-block .eq-main {
+    font-family: var(--mono);
+    font-size: 1.05rem;
+    text-align: center;
+    letter-spacing: 0.03em;
+    display: block;
+    margin-bottom: 1rem;
+  }
+  .eq-vars {
+    font-size: 0.82rem;
+    color: #555;
+    border-top: 1px solid var(--paper-dark);
+    padding-top: 0.8rem;
+  }
+  .eq-vars table { width: 100%; border-collapse: collapse; font-family: var(--serif); }
+  .eq-vars td { padding: 0.18rem 0.5rem 0.18rem 0; vertical-align: top; }
+  .eq-vars td:first-child { font-family: var(--mono); font-size: 0.8rem; color: var(--teal); white-space: nowrap; width: 9rem; }
+  .callout {
+    background: var(--amber-pale);
+    border: 1px solid #ddc89a;
+    border-radius: 4px;
+    padding: 1.2rem 1.5rem;
+    margin: 1.5rem 0;
+    font-size: 0.95rem;
+  }
+  .callout-title {
+    font-family: var(--sans);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 0.5rem;
+  }
+  .callout-teal { background: #eaf4f4; border: 1px solid #b0d8da; }
+  .callout-teal .callout-title { color: var(--teal); }
+  .callout-dark { background: #1e1c1a; border: 1px solid #333; color: #ccc; }
+  .callout-dark .callout-title { color: var(--amber-light); }
+  .callout-dark p { color: #bbb; }
+  .foreshadow-box {
+    background: linear-gradient(135deg, #1e2a2b, #1a1714);
+    border: 1px solid #2a4a4b;
+    border-left: 4px solid var(--teal);
+    border-radius: 4px;
+    padding: 1.1rem 1.4rem;
+    margin: 1.5rem 0;
+    font-size: 0.92rem;
+    color: #c5c0ba;
+  }
+  .foreshadow-box strong { color: var(--teal-light); }
+  .foreshadow-box .fs-label {
+    font-family: var(--sans);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+  .sim-box {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 6px;
+    padding: 2rem;
+    margin: 2rem 0;
+  }
+  .sim-title {
+    font-family: var(--sans);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--amber-light);
+    margin-bottom: 0.4rem;
+  }
+  .sim-desc {
+    font-size: 0.88rem;
+    color: #aaa;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+    line-height: 1.55;
+  }
+  .sim-controls {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 1.2rem;
+  }
+  .btn {
+    font-family: var(--sans);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.55rem 1.2rem;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-primary { background: var(--amber); color: white; }
+  .btn-primary:hover { background: var(--amber-light); }
+  .btn-secondary { background: transparent; color: #aaa; border: 1px solid #444; }
+  .btn-secondary:hover { border-color: #888; color: #ddd; }
+  .btn-teal { background: var(--teal); color: white; }
+  .btn-teal:hover { background: var(--teal-light); }
+  .sim-stat-row { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
+  .stat-chip { display: flex; flex-direction: column; }
+  .stat-label { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.05em; color: #9a9288; text-transform: uppercase; line-height: 1.45; }
+  .stat-label .sublabel { display: block; font-family: var(--serif); font-size: 0.78rem; font-style: italic; letter-spacing: 0; text-transform: none; color: #7a7268; margin-top: 0.15rem; line-height: 1.35; }
+  .stat-value { font-family: var(--mono); font-size: 1.35rem; color: var(--amber-light); margin-top: 0.15rem; }
+  .stat-value.teal { color: #6bbbbf; }
+  .stat-value.green { color: #7ec87e; }
+  .stat-value.dim { color: #888; }
+  .stat-row-secondary { border-top: 1px solid #2a2724; padding-top: 0.9rem; margin-top: -0.3rem; }
+  canvas { display: block; width: 100%; }
+  .canvas-label { font-family: var(--mono); font-size: 0.58rem; color: #666; margin-bottom: 0.35rem; text-transform: uppercase; letter-spacing: 0.1em; }
+  .diagram-container { background: var(--paper-mid); border: 1px solid var(--paper-dark); border-radius: 6px; padding: 2rem 1.5rem; margin: 2rem 0; overflow-x: auto; }
+  .diagram-title { font-family: var(--sans); font-size: 0.65rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 1.5rem; text-align: center; }
+  .diagram-svg-wrap { max-width: 700px; margin: 0 auto; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.5rem 0; }
+  @media (max-width: 640px) {
+    .two-col { grid-template-columns: 1fr; }
+    .header-grid { grid-template-columns: 1fr; }
+    .header-nav { display: none; }
+  }
+  .info-card { background: var(--paper-mid); border: 1px solid var(--paper-dark); border-radius: 4px; padding: 1.2rem; }
+  .info-card-title { font-family: var(--sans); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.6rem; }
+  .info-card p { font-size: 0.88rem; margin-bottom: 0; }
+  input[type=range] { -webkit-appearance: none; background: #333; height: 4px; border-radius: 2px; outline: none; cursor: pointer; width: 100%; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--amber); cursor: pointer; }
+  .slider-label { font-family: var(--mono); font-size: 0.7rem; color: #aaa; display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
+  .slider-val { color: var(--amber-light); min-width: 3ch; text-align: right; }
+  .legend-row { display: flex; gap: 1.2rem; flex-wrap: wrap; margin-top: 0.6rem; }
+  .legend-item { display: flex; align-items: center; gap: 0.4rem; font-family: var(--mono); font-size: 0.62rem; color: #999; text-transform: uppercase; letter-spacing: 0.08em; }
+  .legend-swatch { width: 20px; height: 3px; border-radius: 2px; flex-shrink: 0; }
+
+  /* Chain summary */
+  .chain {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-wrap: wrap;
+    margin: 2rem 0;
+  }
+  .chain-node {
+    background: var(--ink);
+    color: #ff6b6b;
+    border-radius: 5px;
+    padding: 0.8rem 1.1rem;
+    font-family: var(--sans);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-align: center;
+    flex: 1;
+    min-width: 110px;
+    border-bottom: 3px solid var(--amber);
+  }
+  .chain-node span { display: block; font-size: 0.72rem; font-weight: 400; color: #ff6b6b; margin-top: 0.35rem; letter-spacing: 0.04em; line-height: 1.4; }
+  .chain-arrow {
+    font-size: 1.3rem;
+    color: var(--amber);
+    padding: 0 0.4rem;
+    flex-shrink: 0;
+  }
+  .chain-node.future { background: #222; border-bottom-color: var(--teal); opacity: 0.75; }
+  .chain-node.future span { color: #4a9b9e88; }
+
+  /* page-2 teaser */
+  .page2-teaser {
+    background: var(--ink);
+    border-radius: 8px;
+    padding: 2.5rem 2rem;
+    margin-top: 3rem;
+    border: 1px solid #333;
+    position: relative;
+    overflow: hidden;
+  }
+  .page2-teaser::before {
+    content: 'COMING NEXT';
+    position: absolute;
+    top: 1rem; right: 1.2rem;
+    font-family: var(--sans);
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    color: var(--teal);
+  }
+  .page2-teaser h3 { color: var(--amber-light); margin-top: 0; font-size: 1.5rem; }
+  .page2-teaser p { color: #aaa; font-size: 0.92rem; margin-bottom: 0.8rem; }
+  .page2-teaser .teaser-items { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.2rem; }
+  .teaser-item {
+    flex: 1;
+    min-width: 160px;
+    background: #111;
+    border: 1px solid #333;
+    border-top: 2px solid var(--teal);
+    border-radius: 4px;
+    padding: 0.9rem 1rem;
+  }
+  .teaser-item-title { font-family: var(--sans); font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal-light); margin-bottom: 0.4rem; }
+  .teaser-item p { font-size: 0.82rem; color: #888; margin: 0; }
+
+  footer { background: var(--ink); color: #666; text-align: center; padding: 2.5rem 2rem; font-size: 0.8rem; font-family: var(--sans); letter-spacing: 0.06em; }
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.55s ease, transform 0.55s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  #progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--amber), var(--teal-light)); z-index: 9999; transition: width 0.1s; }
+  .toc-indicator { position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; z-index: 100; }
+  .toc-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--paper-dark); transition: all 0.3s; cursor: pointer; }
+  .toc-dot.active { background: var(--amber); transform: scale(1.4); }
+  @media (max-width: 768px) { .toc-indicator { display: none; } }
+</style>
+</head>
+<body>
+
+<div id="progress-bar" style="width:0%"></div>
+
+<div class="toc-indicator">
+  <div class="toc-dot active" onclick="scrollToSection(0)"></div>
+  <div class="toc-dot" onclick="scrollToSection(1)"></div>
+  <div class="toc-dot" onclick="scrollToSection(2)"></div>
+  <div class="toc-dot" onclick="scrollToSection(3)"></div>
+  <div class="toc-dot" onclick="scrollToSection(4)"></div>
+  <div class="toc-dot" onclick="scrollToSection(5)"></div>
+</div>
+
+<header>
+  <div class="header-grid">
+    <div>
+      <div class="header-eyebrow">Statistical Foundations · Part 1 of 2</div>
+      <h1>Why We <em>Average</em><br>— and What It Buys Us</h1>
+      <p class="header-subtitle">From the Law of Large Numbers to Gaussian distributions — and why this is the foundation for t-tests and ANOVA.</p>
+    </div>
+    <nav class="header-nav">
+      <a href="#s0" class="nav-item">Introduction</a>
+      <a href="#s1" class="nav-item">Law of Large Numbers</a>
+      <a href="#s2" class="nav-item">The Gaussian Connection</a>
+      <a href="#s2b" class="nav-item">Confidence Intervals</a>
+      <a href="#s3" class="nav-item">Two Levels of Averaging</a>
+      <a href="#s4" class="nav-item">From Means to Inference</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ===== SECTION 0 ===== -->
+<section id="s0" class="section reveal">
+  <span class="section-number">§ 00</span>
+  <h2>Why does adding things up and dividing work?</h2>
+
+  <p class="lead">
+    The sample mean — sum all your scores, divide by how many you have — is probably the most used operation in all of quantitative science. But why does it work? What principle justifies treating a single number as a summary of dozens of observations?
+  </p>
+
+  <p>
+    This is not a trivial question. When a researcher in psychology computes a participant's average score across 40 questionnaire items, or when a clinician uses a scale total as a proxy for some underlying construct, they are implicitly relying on a set of deep mathematical ideas. These ideas connect three things that are usually taught separately:
+  </p>
+
+  <div class="two-col">
+    <div class="info-card">
+      <div class="info-card-title">The Law of Large Numbers</div>
+      <p>As you add more observations, your sample mean gets closer and closer to the true underlying value. Randomness averages out — but only if you give it enough room to do so.</p>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">The Central Limit Theorem</div>
+      <p>The distribution of sample means becomes bell-shaped (Gaussian) as sample size grows — regardless of what the individual observations look like. This is why the normal distribution appears so widely in statistical practice.</p>
+    </div>
+  </div>
+
+  <p>
+    Together, these ideas form the statistical bedrock of a practice that runs from polling and clinical trials to psychometric scale construction and latent variable modelling — and they are what make t-tests and ANOVAs legitimate tools. This page traces the full chain from first principles to inference.
+  </p>
+</section>
+
+<!-- ===== SECTION 1 ===== -->
+<section id="s1" class="section reveal">
+  <span class="section-number">§ 01</span>
+  <h2>The Law of Large Numbers</h2>
+
+  <p>
+    Suppose you toss a fair coin repeatedly. The true probability of heads is exactly 0.5 — but any single toss gives you either 0 or 1, never 0.5. After 4 tosses you might have seen 3 heads (75%). After 10, perhaps 6 heads (60%). But something remarkable happens as you accumulate more and more tosses: the <em>running proportion</em> of heads settles, with increasing reliability, toward 0.5.
+  </p>
+
+  <p>
+    This is the <strong>Law of Large Numbers (LLN)</strong> in its most basic form. It says that for any random variable with a well-defined mean, the sample mean converges to the population mean as sample size grows without bound.
+  </p>
+
+  <div class="equation-block">
+    <span class="eq-label">Law of Large Numbers — informal statement</span>
+    <span class="eq-main">X̄<sub>n</sub> = (X₁ + X₂ + … + Xₙ) / n &nbsp;→&nbsp; μ &nbsp;as&nbsp; n → ∞</span>
+    <div class="eq-vars">
+      <table>
+        <tr><td>X₁, X₂, …, Xₙ</td><td>Individual observations — e.g. each coin toss, each person's height, each item response, or each reaction time in an experiment. Each is a random draw from the same underlying distribution.</td></tr>
+        <tr><td>n</td><td>The number of observations collected so far.</td></tr>
+        <tr><td>X̄<sub>n</sub></td><td>The sample mean — the arithmetic average of n observations: sum them all up and divide by n.</td></tr>
+        <tr><td>μ (mu)</td><td>The true population mean — the average you would get if you could observe every possible value. This is usually unknown; we use X̄ to estimate it.</td></tr>
+        <tr><td>→ as n → ∞</td><td>"Converges to" as n grows. In practice: the larger n is, the closer X̄ tends to be to μ.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <p>
+    The key insight is what averaging <em>does</em> mechanically. When you add up <span class="math-inline">n</span> observations and divide by <span class="math-inline">n</span>, you are diluting the influence of any individual data point. An extreme value that dominates a sum of 5 contributes almost nothing to a sum of 500. As each idiosyncratic observation becomes a tiny fraction of the whole, what remains is the signal they share: the underlying mean.
+  </p>
+
+  <div class="foreshadow-box">
+    <span class="fs-label">Looking ahead — this principle operates at two levels</span>
+    The LLN applies whenever you average over independent draws from the same distribution. In psychology and behavioural science, this happens at <strong>two distinct levels</strong>, and both matter:<br><br>
+    (1) <strong>Within a person:</strong> averaging across multiple items on a questionnaire, or averaging reaction times across many trials, gives a more stable estimate of that individual's true score or speed.<br><br>
+    (2) <strong>Across people:</strong> averaging across many participants' scores gives a more stable estimate of the true group mean.<br><br>
+    We'll unpack both in §03. The Central Limit Theorem — coming next — applies at both levels too, and both applications are essential for understanding why the standard toolkit of inferential statistics works.
+  </div>
+
+  <h3>Try it yourself: a coin-toss simulator</h3>
+
+  <div class="sim-box">
+    <div class="sim-title">Simulation 1 — Law of Large Numbers</div>
+    <div class="sim-desc">Watch the running mean of coin tosses (1 = heads, 0 = tails) converge toward the true probability μ = 0.5 as you accumulate more flips. The same logic applies to any averaging process — reaction time trials, questionnaire items, or participants in a study.</div>
+
+    <div class="sim-controls">
+      <button class="btn btn-primary" onclick="LLN.flip(1)">Flip 1</button>
+      <button class="btn btn-primary" onclick="LLN.flip(10)">Flip 10</button>
+      <button class="btn btn-primary" onclick="LLN.flip(100)">Flip 100</button>
+      <button class="btn btn-secondary" onclick="LLN.reset()">Reset</button>
+    </div>
+
+    <div class="sim-stat-row">
+      <div class="stat-chip">
+        <span class="stat-label">Total flips (n)</span>
+        <span class="stat-value" id="lln-n">0</span>
+      </div>
+      <div class="stat-chip">
+        <span class="stat-label">Running mean X̄</span>
+        <span class="stat-value" id="lln-mean">—</span>
+      </div>
+      <div class="stat-chip">
+        <span class="stat-label">True mean μ</span>
+        <span class="stat-value teal">0.500</span>
+      </div>
+      <div class="stat-chip">
+        <span class="stat-label">|X̄ − μ| distance</span>
+        <span class="stat-value" id="lln-err">—</span>
+      </div>
+    </div>
+
+    <canvas id="lln-canvas" height="180"></canvas>
+    <div class="legend-row" style="margin-top:0.7rem">
+      <div class="legend-item"><div class="legend-swatch" style="background:#e8a44a"></div>Running mean X̄</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#4a9b9e"></div>True μ = 0.5</div>
+    </div>
+  </div>
+
+  <p>
+    Notice that early on the line can swing wildly — this is sampling variability. But with more flips, the trajectory narrows and presses toward 0.5. The variability shrinks proportional to <span class="math-inline">1/√n</span>: double the sample size and the expected distance from μ shrinks by a factor of √2.
+  </p>
+
+  <div class="callout">
+    <div class="callout-title">Key Intuition</div>
+    <p>The mean works because independent noise cancels when you aggregate. Each individual observation carries genuine signal (the true mean) plus random error. Averaging many observations allows the errors — being unsystematic — to cancel each other out, leaving the signal behind. The more observations, the cleaner the signal.</p>
+  </div>
+</section>
+
+<!-- ===== SECTION 2 ===== -->
+<section id="s2" class="section reveal">
+  <span class="section-number">§ 02</span>
+  <h2>From Averaging to Gaussian: the Central Limit Theorem</h2>
+
+  <p>
+    The LLN tells us <em>where</em> the mean ends up. But it says nothing about the <em>shape</em> of the uncertainty around it. That is the job of the <strong>Central Limit Theorem (CLT)</strong>. Before we get there, though, we need to clarify two things: the quantities we are trying to estimate, and what we mean when we say an estimate is <em>precise</em>.
+  </p>
+
+  <div class="callout callout-teal">
+    <div class="callout-title">A Useful Distinction: Mean vs. Variance (and Standard Deviation)</div>
+    <p>Any population has at least two important statistical properties:</p>
+    <p style="margin-top:0.6rem"><strong>A true mean μ</strong> — the average level of the trait across individuals.</p>
+    <p style="margin-top:0.6rem"><strong>A true variance σ²</strong> — a measure of how much individuals differ from that mean, computed as the average <em>squared</em> deviation from μ. We more often work with its square root, the <strong>true standard deviation σ</strong>, because σ is expressed in the same units as the data itself: if the trait is measured in milliseconds, σ is in milliseconds, while σ² is in milliseconds². Variance and standard deviation carry the same information — σ² is the bookkeeping form, σ is the readable form.</p>
+    <p style="margin-top:0.8rem">Both μ and σ are real features of the population — facts about the world, present whether or not anyone samples them. The CLT tells us how well we can estimate μ from a sample. It does not collapse σ away — true individual differences remain, and quantifying them is a separate scientific goal we return to in Part 2.</p>
+    <p style="margin-top:0.8rem">Before we leave σ behind, a point to keep in mind: σ will resurface almost immediately in a <em>second</em> role. Not as a target of estimation in its own right, but as the quantity that enters the formula for how <em>precisely</em> we can estimate μ from a finite sample. The same σ will therefore be doing two jobs in what follows — describing real variability between individuals in the population, and governing the error in our estimate of the mean. These are different things, and teaching routinely muddles them, so we will keep them apart deliberately.</p>
+  </div>
+
+  <h3>What is the standard error, and why does it shrink?</h3>
+
+  <p>
+    As we saw in the earlier example of the law of large numbers, as <span class="math-inline">n</span> grows, the sample mean <span class="math-inline">x̄</span> drifts towards the true mean <span class="math-inline">μ</span>. Our <strong>point estimate</strong> becomes more accurate with more sampling.
+  </p>
+
+  <p>
+    Every estimate drawn from finite data carries uncertainty: as we have illustrated, each run of a new sample experiment gives a slightly different mean. This is the natural consequence of any sampling from a putative distribution. Consequentially, what we really have, around any point estimate, is a distribution of plausible alternatives — the range of means we would have obtained had the coin of sampling landed a different way. Like the variance we see in any given observed distribution (the more familiar standard deviation), the distribution around our estimate also captures variance in our mean estimation. This is captured by the term <strong>standard error</strong>, and it is what we mean by the <em>precision</em> of an estimate.
+  </p>
+
+  <div class="equation-block">
+    <span class="eq-label">Standard error — in plain English</span>
+    <span class="eq-main">SE = σ/√n</span>
+    <div class="eq-vars">
+      <table>
+        <tr><td>SE</td><td>The typical distance between <em>one experiment's</em> sample mean and the true mean μ. If you ran the same experiment many times, SE would be roughly the standard deviation of the resulting means — it is a standard deviation of an estimate, not of raw observations.</td></tr>
+        <tr><td>precision</td><td>An inverse notion: small SE = high precision, large SE = low precision. When we say a later sample is "more precise" we mean its SE is smaller.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <h3>Two kinds of variability: world vs. estimation error</h3>
+
+  <p>
+    The σ that appears in SE = σ/√n is the same σ introduced in the <em>Mean vs. Variance</em> box above — the true standard deviation of the population. Here, however, it plays a different role, and the distinction is worth noting. σ and SE may look similar on the page: both are standard deviations, both are associated with a mean, and σ appears in both formulas. Yet they describe fundamentally different kinds of uncertainty. σ represents the real variability in the population, while SE measures the error in our estimate of μ. One describes how individuals differ; the other describes the uncertainty in our inference procedure — which is why σ is fixed while SE decreases as the sample size increases.
+  </p>
+
+  <div style="margin:1rem 0 0.3rem 0; display:grid; grid-template-columns: minmax(13rem,max-content) 1fr; gap: 0.9rem 1.3rem; font-size:0.95rem; align-items:start">
+    <div><strong>σ — real variability in the world</strong></div>
+    <div>The spread of <em>individual observations</em>. A feature of the population: if individuals genuinely differ, σ captures that heterogeneity. It <strong>does not shrink with more data</strong> — collecting more participants sharpens your <em>estimate</em> of σ, but the world does not become less variable because you measured it more thoroughly.</div>
+    <div><strong>SE — error in the estimate of μ</strong></div>
+    <div>The spread of <em>sample means</em> across hypothetical replications of your study. A property of your estimation procedure, not of the raw data. It <strong>does</strong> shrink with more data: averaging cancels noise, and the error on your estimate gets smaller.</div>
+  </div>
+
+  <p style="margin-top:1rem">
+    This is a nice illustration of a recurring hazard in statistical notation: the same symbol — and even the same word <em>variance</em> — is pressed into service for quantities that mean quite different things in practice. σ² at the <em>population</em> level describes how much individuals differ; σ²/n at the <em>sampling-distribution</em> level describes how much an estimate of the mean wobbles from one study to the next. Both are variances formally, but they live at different levels and play different scientific roles. A useful reading habit: when you see "mean ± X" in a paper, ask — <em>X of what, and at which level — the population, or the estimator?</em>
+  </p>
+
+  <h3>Computing these from a sample: population vs. sample formulas</h3>
+
+  <p>
+    In practice we almost never have the whole population in hand. We work from a sample of size <span class="math-inline">n</span> and use it to <em>estimate</em> σ. Three formulas cover everything you need.
+  </p>
+
+  <div style="margin:1rem 0 0.3rem 0; display:grid; grid-template-columns: minmax(13rem,max-content) 1fr; gap: 1rem 1.3rem; font-size:0.95rem; align-items:start">
+    <div>
+      <div><strong>Population SD (σ)</strong></div>
+      <div style="font-family:var(--mono); font-size:0.9rem; margin-top:0.35rem; color:var(--teal); background:#faf6ec; padding:0.45rem 0.65rem; border-radius:3px; border:1px solid #d9cfbe">σ = √[ Σ(xᵢ − μ)² / N ]</div>
+    </div>
+    <div>Used when you have the whole population. Divides by <em>N</em>. Mainly a theoretical and simulation quantity — the widget below uses it, since there we "play god" with the true distribution. In real research σ is rarely available.</div>
+    <div>
+      <div><strong>Sample SD (s)</strong></div>
+      <div style="font-family:var(--mono); font-size:0.9rem; margin-top:0.35rem; color:var(--teal); background:#faf6ec; padding:0.45rem 0.65rem; border-radius:3px; border:1px solid #d9cfbe">s = √[ Σ(xᵢ − x̄)² / (n − 1) ]</div>
+    </div>
+    <div>The workhorse — what statistical software actually computes from your data. Divides by <em>n − 1</em>, not <em>n</em>: this is <strong>Bessel's correction</strong>. Intuitively, sample points sit closer on average to x̄ than to the (unknown) μ, so dividing by <em>n</em> would slightly under-estimate real variability; <em>n − 1</em> compensates. In later discussions you will see this <em>n − 1</em> 'correction' popping up frequently.</div>
+    <div>
+      <div><strong>SE of the mean</strong></div>
+      <div style="font-family:var(--mono); font-size:0.9rem; margin-top:0.35rem; color:var(--teal); background:#faf6ec; padding:0.45rem 0.65rem; border-radius:3px; border:1px solid #d9cfbe">SE = s/√n &nbsp;&nbsp;(or σ/√n if σ is known)</div>
+    </div>
+    <div>Whichever SD is available goes on top. The CLT is stated in terms of σ/√n; applied research almost always uses s/√n. But the important learning point is that √n on the bottom is a <em>key</em> driver — more data, smaller SE.</div>
+  </div>
+
+  <p style="margin-top:1rem; font-size:0.93rem; color:#4a4540">
+    <em>Forward pointer.</em> Once <em>s</em> replaces σ, SE is itself an estimate and carries uncertainty of its own. For small <em>n</em> this is why inference about means uses Student's <em>t</em> rather than the normal — a point we return to when we build confidence intervals.
+  </p>
+
+  <h3>Why √n, not n?</h3>
+
+  <p>
+    This √n shrinkage is not new — it already appeared in Section 1, where doubling the sample size shrank the expected distance from μ by a factor of √2 rather than halving it outright. The question we deferred there was why the denominator is √n and not n itself.
+  </p>
+
+  <p>
+    Averaging cancels noise: observations above μ offset those below, and the more observations, the more thoroughly the errors cancel. But the cancellation is only partial — a lucky high observation cannot exactly undo an unlucky low one. The mathematics of variance says sums of independent quantities grow <em>in n</em>, so their averages shrink <em>in √n</em>. The practical consequence: quadrupling the sample halves the SE, rather than quartering it. Gains in precision are real but get expensive — the statistical reason behind the familiar lament that a study with twice the data is not twice as informative.
+  </p>
+
+  <h3>From width to shape: the Central Limit Theorem</h3>
+
+  <p>
+    With SE in hand we have the <em>width</em> of the distribution of sample means — a number on a scale. The CLT now goes one step further and tells us its <em>shape</em>. Imagine repeating an experiment many times, each time drawing a fresh sample of size <span class="math-inline">n</span> and computing its mean. You would get a different mean each time. The CLT makes a remarkable claim about the <em>distribution</em> of those means:
+  </p>
+
+  <div class="equation-block">
+    <span class="eq-label">Central Limit Theorem — key result</span>
+    <span class="eq-main">As n → ∞, &nbsp;the distribution of X̄<sub>n</sub> approaches N(μ, σ²/n)</span>
+    <div class="eq-vars">
+      <table>
+        <tr><td>N(μ, σ²/n)</td><td>A normal (Gaussian) distribution — the bell curve — centred on the true mean μ, with spread determined by σ²/n.</td></tr>
+        <tr><td>σ²/n</td><td>The <em>variance</em> of the sampling distribution of means (SE squared). This shrinks as n grows — more observations per sample → less uncertainty about where the mean sits.</td></tr>
+        <tr><td>σ/√n</td><td>The <strong>standard error of the mean</strong> — already met above. The square root of σ²/n; the typical distance of a sample mean from μ.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <h3>Does the CLT only apply to averages?</h3>
+
+  <p>
+    Yes — and this matters. The CLT is a theorem specifically about the behaviour of <em>sums and averages</em> of random variables. It does not say that raw individual observations will become normally distributed; they won't. A reaction time, a number of errors, an item response — these may be skewed or irregular no matter how many you collect.
+  </p>
+
+  <p>
+    What the CLT tells you is that if you <strong>take n such observations and compute their average</strong>, <em>that average</em> will be approximately normally distributed — and the approximation improves as n grows. The theorem applies precisely and only at the point of aggregation. This is why the Gaussian distribution is central to statistical inference: we are almost always working with means or totals, not raw individual values.
+  </p>
+
+  <h3>Explore it: watch the CLT emerge</h3>
+
+  <div class="sim-box">
+    <div class="sim-title">Simulation 2 — Central Limit Theorem</div>
+    <div class="sim-desc">The population here is skewed (exponential) with true mean μ = 1.0. Each "experiment" draws n observations and records their mean — just as you might compute an average RT for one participant, or an average score for one group. Watch the distribution of means accumulate, and watch precision improve as you run more experiments.</div>
+
+    <div class="sim-controls">
+      <div style="flex:1; min-width:200px;">
+        <div class="slider-label">
+          <span>Sample size per experiment (n)</span>
+          <span class="slider-val" id="clt-n-val">5</span>
+        </div>
+        <input type="range" min="1" max="60" value="5" id="clt-n-slider" oninput="CLT.updateN(this.value)">
+      </div>
+    </div>
+
+    <div class="sim-controls" style="margin-top:0.3rem">
+      <button class="btn btn-teal" onclick="CLT.run(1)">+ 1 experiment</button>
+      <button class="btn btn-teal" onclick="CLT.run(20)">+ 20 experiments</button>
+      <button class="btn btn-teal" onclick="CLT.run(200)">+ 200 experiments</button>
+      <button class="btn btn-secondary" onclick="CLT.reset()">Reset</button>
+    </div>
+
+    <div class="sim-stat-row" style="margin-top:1rem">
+      <div class="stat-chip">
+        <span class="stat-label">Experiments run (k)</span>
+        <span class="stat-value" id="clt-count">0</span>
+      </div>
+      <div class="stat-chip">
+        <span class="stat-label">True mean μ</span>
+        <span class="stat-value teal">1.000</span>
+      </div>
+      <div class="stat-chip">
+        <span class="stat-label">Current mean estimate<span class="sublabel">running average of the sample means — approaches μ as k grows</span></span>
+        <span class="stat-value" id="clt-mean">—</span>
+      </div>
+    </div>
+
+    <div class="sim-stat-row stat-row-secondary">
+      <div class="stat-chip">
+        <span class="stat-label">Population SD — σ<span class="sublabel">spread of <em>raw observations</em> pooled across experiments — stabilises at the true σ</span></span>
+        <span class="stat-value dim" id="clt-popsd">—</span>
+      </div>
+      <div class="stat-chip">
+        <span class="stat-label">SE of μ estimate<span class="sublabel">uncertainty in our <em>running estimate</em> of μ — shrinks as k grows</span></span>
+        <span class="stat-value green" id="clt-spread">—</span>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:0.5rem;">
+      <div>
+        <div class="canvas-label">Raw population (exponential — always skewed)</div>
+        <canvas id="clt-pop-canvas" height="150"></canvas>
+      </div>
+      <div>
+        <div class="canvas-label">Distribution of sample means (k experiments)</div>
+        <canvas id="clt-means-canvas" height="150"></canvas>
+      </div>
+    </div>
+
+    <div class="legend-row" style="margin-top:0.8rem">
+      <div class="legend-item"><div class="legend-swatch" style="background:#c07c2a88;height:10px;width:20px;border-radius:2px"></div>Observed means histogram</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#e8a44a"></div>Gaussian predicted by CLT</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#4a9b9e"></div>True μ = 1.0</div>
+    </div>
+
+    <div style="margin-top:1.2rem; background:#111; border-radius:4px; padding:1.1rem 1.2rem; font-size:0.9rem; color:#c8c0b4; line-height:1.7; font-family: var(--serif);">
+      <span style="color:#e8a44a; font-family:var(--sans); font-size:0.65rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; display:block; margin-bottom:0.7rem;">Two levers, two different jobs</span>
+      <p style="margin:0 0 0.7rem 0;">
+        <strong style="color:#e8a44a">n</strong> (sample size per experiment) sets the width of the <em>right panel</em> — the sampling distribution of single-experiment means has spread σ/√n. Raise <span style="font-family:var(--mono)">n</span> and that histogram narrows: each individual experiment's mean estimate is sharper.
+      </p>
+      <p style="margin:0 0 1rem 0;">
+        <strong style="color:#e8a44a">k</strong> (number of experiments) does two things. It <em>reveals</em> the shape of that sampling distribution — as <span style="font-family:var(--mono)">k</span> grows the histogram fills in and its Gaussian form becomes visible (CLT). And it sharpens our <em>pooled</em> estimate of μ: the Current mean estimate uses all <span style="font-family:var(--mono)">k·n</span> observations, so its uncertainty shrinks like σ/√(k·n). That is the SE reported in the chip, and that is why it keeps decreasing.
+      </p>
+      <span style="color:#e8a44a; font-family:var(--sans); font-size:0.65rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; display:block; margin-bottom:0.7rem;">Reading the chips above</span>
+      <p style="margin:0 0 0.7rem 0;">
+        <strong style="color:#6bbbbf">Current mean estimate</strong> — running average of the sample means. Converges on μ = 1.0 as <span style="font-family:var(--mono)">k</span> grows.
+      </p>
+      <p style="margin:0 0 0.7rem 0;">
+        <strong style="color:#aaa">Population SD (σ)</strong> — spread of raw observations pooled across experiments. Wobbly at first, then stabilises at the true σ = 1.0 as observations accumulate; does not shrink further. This is variability in the <em>world</em> — a property of the population, not an inference error.
+      </p>
+      <p style="margin:0;">
+        <strong style="color:#7ec87e">SE of μ estimate</strong> — σ̂/√(k·n), the uncertainty in the Current mean estimate. Steadily decreases as <span style="font-family:var(--mono)">k</span> grows. This is <em>inference error</em> — it shrinks as we collect more data. Note this is <em>not</em> the visual width of the right panel (which stays at σ/√n); it is the SE of our pooled μ estimate.
+      </p>
+    </div>
+  </div>
+
+  <p>
+    A last observation to take with you: at n = 1, the right panel mirrors the left — no averaging has happened, so the "distribution of means" is just the distribution of raw observations. Raise <span class="math-inline">n</span> and the histogram of means becomes symmetric and bell-shaped even though the raw population stays skewed. The orange curve — the Gaussian predicted by the CLT — is the shape it converges to.
+  </p>
+</section>
+
+<!-- ===== SECTION 2B: CONFIDENCE INTERVALS ===== -->
+<section id="s2b" class="section reveal">
+  <span class="section-number">§ 03</span>
+  <h2>Confidence intervals — and why they mean less than you think</h2>
+
+  <p class="lead">
+    The CLT tells us that means are normally distributed around the true value μ. That is mathematically elegant, but on its own it does not tell us what to <em>do</em> with a single experiment. The confidence interval is the inferential payoff — the tool that turns a sampling distribution into a statement about where the true value might be. Understanding how it is constructed, and what it really says, exposes an odd little philosophical corner of frequentist inference that most textbooks glide over.
+  </p>
+
+  <h3>The trick: cheat, then un-cheat</h3>
+
+  <p>
+    You have run one experiment. You have one sample mean and one sample standard deviation. Somewhere out there is a true population mean μ you will never observe. The CLT says that if you could repeat the experiment many times, the resulting sample means would cluster around μ in a normal distribution with spread σ/√n. But you only ran the experiment once. You do not know σ. You do not know μ. You have one number.
+  </p>
+
+  <p>
+    The confidence interval is built on a piece of sleight of hand. Step one: <em>pretend the sample is the population</em>. Assume your sample mean equals μ and your sample standard deviation equals σ. Under this pretence, you can construct a sampling distribution explicitly — it is centred on your sample mean, with spread s/√n. You can then take the middle 95% of that distribution as the interval.
+  </p>
+
+  <div class="equation-block">
+    <span class="eq-label">Confidence interval — construction</span>
+    <span class="eq-main">CI<sub>95</sub> = X̄ ± t<sub>n−1, .025</sub> × (s/√n)</span>
+    <div class="eq-vars">
+      <table>
+        <tr><td>X̄</td><td>Your observed sample mean — treated, for the purposes of constructing the interval, as if it were the population mean.</td></tr>
+        <tr><td>s/√n</td><td>The <strong>standard error</strong> of the mean — derived under the fiction that the sample SD equals the population SD.</td></tr>
+        <tr><td>t<sub>n−1, .025</sub></td><td>The critical t-value capturing the middle 95% of a t-distribution with n−1 degrees of freedom. Approximately 2.78 at n=5, 2.06 at n=25, 1.98 at n=100 — converging on the familiar z-value of 1.96 for very large samples.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <p>
+    Step two is the un-cheat: we do not actually believe our sample equals the population, so we do not get to conclude "95% probability μ is in this interval." Instead we fall back on the one thing the CLT really does let us say — a statement about what would happen <em>across</em> many hypothetical repetitions of the study.
+  </p>
+
+  <div class="callout callout-teal">
+    <div class="callout-title">The correct interpretation</div>
+    <p>A 95% confidence interval is defined by the <em>procedure</em> used to compute it, not by the single interval in front of you. If the study were repeated many times, with a fresh sample each time, 95% of the intervals constructed by this procedure would contain the true value μ. The other 5% would not. You cannot tell which kind yours is.</p>
+  </div>
+
+  <h3>Explore it: 95% of intervals contain the truth — which is not the same as "95% probability"</h3>
+
+  <div class="sim-box">
+    <div class="sim-title">Simulation 3 — Confidence Intervals over Repeated Experiments</div>
+    <div class="sim-desc">A true population mean μ = 5.0 sits beneath an amber line that runs across the plot. Each vertical bar is one experiment: a fresh sample of size n drawn from N(μ, σ²), producing its own mean (dot) and its own 95% CI (the bar). Intervals that contain μ are teal; intervals that miss μ are red. Run 100 experiments and watch roughly 95 land on truth — and about 5 miss. No individual interval knows which kind it is.</div>
+
+    <div class="sim-controls">
+      <div style="flex:1; min-width:200px;">
+        <div class="slider-label">
+          <span>Sample size per experiment (n)</span>
+          <span class="slider-val" id="ci-n-val">25</span>
+        </div>
+        <input type="range" min="5" max="100" value="25" id="ci-n-slider" oninput="CI.updateN(this.value)">
+      </div>
+    </div>
+
+    <div class="sim-controls" style="margin-top:0.3rem">
+      <button class="btn btn-teal" onclick="CI.run(1)">+ 1 experiment</button>
+      <button class="btn btn-teal" onclick="CI.run(20)">+ 20 experiments</button>
+      <button class="btn btn-teal" onclick="CI.run(100)">+ 100 experiments</button>
+      <button class="btn btn-secondary" onclick="CI.reset()">Reset</button>
+    </div>
+
+    <div class="sim-stat-row" style="margin-top:1rem">
+      <div class="stat-chip">
+        <span class="stat-label">Experiments run</span>
+        <span class="stat-value" id="ci-count">0</span>
+      </div>
+      <div class="stat-chip">
+        <span class="stat-label">Intervals containing μ</span>
+        <span class="stat-value teal" id="ci-hits">—</span>
+      </div>
+      <div class="stat-chip">
+        <span class="stat-label">Intervals missing μ</span>
+        <span class="stat-value" id="ci-misses" style="color:#e07070">—</span>
+      </div>
+      <div class="stat-chip">
+        <span class="stat-label">Coverage rate</span>
+        <span class="stat-value green" id="ci-coverage">—</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="canvas-label">Each bar = one experiment's 95% CI &nbsp;·&nbsp; amber line = true μ</div>
+      <canvas id="ci-canvas" height="260"></canvas>
+    </div>
+
+    <div class="legend-row" style="margin-top:0.8rem">
+      <div class="legend-item"><div class="legend-swatch" style="background:#6bbbbf"></div>Interval contains μ</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#e07070"></div>Interval misses μ</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#e8a44a"></div>True μ = 5.0</div>
+    </div>
+
+    <div style="margin-top:1.2rem; background:#111; border-radius:4px; padding:1rem; font-size:0.82rem; color:#aaa; line-height:1.65; font-family: var(--serif);">
+      <strong style="color:#e8a44a; font-family:var(--sans); font-size:0.6rem; letter-spacing:0.15em; text-transform:uppercase;">What to look for</strong><br><br>
+      After 100 experiments the coverage rate should settle near 95%. Increase n and the intervals get narrower — the procedure is more <em>precise</em> — but the coverage rate stays the same. Precision and coverage are two different properties: a smaller interval is more informative when it is right, but the rate at which the procedure hits μ is fixed by the critical t-value, not by n. The t-value adjusts with sample size specifically to keep that coverage rate at 95% across the whole range.
+    </div>
+  </div>
+
+  <h3>The awkward truth about a single CI</h3>
+
+  <p>
+    Remember that we have set out confidence interval (CI) as 95%, which is that 5% (or 1 in 20) of our sampled experiments will generate a CI that <em>does not contain</em> the true mean (μ). Look at the plot above once it has 100 or so experiments on it. Usually 5 of those intervals either contains μ, or it does not. There is no probability in between — the truth is fixed, the interval is fixed, and the relationship between them is either "contains" or "misses." Full stop. Saying "there is a 95% probability that this interval contains μ" is saying something that is either 0 or 1 — not 0.95. The 95% lives in the <em>procedure</em>, not in any individual interval.
+  </p>
+
+  <div class="callout callout-teal">
+    <div class="callout-title">A note on interpretation — and a look ahead</div>
+    <p>
+      The numerical bounds of a single CI — the 0 and the 0.66, the 4.2 and the 5.8 — do not tell us, for this particular study, where μ probably lies. They are the output of a procedure that, across repeated studies, would capture μ 95% of the time. A wider CI from a smaller sample and a narrower CI from a larger sample have the same coverage rate; they differ in precision, not in probability of being correct.
+    </p>
+    <p style="margin-top:0.8rem">
+      If that feels restrictive, it is — and it reflects how frequentist statistics was originally set up. In this tradition, probabilities are attached to procedures, not to particular parameter values. A different tradition — Bayesian statistics — attaches probabilities directly to parameters, and so can support statements like "there is an 85% probability the true effect lies between .2 and .5". The Bayesian <em>credible interval</em> looks superficially like a CI, but carries exactly the interpretation readers often reach for and that the frequentist CI cannot. We return to this alternative in Part 2 (Bayesian LMMs).
+    </p>
+  </div>
+
+  <h3>Why the weird interpretation is the honest one</h3>
+
+  <p>
+    It is tempting to read all of this as a bookkeeping technicality — to note the awkward interpretation and then revert, in practice, to treating the CI as "probably where μ is." But the weirdness is pointing at something real. The frequentist framework is committed to an austere ontology: probability is a long-run frequency property of a repeatable procedure, not a degree of belief about a fixed-but-unknown quantity. Under that commitment, μ is not a random variable. The interval is. And the only probability statement you get to make is about the <em>behaviour of the procedure</em> — not about the truth.
+  </p>
+
+  <p>
+    The pretence-then-correction structure is the price of inference without priors. You construct the interval by imagining your sample is the population (otherwise you have nothing to work with), and you interpret it under the rule that this imagining was a device, not a claim. The interval works. It just does not mean what most people think it does.
+  </p>
+
+  <div class="foreshadow-box">
+    <span class="recall-label" style="font-family:var(--sans);font-size:0.6rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--teal);margin-bottom:0.5rem;display:block">Looking ahead</span>
+    The CLT + CI machinery is what makes t-tests and ANOVA work — the next section shows how the same logic of "mean ± precision" generates the t-statistic and the F-ratio. The odd interpretation of a single CI is the same odd interpretation that sits behind every p-value you will ever compute.
+  </div>
+</section>
+
+<!-- ===== SECTION 3 ===== -->
+<section id="s3" class="section reveal">
+  <span class="section-number">§ 04</span>
+  <h2>Two Levels of Averaging in Behavioural Science</h2>
+
+  <p>
+    As foreshadowed in §01, the logic of LLN and CLT applies at two distinct levels in a typical study. Both are applications of the same mathematical idea; both carry the same assumptions; and both can fail in the same kinds of ways.
+  </p>
+
+  <div class="diagram-container">
+    <div class="diagram-title">The Double Averaging Structure</div>
+    <div class="diagram-svg-wrap">
+      <svg viewBox="0 0 680 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;font-family:'Epilogue',sans-serif">
+        <text x="10" y="50" font-size="9" fill="#888" letter-spacing="2" text-anchor="start" font-weight="700" transform="rotate(-90,10,50)">LEVEL 1</text>
+        <g>
+          <rect x="30" y="20" width="52" height="30" rx="4" fill="#2a6b6e" opacity="0.85"/>
+          <text x="56" y="39" font-size="10" fill="white" text-anchor="middle">Item 1</text>
+          <rect x="30" y="58" width="52" height="30" rx="4" fill="#2a6b6e" opacity="0.65"/>
+          <text x="56" y="77" font-size="10" fill="white" text-anchor="middle">Item 2</text>
+          <text x="56" y="105" font-size="14" fill="#555" text-anchor="middle">⋮</text>
+          <rect x="30" y="115" width="52" height="30" rx="4" fill="#2a6b6e" opacity="0.4"/>
+          <text x="56" y="134" font-size="10" fill="white" text-anchor="middle">Item k</text>
+        </g>
+        <path d="M 84 82 L 140 82" stroke="#c07c2a" stroke-width="2" marker-end="url(#arrow-a)"/>
+        <text x="112" y="72" font-size="8.5" fill="#c07c2a" text-anchor="middle">Σ / k</text>
+        <text x="112" y="96" font-size="8" fill="#888" text-anchor="middle">average items</text>
+        <rect x="144" y="20" width="62" height="30" rx="4" fill="#c07c2a" opacity="0.9"/>
+        <text x="175" y="39" font-size="10" fill="white" text-anchor="middle">Person 1</text>
+        <rect x="144" y="58" width="62" height="30" rx="4" fill="#c07c2a" opacity="0.75"/>
+        <text x="175" y="77" font-size="10" fill="white" text-anchor="middle">Person 2</text>
+        <text x="175" y="105" font-size="14" fill="#555" text-anchor="middle">⋮</text>
+        <rect x="144" y="115" width="62" height="30" rx="4" fill="#c07c2a" opacity="0.5"/>
+        <text x="175" y="134" font-size="10" fill="white" text-anchor="middle">Person N</text>
+        <line x1="210" y1="18" x2="225" y2="18" stroke="#888" stroke-width="1.5"/>
+        <line x1="225" y1="18" x2="225" y2="147" stroke="#888" stroke-width="1.5"/>
+        <line x1="210" y1="147" x2="225" y2="147" stroke="#888" stroke-width="1.5"/>
+        <text x="238" y="88" font-size="9" fill="#888" text-anchor="start">N person</text>
+        <text x="238" y="100" font-size="9" fill="#888" text-anchor="start">scores</text>
+        <text x="10" y="210" font-size="9" fill="#888" letter-spacing="2" text-anchor="start" font-weight="700" transform="rotate(-90,10,210)">LEVEL 2</text>
+        <path d="M 175 148 L 175 190" stroke="#b84040" stroke-width="2" marker-end="url(#arrow-b)"/>
+        <text x="196" y="175" font-size="8.5" fill="#b84040">Σ / N</text>
+        <rect x="113" y="194" width="125" height="40" rx="5" fill="#1a1714"/>
+        <text x="175" y="212" font-size="11" fill="#f7f3ee" text-anchor="middle">Group Mean X̄</text>
+        <text x="175" y="228" font-size="9" fill="#c07c2a" text-anchor="middle">→ N(μ, σ²/N) by CLT</text>
+        <g transform="translate(330,10)">
+          <rect x="0" y="0" width="330" height="240" rx="6" fill="#ede8e1" stroke="#ddd6cb"/>
+          <text x="165" y="22" font-size="9.5" fill="#7a7068" text-anchor="middle" letter-spacing="1.5" font-weight="700">WHAT AVERAGING ACHIEVES AT EACH LEVEL</text>
+          <rect x="12" y="35" width="8" height="8" rx="1" fill="#2a6b6e"/>
+          <text x="28" y="45" font-size="10" fill="#1a1714" font-weight="700">Level 1: Items → Person Score</text>
+          <text x="28" y="60" font-size="9" fill="#555">• Each item = noisy draw from person's true trait</text>
+          <text x="28" y="74" font-size="9" fill="#555">• Averaging k items cancels independent error</text>
+          <text x="28" y="88" font-size="9" fill="#555">• LLN: score → person's true score as k grows</text>
+          <text x="28" y="102" font-size="9" fill="#555">• Cronbach's α measures how well this works</text>
+          <line x1="12" y1="115" x2="318" y2="115" stroke="#ddd6cb" stroke-width="1"/>
+          <rect x="12" y="125" width="8" height="8" rx="1" fill="#c07c2a"/>
+          <text x="28" y="135" font-size="10" fill="#1a1714" font-weight="700">Level 2: People → Group Estimate</text>
+          <text x="28" y="150" font-size="9" fill="#555">• Each person's score = draw from population</text>
+          <text x="28" y="164" font-size="9" fill="#555">• Averaging N scores reduces sampling error</text>
+          <text x="28" y="178" font-size="9" fill="#555">• LLN: group mean → population mean μ</text>
+          <text x="28" y="192" font-size="9" fill="#555">• CLT → N(μ, σ²/N), enabling t-tests &amp; ANOVA</text>
+          <line x1="12" y1="205" x2="318" y2="205" stroke="#ddd6cb" stroke-width="1"/>
+          <text x="165" y="222" font-size="9" fill="#888" text-anchor="middle" font-style="italic">Same theorems, two levels — same assumptions</text>
+        </g>
+        <defs>
+          <marker id="arrow-a" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#c07c2a"/></marker>
+          <marker id="arrow-b" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#b84040"/></marker>
+        </defs>
+      </svg>
+    </div>
+  </div>
+
+  <h3>Level 1: Averaging items — and what Cronbach's α is actually measuring</h3>
+
+  <p>
+    Consider a 30-item questionnaire measuring trait anxiety. Each item is a noisy measure of the participant's true anxiety level — it captures the construct imperfectly and also picks up item-specific variance plus random response error. When we average across those 30 responses, the LLN does its work: to the extent that item-specific noise is <em>independent</em> across items, it cancels. What remains is predominantly the shared signal — the person's underlying trait level.
+  </p>
+
+  <p>
+    Psychometric researchers are naturally wary about whether this averaging has actually worked — that is, whether the mean score we generate for each individual represents something close to their <em>true</em> trait level, or has been overwhelmed by item-specific noise. This concern has a name in measurement theory: <em>reliability</em> — the degree to which an observed score reflects the underlying trait rather than measurement error. A low-reliability measure is dominated by error; a high-reliability measure is one in which the averaging has done its work and the score is a stable estimate of the trait.
+  </p>
+
+  <p>
+    <strong>Cronbach's α</strong> is a classic procedure for checking reliability, and it operates precisely at the level just described. Its connection to the LLN is direct: α increases as the number of items k increases, following the same logic as the LLN. Add more items and the aggregate becomes a more stable, reliable summary of the underlying trait — just as adding more coin flips brings the running mean closer to 0.5. A fuller treatment of reliability measures — what they assume, how they are computed, and how they differ — is the subject of a later website.
+  </p>
+  <p>
+    It is important not to misread what a high α tells you, however. A high α does <em>not</em> necessarily mean that the items are strongly intercorrelated. Because α is sensitive to the number of items, a scale with a large number of items can achieve a high α even when the average inter-item correlation is quite low. What a high α does tell you — and this is the LLN point — is that with enough items, the aggregate average is a reasonably stable summary of whatever signal the items share, whatever that signal happens to be. Whether it is the right signal, and whether all items contribute equally to it, are separate questions.
+  </p>
+
+  <div class="callout" style="border-left-color:var(--red-acc);background:var(--red-pale, #f5eaea)">
+    <div class="callout-title" style="color:var(--red-acc)">The sharpest version of this point</div>
+    <p><strong>High reliability + poor construct validity = consistent measurement of the wrong thing.</strong></p>
+    <p style="margin-top:0.6rem">A scale can be internally consistent — items agreeing with each other, α high, LLN doing its job — while systematically measuring something other than the intended construct. The averaging is working; the target is wrong. Reliability tells you the score is stable. It says nothing about whether the stable thing is the thing you care about. Construct validity is a separate question that reliability evidence alone cannot answer.</p>
+  </div>
+  </p>
+
+  <p>
+    Although the LLN gives us some sense that the observed individual mean is <em>probably</em> a reasonable proxy for the individual's <em>true score</em>, there are a bunch of assumptions at play under the hood. Three are worth touching on.
+  </p>
+
+  <p>
+    <strong>First</strong>, that errors across items are uncorrelated and random — the <em>key</em> assumption of the LLN. For psychometric measures this <em>may not be true</em>: items with similar wording, shared response formats, or carry-over effects from one item to the next can introduce correlated error, at which point the cancelling logic of the LLN no longer holds.
+  </p>
+
+  <p>
+    <strong>Second</strong>, that all items contribute to the observed estimate of a participant's ability <em>equally</em>. This is called <em>tau-equivalence</em>, and we return to it in a later discussion. If some items are much stronger or weaker indicators than others, the averaging is not cleanly estimating one latent quantity.
+  </p>
+
+  <p>
+    <strong>Third</strong>, that all the numbers we are combining represent a <em>single construct</em> — for instance, the participant's singular latent ability on whatever is being tested. If this is wrong, we are combining apples and pears and thinking we have only apples, when in fact we have a fruit salad.
+  </p>
+
+  <p>
+    This is one reason why more flexible approaches — which we preview at the end of this page and explore fully in Part 2 — are sometimes necessary.
+  </p>
+
+  <h3>Level 2: Averaging people — why the CLT assures us of normality</h3>
+
+  <p>
+    Now we have N person-level scores, each treated as a single observation drawn from the population of trait levels. As we have seen in section 2, when we compute the group mean across N people, we are computing a sample mean of N draws from some population distribution — and the remarkable power of the CLT indicates that with sufficient draws we get a normal (Gaussian) distribution.
+  </p>
+
+  <p>
+    And to remind you, so long as the earlier assumptions we discussed are true, then the CLT now applies: <em>regardless of what the population distribution of individual scores looks like</em> — even if individual anxiety scores are skewed, bimodal, or non-normal — the distribution of sample means will be approximately normal, centred on the true population mean μ, with standard error σ/√N. This is not an assumption about the data; it is a mathematical consequence of independence and finite variance.
+  </p>
+
+  <p>
+    This is what makes t-tests, ANOVAs, and confidence intervals legitimate. We are not assuming individual data points are Gaussian. We are relying on the CLT's guarantee that <em>means of sufficiently large, independent samples</em> will be approximately Gaussian. Larger N means a better approximation and more reliable inference.
+  </p>
+
+  <div class="callout">
+    <div class="callout-title">The shared logic</div>
+    <p>Both levels of our averaging thus rest on the same foundation: independent observations, averaging, noise cancellation, and convergence toward a well-behaved normal distribution. The same mathematical engine drives reliability at Level 1 and inference at Level 2. Which means the same failure modes — <strong>non-independence</strong> (observations influence one another, so knowing one carries information about others), <strong>heterogeneity</strong> (observations are drawn from different underlying distributions rather than a single common one), and <strong>violated exchangeability</strong> (the order or grouping of observations matters, so they cannot be freely relabelled) — threaten both.</p>
+  </div>
+</section>
+
+<!-- ===== SECTION 4 ===== -->
+<section id="s4" class="section reveal">
+  <span class="section-number">§ 05</span>
+  <h2>From Means to Inference: t-tests and ANOVA</h2>
+
+  <p class="lead">
+    We have now established the initial motivations for why frequentist statisticians average, (along with a bunch of their assumptions!), and why the means we compute from samples can be approximately normally distributed. The next question is natural: once we have group means, what do we do with them?
+  </p>
+
+  <p>
+    Suppose a researcher runs a simple two-condition experiment — say, a face recognition task under two conditions: typical and inverted faces. Fifty participants complete each condition. The researcher computes a mean accuracy for each condition: <span class="math-inline">X̄₁</span> and <span class="math-inline">X̄₂</span>. The CLT, as we now know, assures us that each of these means is approximately normally distributed around its true condition mean μ₁ and μ₂ respectively.
+  </p>
+
+  <p>
+    The natural question all scientists will want to know is whether the observed difference <span class="math-inline">X̄₁ − X̄₂</span> reflects a <em>real</em> difference in the underlying population means. But as I have tried to make clear throughout, the answer we get will always depend on how much we trust each mean estimate — how <em>precisely</em> it represents its true condition value (particularly as we have also established we play a sleight of hand and actually <em>assume</em> this mean estimate is exactly the genuine true estimate!). This is the theme of estimate <em>fidelity</em> or <em>precision</em> that runs through everything on this page: in the case of CLT, the message is that the more observations we aggregate, the sharper our estimates come into focus, and the more confidently we can judge whether an apparent difference between them is genuine.
+  </p>
+
+  <h3>The t-test: how precisely do we know each mean?</h3>
+
+  <p>
+    The t-statistic captures this idea of precision directly. The standard error of each mean — <span class="math-inline">σ/√N</span>, from the CLT — tells us how sharply that mean estimate is in focus. A small standard error means the estimate is tight: with high N, we can be confident the observed mean is close to the true condition mean. Consequentially, with a low SE, we are indicating that the mean difference is being estimated with high precision (because it's being derived from two group means that <em>also</em> have a small SE), and so even a very small observed difference may be informative.
+  </p>
+
+  <div class="equation-block">
+    <span class="eq-label">Independent samples t-statistic</span>
+    <span class="eq-main">t = (X̄₁ − X̄₂) / SE<sub>diff</sub></span>
+    <div class="eq-vars">
+      <table>
+        <tr><td>X̄₁ − X̄₂</td><td>The observed difference between sample means. This is what we want to interpret — but its meaning depends on how precisely each mean is known.</td></tr>
+        <tr><td>SE<sub>diff</sub></td><td>The standard error of the difference — derived from σ/√N for each group. This quantifies the precision of the observed difference: a small SE means both means are in sharp focus and thus the difference between them is equally sharp in focus; a large SE means the means are blurry and the difference could shift substantially with different samples.</td></tr>
+        <tr><td>t</td><td>The <em>ratio</em> of the observed difference to the precision of that estimate. A large t means the observed difference is large relative to the uncertainty in our mean estimates. Under the null hypothesis that μ₁ = μ₂, this ratio follows a known t-distribution, giving us a p-value. Note the use of a <em>ratio</em> here which captures the key idea of <em>signal</em> (what we want to give us a sharply focused estimate) over the <em>noise</em> (what is blurring our goal). The higher the <em>signal</em> (the numerator) the higher the t value we get and thus the more confident we are the estimated difference is probably an accurate estimate of the true difference. Remember the idea of ratios in this process — they come up a lot!</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <p>
+    The CLT runs through every part of this. <span class="math-inline">SE<sub>diff</sub></span> is derived from <span class="math-inline">σ/√N</span> — precisely the standard error the CLT gives us for each sample mean. As N grows, the CLT makes our mean estimates sharper; the SE shrinks; and any observed difference between conditions comes into correspondingly clearer focus. The t-distribution itself depends on the normality of the sample means — which the CLT justifies. Without the CLT, the t-test has no foundation.
+  </p>
+
+  <h3>ANOVA: the same idea, extended to multiple groups</h3>
+
+  <p>
+    If there are more than two groups — say, three face conditions — pairwise t-tests become unwieldy and inflate the risk of false positives. <strong>Analysis of Variance (ANOVA)</strong> generalises the t-test logic to any number of groups simultaneously.
+  </p>
+
+  <p>
+    Instead of comparing two means directly, ANOVA partitions the total variance in the data into two components and examines their ratio:
+  </p>
+
+  <div class="equation-block">
+    <span class="eq-label">ANOVA — the F-ratio</span>
+    <span class="eq-main">F = Variance between groups / Variance within groups</span>
+    <div class="eq-vars">
+      <table>
+        <tr><td>Between-groups variance</td><td>How much the group means vary from the overall grand mean. If conditions have different true means (a real effect), this will be large.</td></tr>
+        <tr><td>Within-groups variance</td><td>How much individuals vary within each condition — the baseline "noise" level against which we judge the between-group signal.</td></tr>
+        <tr><td>F</td><td>Remember I mentioned <em>ratios</em> earlier, and they capture the idea of <em>signal</em> over <em>noise</em>. Well here again the same basic principle applies, when F is large, the differences between group means are large relative to within-group noise — evidence for a real effect. Like the t-statistic, F follows a known distribution under the null hypothesis, allowing a p-value to be calculated.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <p>
+    The same fidelity logic underpins ANOVA. Each group mean is a CLT-guaranteed estimate of the true condition mean — sharper when N is large, blurrier when it is small. The F-ratio asks whether the differences between those group means are large relative to the precision with which each is known. The F-distribution, used to calculate p-values, is derived from the same normality of sample means that the CLT provides. ANOVA is t-test logic, generalised to multiple groups.
+  </p>
+
+  <h3>The full chain, end to end</h3>
+
+  <p>
+    We can now trace the complete logical sequence from raw observation to statistical inference:
+  </p>
+
+  <div class="chain">
+    <div class="chain-node">Law of Large Numbers<span>Averaging independent observations → stable summary</span></div>
+    <div class="chain-arrow">→</div>
+    <div class="chain-node">Central Limit Theorem<span>Distribution of means → approximately normal</span></div>
+    <div class="chain-arrow">→</div>
+    <div class="chain-node">Group Means<span>Each condition mean ~ N(μ, σ²/N)</span></div>
+    <div class="chain-arrow">→</div>
+    <div class="chain-node">t-test / ANOVA<span>Signal-to-noise ratio on normally distributed means</span></div>
+  </div>
+
+  <p>
+    Every step depends on the one before. The t-test requires normally distributed means. Normally distributed means require the CLT. The CLT applies to averages. And averaging cancels noise only when the LLN conditions — independence, identical distribution — are satisfied. The chain is only as strong as its weakest link.
+  </p>
+
+  <div class="callout callout-teal">
+    <div class="callout-title">What could go wrong?</div>
+    <p>
+      To reiterate then, this chain of assumptions holds when: (a) observations within a person or condition are independent and exchangeable (i.e., noise is random and 'cancels out'); (b) sample sizes are large enough for the CLT approximation to be good (see simulation 2); (c) the items or trials we average over really are measuring the same thing with similar precision (see discussion of Cronbach).
+      <br><br>
+      When these conditions fail — very small samples, clustered or repeated-measures data, heterogeneous item quality, constructs that are genuinely multidimensional — the neat chain from LLN to valid inference breaks down. In Part 2, we examine what happens then, and how more flexible modelling frameworks (Linear Mixed Models; Item Response Theory) respond.
+    </p>
+  </div>
+
+  <h3>Error is not one thing</h3>
+
+  <p>
+    Alongside the observations of the LLN and the CLT is a wider psychometric philosophy called <em>Classical test theory</em> which I will discuss in a later website. For now it is worth highlighting another key underlying assumption. Classical test theory bundles all imprecision into a single term — E, the error. This was evident throughout this web-page: that measurement error is out there, but you can try to deal with it through repeated sampling. But in practice, "error" is not a single undifferentiated quantity. The deviation between an observed score and some true value can come from many sources simultaneously:
+  </p>
+
+  <div class="two-col">
+    <div class="info-card">
+      <div class="info-card-title">Sources of error in a typical study</div>
+      <p><strong>Item variance</strong> — some items are harder, more ambiguous, or tap slightly different sub-facets of the construct. <strong>Person variance</strong> — individuals differ in their baseline levels and in how consistently they respond. <strong>Session variance</strong> — performance fluctuates across time of day, fatigue, motivation. <strong>Context variance</strong> — the experimenter, the setting, the order of conditions all introduce systematic differences that CTT folds silently into E.</p>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">Why it matters</div>
+      <p>When error comes from multiple structured sources, rolling them into a single E is not just imprecise — it is actively misleading. Some of what CTT calls "error" is actually systematic and predictable variation. A model that knows where the variance comes from can separate these sources, producing sharper estimates at each level. This is the core motivation for Linear Mixed Models (which partition person, item, and residual variance) and for Generalizability Theory (which formally estimates variance components from each source).</p>
+    </div>
+  </div>
+
+  <p>
+    The same logic applies to the inference chain built in this page. When the LLN averages across items or across people, it cancels <em>random</em> error. But if some of the apparent error is actually structured — the same items always harder, the same people always more variable — averaging doesn't cancel it, it obscures it. The error term in CTT is not a scientific description of noise; it is a confession that the model does not know where the noise came from. What is ironic is that researchers often <em>do</em> know about sources of this error <em>a priori</em> — that is, they know about different participants, or that participants have repeated some things but not others, or that the means they derived come from a certain set of items, etc. So why not <em>specify</em> such parameter details in your <em>statistical model</em>? This will be a major theme for why we want to argue to step away from ANOVA in the first place!
+  </p>
+
+  <div class="page2-teaser">
+    <h3>Part 2: When the Chain Breaks</h3>
+    <p>This page established the foundations: averaging works when independence holds, and normally distributed means make inference possible. But in real behavioural data, independence is often violated, sample sizes are often small, and constructs are often multidimensional. What then?</p>
+    <div class="teaser-items">
+      <div class="teaser-item">
+        <div class="teaser-item-title">Linear Mixed Models</div>
+        <p>When observations are clustered — repeated measures within participants, students within classrooms — standard ANOVA assumptions break. LMMs model individual variability explicitly rather than averaging it away.</p>
+      </div>
+      <div class="teaser-item">
+        <div class="teaser-item-title">Item Response Theory</div>
+        <p>When items differ in difficulty and discriminating power, tau-equivalence fails and summed scores are imprecise. IRT models each item's relationship to the latent trait, producing better-calibrated person estimates.</p>
+      </div>
+      <div class="teaser-item">
+        <div class="teaser-item-title">Measurement &amp; Validity</div>
+        <p>When summed scores carry systematic bias or attenuated correlations, statistical power suffers in a predictable and correctable way. Understanding measurement quality is inseparable from understanding inference.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>Statistical Foundations · Part 1 of 2 &nbsp;·&nbsp; Teaching Materials</p>
+  <p style="margin-top:0.5rem; font-size:0.7rem; opacity:0.6">LLN → CLT → Group Means → t-test / ANOVA &nbsp;·&nbsp; Continue to Part 2: When the Chain Breaks</p>
+</footer>
+
+<script>
+function makeCanvas(id, heightPx) {
+  const canvas = document.getElementById(id);
+  if (!canvas) return null;
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.parentElement.clientWidth || 400;
+  const h = heightPx;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  return { ctx, w, h };
+}
+
+// ============================================================
+// LLN
+// ============================================================
+const LLN = (() => {
+  let flips = [];
+  function reset() {
+    flips = [];
+    document.getElementById('lln-n').textContent = '0';
+    document.getElementById('lln-mean').textContent = '—';
+    document.getElementById('lln-err').textContent = '—';
+    draw();
+  }
+  function flip(n) {
+    for (let i = 0; i < n; i++) flips.push(Math.random() < 0.5 ? 1 : 0);
+    update();
+  }
+  function update() {
+    const n = flips.length;
+    if (!n) return;
+    const mean = flips.reduce((a,b)=>a+b,0)/n;
+    document.getElementById('lln-n').textContent = n;
+    document.getElementById('lln-mean').textContent = mean.toFixed(4);
+    document.getElementById('lln-err').textContent = Math.abs(mean-0.5).toFixed(4);
+    draw();
+  }
+  function draw() {
+    const r = makeCanvas('lln-canvas', 180);
+    if (!r) return;
+    const {ctx,w,h} = r;
+    ctx.fillStyle = '#1a1714';
+    ctx.fillRect(0,0,w,h);
+    const pad={l:46,r:14,t:16,b:30};
+    const pw=w-pad.l-pad.r, ph=h-pad.t-pad.b;
+    [0,0.25,0.5,0.75,1].forEach(v=>{
+      const y=pad.t+ph*(1-v);
+      ctx.strokeStyle=v===0.5?'#2a4a4b':'#252220';
+      ctx.lineWidth=v===0.5?1.5:1;
+      ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+pw,y); ctx.stroke();
+      ctx.fillStyle='#555'; ctx.font=`10px 'DM Mono',monospace`; ctx.textAlign='right';
+      ctx.fillText(v.toFixed(2),pad.l-6,y+4);
+    });
+    const trueY=pad.t+ph*0.5;
+    ctx.strokeStyle='#4a9b9e'; ctx.lineWidth=2; ctx.setLineDash([7,5]);
+    ctx.beginPath(); ctx.moveTo(pad.l,trueY); ctx.lineTo(pad.l+pw,trueY); ctx.stroke();
+    ctx.setLineDash([]);
+    if (!flips.length) {
+      ctx.fillStyle='#444'; ctx.font=`12px 'Cormorant Garamond',serif`; ctx.textAlign='center';
+      ctx.fillText('Press a flip button to start', pad.l+pw/2, pad.t+ph/2); return;
+    }
+    ctx.strokeStyle='#e8a44a'; ctx.lineWidth=2; ctx.beginPath();
+    let s=0;
+    const n=flips.length;
+    flips.forEach((v,i)=>{
+      s+=v;
+      const rm=s/(i+1);
+      const x=pad.l+(i/Math.max(n-1,1))*pw;
+      const y=pad.t+ph*(1-rm);
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+    const fm=s/n;
+    ctx.beginPath(); ctx.arc(pad.l+pw,pad.t+ph*(1-fm),4,0,Math.PI*2);
+    ctx.fillStyle='#e8a44a'; ctx.fill();
+    ctx.fillStyle='#555'; ctx.font=`9px 'DM Mono',monospace`; ctx.textAlign='center';
+    [1,Math.round(n/2),n].filter((v,i,a)=>a.indexOf(v)===i&&v>0).forEach(v=>{
+      const x=pad.l+((v-1)/Math.max(n-1,1))*pw;
+      ctx.fillText(v,x,h-6);
+    });
+  }
+  return {flip,reset,draw};
+})();
+
+// ============================================================
+// CLT
+// ============================================================
+const CLT = (() => {
+  let means=[], n=5;
+  let rawSum=0, rawSumSq=0, totalObs=0;
+  const MU=1.0, SIGMA=1.0;
+  function sampleExp(){ return -Math.log(1-Math.random()); }
+  function updateN(val){
+    n=parseInt(val);
+    document.getElementById('clt-n-val').textContent=n;
+    means=[]; rawSum=0; rawSumSq=0; totalObs=0;
+    updateStats(); drawPop(); drawMeans();
+  }
+  function run(k){
+    for(let i=0;i<k;i++){
+      let s=0;
+      for(let j=0;j<n;j++){
+        const x=sampleExp();
+        rawSum+=x; rawSumSq+=x*x; totalObs++;
+        s+=x;
+      }
+      means.push(s/n);
+    }
+    updateStats(); drawMeans();
+  }
+  function reset(){
+    means=[]; rawSum=0; rawSumSq=0; totalObs=0;
+    updateStats(); drawMeans();
+  }
+  function updateStats(){
+    const k=means.length;
+    document.getElementById('clt-count').textContent=k;
+    if(k<1){
+      ['clt-mean','clt-spread','clt-popsd'].forEach(id=>document.getElementById(id).textContent='—');
+      return;
+    }
+    const m=means.reduce((a,b)=>a+b,0)/k;
+    document.getElementById('clt-mean').textContent=m.toFixed(4);
+    if(totalObs<2){
+      document.getElementById('clt-popsd').textContent='—';
+      document.getElementById('clt-spread').textContent='—';
+      return;
+    }
+    // Population SD from pooled raw observations (Bessel-corrected)
+    const rawMean=rawSum/totalObs;
+    const popVar=Math.max((rawSumSq - totalObs*rawMean*rawMean)/(totalObs-1), 0);
+    const popSD=Math.sqrt(popVar);
+    // SE of the pooled μ estimate: σ̂ / √(k·n) = σ̂ / √(totalObs)
+    const seEst=popSD/Math.sqrt(totalObs);
+    document.getElementById('clt-popsd').textContent=popSD.toFixed(4);
+    document.getElementById('clt-spread').textContent=seEst.toFixed(4);
+  }
+  function drawPop(){
+    const r=makeCanvas('clt-pop-canvas',150); if(!r) return;
+    const {ctx,w,h}=r;
+    ctx.fillStyle='#1a1714'; ctx.fillRect(0,0,w,h);
+    const pad={l:8,r:8,t:14,b:8};
+    const pw=w-pad.l-pad.r, ph=h-pad.t-pad.b;
+    const BINS=40, MAXV=6;
+    const counts=new Array(BINS).fill(0);
+    for(let i=0;i<4000;i++){
+      const v=sampleExp(); const b=Math.floor(v/MAXV*BINS);
+      if(b>=0&&b<BINS) counts[b]++;
+    }
+    const maxC=Math.max(...counts);
+    counts.forEach((c,i)=>{
+      const bh=(c/maxC)*ph, bw=pw/BINS;
+      ctx.fillStyle='#2a6b6e66';
+      ctx.fillRect(pad.l+i*bw,pad.t+ph-bh,bw-0.5,bh);
+    });
+    ctx.strokeStyle='#4a9b9e'; ctx.lineWidth=2; ctx.beginPath();
+    for(let i=0;i<=200;i++){
+      const x=(i/200)*MAXV, y=Math.exp(-x);
+      const px=pad.l+(x/MAXV)*pw, py=pad.t+ph*(1-y);
+      i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    const muPx=pad.l+(MU/MAXV)*pw;
+    ctx.strokeStyle='#4a9b9e88'; ctx.lineWidth=1.5; ctx.setLineDash([5,4]);
+    ctx.beginPath(); ctx.moveTo(muPx,pad.t); ctx.lineTo(muPx,pad.t+ph); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='#4a9b9e'; ctx.font=`9px 'DM Mono',monospace`; ctx.textAlign='center';
+    ctx.fillText('μ=1',muPx,pad.t+10);
+  }
+  function drawMeans(){
+    const r=makeCanvas('clt-means-canvas',150); if(!r) return;
+    const {ctx,w,h}=r;
+    ctx.fillStyle='#1a1714'; ctx.fillRect(0,0,w,h);
+    const pad={l:8,r:8,t:14,b:8};
+    const pw=w-pad.l-pad.r, ph=h-pad.t-pad.b;
+    if(means.length<3){
+      ctx.fillStyle='#444'; ctx.font=`12px 'Cormorant Garamond',serif`; ctx.textAlign='center';
+      ctx.fillText('Run some experiments…',w/2,h/2); return;
+    }
+    const theorSE=SIGMA/Math.sqrt(n);
+    const lo=Math.max(0,MU-4.5*theorSE), hi=MU+4.5*theorSE;
+    const range=hi-lo;
+    const BINS=40, binW=range/BINS;
+    const counts=new Array(BINS).fill(0);
+    means.forEach(v=>{ const b=Math.floor((v-lo)/binW); if(b>=0&&b<BINS) counts[b]++; });
+    const maxC=Math.max(...counts,1);
+    counts.forEach((c,i)=>{
+      const bh=(c/maxC)*ph, bw=pw/BINS;
+      ctx.fillStyle='#c07c2a88';
+      ctx.fillRect(pad.l+i*bw,pad.t+ph-bh,Math.max(bw-0.5,1),bh);
+    });
+    // Gaussian overlay (counts scaled)
+    ctx.strokeStyle='#e8a44a'; ctx.lineWidth=2.5; ctx.beginPath();
+    for(let i=0;i<=300;i++){
+      const x=lo+(i/300)*range;
+      const z=(x-MU)/theorSE;
+      const density=Math.exp(-0.5*z*z)/(theorSE*Math.sqrt(2*Math.PI));
+      const expectedCount=density*means.length*binW;
+      const px=pad.l+((x-lo)/range)*pw;
+      const py=pad.t+ph*(1-expectedCount/maxC);
+      i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    const muPx=pad.l+((MU-lo)/range)*pw;
+    ctx.strokeStyle='#4a9b9e'; ctx.lineWidth=2; ctx.setLineDash([6,4]);
+    ctx.beginPath(); ctx.moveTo(muPx,pad.t); ctx.lineTo(muPx,pad.t+ph); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='#4a9b9e'; ctx.font=`9px 'DM Mono',monospace`; ctx.textAlign='center';
+    ctx.fillText('μ=1',muPx,pad.t+10);
+    ctx.fillStyle='#555'; ctx.textAlign='left'; ctx.fillText(lo.toFixed(2),pad.l,h-2);
+    ctx.textAlign='right'; ctx.fillText(hi.toFixed(2),pad.l+pw,h-2);
+  }
+  setTimeout(()=>{ drawPop(); drawMeans(); },300);
+  window.addEventListener('resize',()=>{ drawPop(); drawMeans(); LLN.draw(); });
+  return {run,reset,updateN};
+})();
+
+// ============================================================
+// CONFIDENCE INTERVALS
+// ============================================================
+const CI = (() => {
+  // True parameters of the world
+  const MU = 5.0;
+  const SIGMA = 2.0;
+
+  // t-critical values (two-tailed, 95%) for df = n-1.
+  // For df > 30 we use a tiny interpolation; for very large df we converge to 1.96.
+  // Sparse lookup table — plenty accurate for a teaching sim.
+  const T_TABLE = {
+    1: 12.706, 2: 4.303, 3: 3.182, 4: 2.776, 5: 2.571,
+    6: 2.447, 7: 2.365, 8: 2.306, 9: 2.262, 10: 2.228,
+    12: 2.179, 15: 2.131, 20: 2.086, 25: 2.060, 30: 2.042,
+    40: 2.021, 50: 2.009, 60: 2.000, 80: 1.990, 100: 1.984
+  };
+  function tCrit(df) {
+    if (df <= 0) return 1.96;
+    if (T_TABLE[df]) return T_TABLE[df];
+    // Find the two surrounding keys and linearly interpolate
+    const keys = Object.keys(T_TABLE).map(Number).sort((a,b)=>a-b);
+    if (df >= keys[keys.length - 1]) {
+      // asymptote toward 1.96
+      const last = keys[keys.length - 1];
+      const t = T_TABLE[last];
+      return t + (1.96 - t) * Math.min(1, (df - last) / 200);
+    }
+    for (let i = 0; i < keys.length - 1; i++) {
+      if (df > keys[i] && df < keys[i+1]) {
+        const a = keys[i], b = keys[i+1];
+        const frac = (df - a) / (b - a);
+        return T_TABLE[a] + (T_TABLE[b] - T_TABLE[a]) * frac;
+      }
+    }
+    return 1.96;
+  }
+
+  let n = 25;
+  let experiments = []; // each entry: {mean, lo, hi, hits}
+
+  // Box-Muller for normal samples
+  function rnorm(mu, sigma) {
+    let u1 = Math.random(), u2 = Math.random();
+    const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+    return mu + sigma * z;
+  }
+
+  function drawSample(size) {
+    const xs = [];
+    for (let i = 0; i < size; i++) xs.push(rnorm(MU, SIGMA));
+    const mean = xs.reduce((a,b)=>a+b, 0) / size;
+    const variance = xs.reduce((a,b)=>a + (b-mean)*(b-mean), 0) / (size - 1);
+    const sd = Math.sqrt(variance);
+    const se = sd / Math.sqrt(size);
+    const half = tCrit(size - 1) * se;
+    return { mean, lo: mean - half, hi: mean + half, hits: (mean - half <= MU && mean + half >= MU) };
+  }
+
+  function updateN(val) {
+    n = parseInt(val);
+    document.getElementById('ci-n-val').textContent = n;
+  }
+
+  function run(k) {
+    for (let i = 0; i < k; i++) experiments.push(drawSample(n));
+    if (experiments.length > 300) experiments = experiments.slice(-300); // cap for drawing
+    updateReadouts();
+    draw();
+  }
+
+  function reset() {
+    experiments = [];
+    updateReadouts();
+    draw();
+  }
+
+  function updateReadouts() {
+    const count = experiments.length;
+    const hits = experiments.filter(e => e.hits).length;
+    const misses = count - hits;
+    document.getElementById('ci-count').textContent = count;
+    document.getElementById('ci-hits').textContent = count ? hits : '—';
+    document.getElementById('ci-misses').textContent = count ? misses : '—';
+    document.getElementById('ci-coverage').textContent = count ? (hits / count * 100).toFixed(1) + '%' : '—';
+  }
+
+  function draw() {
+    const setup = makeCanvas('ci-canvas', 260);
+    if (!setup) return;
+    const { ctx, w, h } = setup;
+    ctx.fillStyle = '#1a1714';
+    ctx.fillRect(0, 0, w, h);
+
+    if (experiments.length === 0) {
+      ctx.fillStyle = '#555';
+      ctx.font = `11px 'DM Mono',monospace`;
+      ctx.textAlign = 'center';
+      ctx.fillText('click +1 / +20 / +100 to run experiments', w / 2, h / 2);
+      return;
+    }
+
+    const pad = { l: 44, r: 14, t: 14, b: 22 };
+    const pw = w - pad.l - pad.r;
+    const ph = h - pad.t - pad.b;
+
+    // y-axis: data range
+    const yLo = 2.0, yHi = 8.0;
+    const yPx = v => pad.t + ph * (1 - (v - yLo) / (yHi - yLo));
+
+    // axis labels
+    ctx.fillStyle = '#555';
+    ctx.font = `9px 'DM Mono',monospace`;
+    ctx.textAlign = 'right';
+    [3, 4, 5, 6, 7].forEach(v => {
+      ctx.fillText(v.toFixed(0), pad.l - 5, yPx(v) + 3);
+      // faint gridline
+      ctx.strokeStyle = '#2a2724';
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(pad.l, yPx(v)); ctx.lineTo(pad.l + pw, yPx(v)); ctx.stroke();
+    });
+
+    // true mu line (behind bars)
+    ctx.strokeStyle = '#e8a44a';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath(); ctx.moveTo(pad.l, yPx(MU)); ctx.lineTo(pad.l + pw, yPx(MU)); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#e8a44a';
+    ctx.textAlign = 'left';
+    ctx.fillText(`μ = ${MU}`, pad.l + 4, yPx(MU) - 4);
+
+    // draw intervals
+    const N = experiments.length;
+    // we show up to most-recent ~80 experiments as distinct bars
+    const showN = Math.min(N, 80);
+    const start = N - showN;
+    const slotW = pw / showN;
+
+    for (let i = 0; i < showN; i++) {
+      const e = experiments[start + i];
+      const x = pad.l + slotW * (i + 0.5);
+      const yLoPx = yPx(e.lo);
+      const yHiPx = yPx(e.hi);
+      const yMPx  = yPx(e.mean);
+
+      const colour = e.hits ? '#6bbbbf' : '#e07070';
+      ctx.strokeStyle = colour;
+      ctx.lineWidth = 1.4;
+      // vertical line
+      ctx.beginPath(); ctx.moveTo(x, yHiPx); ctx.lineTo(x, yLoPx); ctx.stroke();
+      // whiskers
+      const whisker = Math.min(slotW * 0.38, 4);
+      ctx.beginPath(); ctx.moveTo(x - whisker, yHiPx); ctx.lineTo(x + whisker, yHiPx); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x - whisker, yLoPx); ctx.lineTo(x + whisker, yLoPx); ctx.stroke();
+      // dot
+      ctx.fillStyle = colour;
+      ctx.beginPath(); ctx.arc(x, yMPx, 1.8, 0, 2 * Math.PI); ctx.fill();
+    }
+
+    // caption if we're clipping
+    if (N > showN) {
+      ctx.fillStyle = '#666';
+      ctx.font = `9px 'DM Mono',monospace`;
+      ctx.textAlign = 'right';
+      ctx.fillText(`showing last ${showN} of ${N}`, pad.l + pw, h - 6);
+    }
+  }
+
+  window.addEventListener('resize', () => draw());
+  return { run, reset, updateN };
+})();
+
+// ============================================================
+// SCROLL / REVEAL
+// ============================================================
+const sections=document.querySelectorAll('.section');
+const dots=document.querySelectorAll('.toc-dot');
+const progressBar=document.getElementById('progress-bar');
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+},{threshold:0, rootMargin:'0px 0px -5% 0px'});
+sections.forEach(s=>observer.observe(s));
+window.addEventListener('scroll',()=>{
+  const pct=window.scrollY/(document.body.scrollHeight-window.innerHeight)*100;
+  progressBar.style.width=Math.min(100,pct)+'%';
+  const arr=Array.from(sections);
+  let active=0;
+  arr.forEach((s,i)=>{ if(s.getBoundingClientRect().top<window.innerHeight*0.5) active=i; });
+  dots.forEach((d,i)=>d.classList.toggle('active',i===active));
+});
+function scrollToSection(i){
+  const els=Array.from(document.querySelectorAll('.section'));
+  if(els[i]) els[i].scrollIntoView({behavior:'smooth'});
+}
+setTimeout(()=>{
+  document.querySelectorAll('.section,.part-marker').forEach(s=>{
+    const r=s.getBoundingClientRect();
+    if(r.top<window.innerHeight) s.classList.add('visible');
+  });
+  LLN.draw();
+  CI.reset();
+},150);
+</script>
+</body>
+</html>
