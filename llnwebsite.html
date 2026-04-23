@@ -315,6 +315,10 @@
     /* Two-column grid collapses to single column */
     .two-col { grid-template-columns: 1fr; gap: 1rem; }
 
+    /* Definition grids (σ/SE; population vs sample formulas) — override inline style */
+    .def-grid { grid-template-columns: 1fr !important; gap: 0.35rem 0 !important; }
+    .def-grid > *:nth-child(even) { margin-bottom: 0.7rem; }
+
     /* Equation blocks: stack variable name above description */
     .equation-block { padding: 1rem 1.1rem; }
     .equation-block .eq-main { font-size: 0.95rem; }
@@ -628,7 +632,7 @@
     The σ that appears in SE = σ/√n is the same σ introduced in the <em>Mean vs. Variance</em> box above — the true standard deviation of the population. Here, however, it plays a different role, and the distinction is worth noting. σ and SE may look similar on the page: both are standard deviations, both are associated with a mean, and σ appears in both formulas. Yet they describe fundamentally different kinds of uncertainty. σ represents the real variability in the population, while SE measures the error in our estimate of μ. One describes how individuals differ; the other describes the uncertainty in our inference procedure — which is why σ is fixed while SE decreases as the sample size increases.
   </p>
 
-  <div style="margin:1rem 0 0.3rem 0; display:grid; grid-template-columns: minmax(13rem,max-content) 1fr; gap: 0.9rem 1.3rem; font-size:0.95rem; align-items:start">
+  <div class="def-grid" style="margin:1rem 0 0.3rem 0; display:grid; grid-template-columns: minmax(13rem,max-content) 1fr; gap: 0.9rem 1.3rem; font-size:0.95rem; align-items:start">
     <div><strong>σ — real variability in the world</strong></div>
     <div>The spread of <em>individual observations</em>. A feature of the population: if individuals genuinely differ, σ captures that heterogeneity. It <strong>does not shrink with more data</strong> — collecting more participants sharpens your <em>estimate</em> of σ, but the world does not become less variable because you measured it more thoroughly.</div>
     <div><strong>SE — error in the estimate of μ</strong></div>
@@ -645,7 +649,7 @@
     In practice we almost never have the whole population in hand. We work from a sample of size <span class="math-inline">n</span> and use it to <em>estimate</em> σ. Three formulas cover everything you need.
   </p>
 
-  <div style="margin:1rem 0 0.3rem 0; display:grid; grid-template-columns: minmax(13rem,max-content) 1fr; gap: 1rem 1.3rem; font-size:0.95rem; align-items:start">
+  <div class="def-grid" style="margin:1rem 0 0.3rem 0; display:grid; grid-template-columns: minmax(13rem,max-content) 1fr; gap: 1rem 1.3rem; font-size:0.95rem; align-items:start">
     <div>
       <div><strong>Population SD (σ)</strong></div>
       <div style="font-family:var(--mono); font-size:0.9rem; margin-top:0.35rem; color:var(--teal); background:#faf6ec; padding:0.45rem 0.65rem; border-radius:3px; border:1px solid #d9cfbe">σ = √[ Σ(xᵢ − μ)² / N ]</div>
