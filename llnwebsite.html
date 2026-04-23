@@ -294,9 +294,58 @@
   .diagram-svg-wrap { max-width: 700px; margin: 0 auto; }
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.5rem 0; }
   @media (max-width: 640px) {
-    .two-col { grid-template-columns: 1fr; }
-    .header-grid { grid-template-columns: 1fr; }
+    /* ===== Mobile layout ===== */
+
+    /* Baseline */
+    body { font-size: 17px; line-height: 1.65; }
+
+    /* Header */
+    header { padding: 3rem 1.2rem 2.5rem; }
+    .header-grid { grid-template-columns: 1fr; gap: 1.2rem; }
     .header-nav { display: none; }
+    .header-subtitle { font-size: 1rem; }
+
+    /* Section layout */
+    .section { padding: 2.5rem 1.1rem; }
+    .section h3 { font-size: 1.15rem; margin-top: 1.6rem; }
+
+    /* Lead */
+    .lead { font-size: 1.02rem; padding-left: 0.9rem; margin: 1.2rem 0; }
+
+    /* Two-column grid collapses to single column */
+    .two-col { grid-template-columns: 1fr; gap: 1rem; }
+
+    /* Equation blocks: stack variable name above description */
+    .equation-block { padding: 1rem 1.1rem; }
+    .equation-block .eq-main { font-size: 0.95rem; }
+    .eq-vars td { display: block; padding: 0; }
+    .eq-vars td:first-child { width: auto; margin-top: 0.75rem; margin-bottom: 0.2rem; font-size: 0.82rem; }
+    .eq-vars tr:first-child td:first-child { margin-top: 0; }
+
+    /* Callouts */
+    .callout { padding: 1rem 1.1rem; font-size: 0.9rem; }
+    .foreshadow-box { padding: 1rem 1.1rem; font-size: 0.88rem; }
+
+    /* Simulation boxes */
+    .sim-box { padding: 1.2rem 1rem; margin: 1.6rem 0; }
+    .sim-desc { font-size: 0.84rem; }
+    .sim-controls { gap: 0.6rem; }
+    .btn { font-size: 0.7rem; padding: 0.5rem 0.9rem; }
+    .stat-value { font-size: 1.15rem; }
+    .sim-stat-row { gap: 1rem 1.5rem; }
+
+    /* Chain summary — stack vertically, rotate arrows to point down */
+    .chain { flex-direction: column; }
+    .chain-node { width: 100%; }
+    .chain-arrow { transform: rotate(90deg); padding: 0.2rem 0; }
+
+    /* Diagram containers — force horizontal scroll so SVG text stays readable */
+    .diagram-container { padding: 1rem 0.8rem; }
+    .diagram-svg-wrap { min-width: 580px; }
+
+    /* Page-2 teaser: let teaser items fill available width */
+    .page2-teaser { padding: 1.6rem 1.2rem; }
+    .teaser-item { min-width: 0; }
   }
   .info-card { background: var(--paper-mid); border: 1px solid var(--paper-dark); border-radius: 4px; padding: 1.2rem; }
   .info-card-title { font-family: var(--sans); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.6rem; }
@@ -442,7 +491,7 @@
   </div>
 
   <p>
-    Together, these ideas form the statistical bedrock of a practice that runs from polling and clinical trials to psychometric scale construction and latent variable modelling — and they are what make t-tests and ANOVAs legitimate tools. This page traces the full chain from first principles to inference.
+    Together, these ideas form the statistical bedrock of a practice that runs from polling and clinical trials to psychometric scale construction and latent variable modelling — and they are a central reason why mean-based procedures like t-tests and ANOVA often work. They are not the whole story: whether any particular test behaves as advertised also depends on design choices, independence assumptions, and the dependence structure of the data. This page traces the full chain from first principles to inference.
   </p>
 </section>
 
@@ -559,7 +608,7 @@
   </p>
 
   <p>
-    Every estimate drawn from finite data carries uncertainty: as we have illustrated, each run of a new sample experiment gives a slightly different mean. This is the natural consequence of any sampling from a putative distribution. Consequentially, what we really have, around any point estimate, is a distribution of plausible alternatives — the range of means we would have obtained had the coin of sampling landed a different way. Like the variance we see in any given observed distribution (the more familiar standard deviation), the distribution around our estimate also captures variance in our mean estimation. This is captured by the term <strong>standard error</strong>, and it is what we mean by the <em>precision</em> of an estimate.
+    Every estimate drawn from finite data carries uncertainty: as we have illustrated, each run of a new sample experiment gives a slightly different mean. This is the natural consequence of any sampling from a putative distribution. Consequently, what we really have, around any point estimate, is a distribution of plausible alternatives — the range of means we would have obtained had the coin of sampling landed a different way. Like the variance we see in any given observed distribution (the more familiar standard deviation), the distribution around our estimate also captures variance in our mean estimation. This is captured by the term <strong>standard error</strong>, and it is what we mean by the <em>precision</em> of an estimate.
   </p>
 
   <div class="equation-block">
@@ -653,7 +702,7 @@
   </p>
 
   <p>
-    What the CLT tells you is that if you <strong>take n such observations and compute their average</strong>, <em>that average</em> will be approximately normally distributed — and the approximation improves as n grows. The theorem applies precisely and only at the point of aggregation. This is why the Gaussian distribution is central to statistical inference: we are almost always working with means or totals, not raw individual values.
+    What the CLT tells you is that if you <strong>take n such observations and compute their sum — or, equivalently, their average</strong>, <em>that sum or average</em> will be approximately normally distributed, and the approximation improves as n grows. In its classical form the CLT is a theorem about sums of independent random variables; because the mean is just the sum divided by n, the same result carries across to averages. This is why the Gaussian distribution is central to statistical inference: we are almost always working with sums, means, or totals, not raw individual values.
   </p>
 
   <h3>Explore it: watch the CLT emerge</h3>
@@ -754,17 +803,17 @@
   <h2>Confidence intervals — and why they mean less than you think</h2>
 
   <p class="lead">
-    The CLT tells us that means are normally distributed around the true value μ. That is mathematically elegant, but on its own it does not tell us what to <em>do</em> with a single experiment. The confidence interval is the inferential payoff — the tool that turns a sampling distribution into a statement about where the true value might be. Understanding how it is constructed, and what it really says, exposes an odd little philosophical corner of frequentist inference that most textbooks glide over.
+    Under broad conditions, the CLT tells us that the sampling distribution of the mean is approximately normal, centred on the true value μ. That is mathematically elegant, but on its own it does not tell us what to <em>do</em> with a single experiment. The confidence interval is the inferential payoff — the tool that turns a sampling distribution into a statement about where the true value might be. Understanding how it is constructed, and what it really says, exposes an interesting philosophical corner of frequentist inference that most textbooks glide over.
   </p>
 
-  <h3>The trick: cheat, then un-cheat</h3>
+  <h3>The construction: substitute, then adjust</h3>
 
   <p>
     You have run one experiment. You have one sample mean and one sample standard deviation. Somewhere out there is a true population mean μ you will never observe. The CLT says that if you could repeat the experiment many times, the resulting sample means would cluster around μ in a normal distribution with spread σ/√n. But you only ran the experiment once. You do not know σ. You do not know μ. You have one number.
   </p>
 
   <p>
-    The confidence interval is built on a piece of sleight of hand. Step one: <em>pretend the sample is the population</em>. Assume your sample mean equals μ and your sample standard deviation equals σ. Under this pretence, you can construct a sampling distribution explicitly — it is centred on your sample mean, with spread s/√n. You can then take the middle 95% of that distribution as the interval.
+    Because μ and σ are unknown, the confidence interval is built by <em>substituting the sample estimates</em> into the CLT's formula: the sample mean X̄ stands in for μ, and the sample standard deviation s stands in for σ. Substituting s for σ adds extra uncertainty — we are using an estimate inside an estimate — so instead of reading widths off the normal distribution, we read them off the t distribution with n−1 degrees of freedom, which is a little wider to account for that extra uncertainty. The middle 95% of that t distribution gives us the interval.
   </p>
 
   <div class="equation-block">
@@ -773,14 +822,14 @@
     <div class="eq-vars">
       <table>
         <tr><td>X̄</td><td>Your observed sample mean — treated, for the purposes of constructing the interval, as if it were the population mean.</td></tr>
-        <tr><td>s/√n</td><td>The <strong>standard error</strong> of the mean — derived under the fiction that the sample SD equals the population SD.</td></tr>
+        <tr><td>s/√n</td><td>The <strong>estimated standard error</strong> of the mean — computed by substituting the sample SD (s) for the population SD (σ), which is unknown.</td></tr>
         <tr><td>t<sub>n−1, .025</sub></td><td>The critical t-value capturing the middle 95% of a t-distribution with n−1 degrees of freedom. Approximately 2.78 at n=5, 2.06 at n=25, 1.98 at n=100 — converging on the familiar z-value of 1.96 for very large samples.</td></tr>
       </table>
     </div>
   </div>
 
   <p>
-    Step two is the un-cheat: we do not actually believe our sample equals the population, so we do not get to conclude "95% probability μ is in this interval." Instead we fall back on the one thing the CLT really does let us say — a statement about what would happen <em>across</em> many hypothetical repetitions of the study.
+    The substitution is what lets us compute an interval from a single experiment — but it also constrains how we are allowed to interpret it. Because we plugged in estimates rather than known values, we do not get to conclude "95% probability μ is in this interval." Instead we fall back on the one thing the CLT really does let us say — a statement about what would happen <em>across</em> many hypothetical repetitions of the study.
   </p>
 
   <div class="callout callout-teal">
@@ -847,10 +896,10 @@
     </div>
   </div>
 
-  <h3>The awkward truth about a single CI</h3>
+  <h3>What a single CI really tells you</h3>
 
   <p>
-    Remember that we have set out confidence interval (CI) as 95%, which is that 5% (or 1 in 20) of our sampled experiments will generate a CI that <em>does not contain</em> the true mean (μ). Look at the plot above once it has 100 or so experiments on it. Usually 5 of those intervals either contains μ, or it does not. There is no probability in between — the truth is fixed, the interval is fixed, and the relationship between them is either "contains" or "misses." Full stop. Saying "there is a 95% probability that this interval contains μ" is saying something that is either 0 or 1 — not 0.95. The 95% lives in the <em>procedure</em>, not in any individual interval.
+    Remember that we have set our confidence interval (CI) at 95%, which is to say that about 5% (or roughly 1 in 20) of our sampled experiments will generate a CI that <em>does not contain</em> the true mean (μ). Look at the plot above once it has 100 or so experiments on it. Typically about 5 of those intervals will miss μ; each individual interval either contains μ or it does not. There is no probability in between — the truth is fixed, the interval is fixed, and the relationship between them is either "contains" or "misses." Saying "there is a 95% probability that this interval contains μ" is, under the frequentist framework, saying something that is either 0 or 1 — not 0.95. The 95% lives in the <em>procedure</em>, not in any individual interval.
   </p>
 
   <div class="callout callout-teal">
@@ -866,11 +915,19 @@
   <h3>Why the weird interpretation is the honest one</h3>
 
   <p>
-    It is tempting to read all of this as a bookkeeping technicality — to note the awkward interpretation and then revert, in practice, to treating the CI as "probably where μ is." But the weirdness is pointing at something real. The frequentist framework is committed to an austere ontology: probability is a long-run frequency property of a repeatable procedure, not a degree of belief about a fixed-but-unknown quantity. Under that commitment, μ is not a random variable. The interval is. And the only probability statement you get to make is about the <em>behaviour of the procedure</em> — not about the truth.
+    It is tempting to read all of this as a bookkeeping technicality — to note the unusual interpretation and then revert, in practice, to treating the CI as "probably where μ is." But the weirdness is pointing at something real. The frequentist framework is committed to an austere ontology: probability is a long-run frequency property of a repeatable procedure, not a degree of belief about a fixed-but-unknown quantity. Under that commitment, μ is not a random variable. The interval is. And the only probability statement you get to make is about the <em>behaviour of the procedure</em> — not about the truth.
   </p>
 
   <p>
-    The pretence-then-correction structure is the price of inference without priors. You construct the interval by imagining your sample is the population (otherwise you have nothing to work with), and you interpret it under the rule that this imagining was a device, not a claim. The interval works. It just does not mean what most people think it does.
+    This forces two things to be <em>binary</em> at the same time, and it is worth keeping them distinct. The <em>procedural assumptions</em> — that the sampling distribution of the mean really is approximately normal, that observations are independent, that the sample SD is a reasonable substitute for σ — either hold for the population and design you drew from, or they do not. There is no partial credit; you were sampling from the right kind of world, or you were not. Separately, the <em>realisation on your single run</em> is also binary: μ is either inside the interval you just computed, or it is outside. The 95% does not apply to this interval. It applies to the long-run behaviour of the procedure across hypothetical repetitions.
+  </p>
+
+  <p>
+    A direct consequence follows, and it is worth stating plainly: under this framework, when you are wrong, you are <em>totally</em> wrong. The interval either contains μ or it does not. There is no "close to μ" partial credit for a near miss, no sliding scale of being wrong by a little. The procedure has an advertised coverage rate of 95%, but the output on any particular run is one of two things — a hit or a miss — and you have no way of telling which kind yours is without knowing μ, which by definition you do not. You ran a procedure whose long-run behaviour is well-characterised; you received one draw from that long-run behaviour; and the event on that draw is binary. This is part of why the Bayesian alternative, which attaches probability directly to μ and so admits degrees of being close, feels so natural to people the first time they meet it.
+  </p>
+
+  <p>
+    The substitute-then-adjust structure is the price of inference without priors. You construct the interval by plugging sample estimates into the CLT's formula (otherwise you have nothing to work with), and you interpret it under the rule that those estimates were a calculation device, not a claim of equality with the population values. The resulting interval is useful and principled — but its formal frequentist interpretation is narrower than the intuitive, Bayesian-flavoured reading many people reach for on first encounter.
   </p>
 
   <div class="foreshadow-box">
@@ -928,10 +985,10 @@
           <text x="165" y="22" font-size="9.5" fill="#7a7068" text-anchor="middle" letter-spacing="1.5" font-weight="700">WHAT AVERAGING ACHIEVES AT EACH LEVEL</text>
           <rect x="12" y="35" width="8" height="8" rx="1" fill="#2a6b6e"/>
           <text x="28" y="45" font-size="10" fill="#1a1714" font-weight="700">Level 1: Items → Person Score</text>
-          <text x="28" y="60" font-size="9" fill="#555">• Each item = noisy draw from person's true trait</text>
+          <text x="28" y="60" font-size="9" fill="#555">• If items tap one construct, each = imperfect indicator</text>
           <text x="28" y="74" font-size="9" fill="#555">• Averaging k items cancels independent error</text>
           <text x="28" y="88" font-size="9" fill="#555">• LLN: score → person's true score as k grows</text>
-          <text x="28" y="102" font-size="9" fill="#555">• Cronbach's α measures how well this works</text>
+          <text x="28" y="102" font-size="9" fill="#555">• α: one index of internal consistency (under assumptions)</text>
           <line x1="12" y1="115" x2="318" y2="115" stroke="#ddd6cb" stroke-width="1"/>
           <rect x="12" y="125" width="8" height="8" rx="1" fill="#c07c2a"/>
           <text x="28" y="135" font-size="10" fill="#1a1714" font-weight="700">Level 2: People → Group Estimate</text>
@@ -961,7 +1018,7 @@
   </p>
 
   <p>
-    <strong>Cronbach's α</strong> is a classic procedure for checking reliability, and it operates precisely at the level just described. Its connection to the LLN is direct: α increases as the number of items k increases, following the same logic as the LLN. Add more items and the aggregate becomes a more stable, reliable summary of the underlying trait — just as adding more coin flips brings the running mean closer to 0.5. A fuller treatment of reliability measures — what they assume, how they are computed, and how they differ — is the subject of a later website.
+    <strong>Cronbach's α</strong> is best thought of as <em>one index of internal consistency</em>, computed from the pattern of inter-item covariances. Under restrictive assumptions — essentially tau-equivalence (items measure the same construct with equal loadings) and uncorrelated errors — α can be interpreted as a lower bound on reliability in the classical-test-theory sense. Its connection to the LLN is direct: α increases as the number of items k increases, following the same logic as the LLN. Add more items and the aggregate becomes a more stable summary of whatever the items are jointly tapping — just as adding more coin flips brings the running mean closer to 0.5. A fuller treatment of α, its assumptions, and the alternatives (ω, composite reliability, factor-based indices) is the subject of a later website.
   </p>
   <p>
     It is important not to misread what a high α tells you, however. A high α does <em>not</em> necessarily mean that the items are strongly intercorrelated. Because α is sensitive to the number of items, a scale with a large number of items can achieve a high α even when the average inter-item correlation is quite low. What a high α does tell you — and this is the LLN point — is that with enough items, the aggregate average is a reasonably stable summary of whatever signal the items share, whatever that signal happens to be. Whether it is the right signal, and whether all items contribute equally to it, are separate questions.
@@ -1028,13 +1085,13 @@
   </p>
 
   <p>
-    The natural question all scientists will want to know is whether the observed difference <span class="math-inline">X̄₁ − X̄₂</span> reflects a <em>real</em> difference in the underlying population means. But as I have tried to make clear throughout, the answer we get will always depend on how much we trust each mean estimate — how <em>precisely</em> it represents its true condition value (particularly as we have also established we play a sleight of hand and actually <em>assume</em> this mean estimate is exactly the genuine true estimate!). This is the theme of estimate <em>fidelity</em> or <em>precision</em> that runs through everything on this page: in the case of CLT, the message is that the more observations we aggregate, the sharper our estimates come into focus, and the more confidently we can judge whether an apparent difference between them is genuine.
+    The natural question all scientists will want to know is whether the observed difference <span class="math-inline">X̄₁ − X̄₂</span> reflects a <em>real</em> difference in the underlying population means. But as I have tried to make clear throughout, the answer we get will always depend on how much we trust each mean estimate — how <em>precisely</em> it represents its true condition value (particularly given that, as we have established, we are also substituting the sample SD for the unknown population SD when we work out that precision). This is the theme of estimate <em>fidelity</em> or <em>precision</em> that runs through everything on this page: in the case of CLT, the message is that the more observations we aggregate, the sharper our estimates come into focus, and the more confidently we can judge whether an apparent difference between them is genuine.
   </p>
 
   <h3>The t-test: how precisely do we know each mean?</h3>
 
   <p>
-    The t-statistic captures this idea of precision directly. The standard error of each mean — <span class="math-inline">σ/√N</span>, from the CLT — tells us how sharply that mean estimate is in focus. A small standard error means the estimate is tight: with high N, we can be confident the observed mean is close to the true condition mean. Consequentially, with a low SE, we are indicating that the mean difference is being estimated with high precision (because it's being derived from two group means that <em>also</em> have a small SE), and so even a very small observed difference may be informative.
+    The t-statistic captures this idea of precision directly. The standard error of each mean — <span class="math-inline">σ/√N</span>, from the CLT — tells us how sharply that mean estimate is in focus. A small standard error means the estimate is tight: with high N, we can be confident the observed mean is close to the true condition mean. Consequently, with a low SE, we are indicating that the mean difference is being estimated with high precision (because it is being derived from two group means that <em>also</em> have a small SE), and so even a very small observed difference may be informative.
   </p>
 
   <div class="equation-block">
@@ -1128,6 +1185,20 @@
   <p>
     The same logic applies to the inference chain built in this page. When the LLN averages across items or across people, it cancels <em>random</em> error. But if some of the apparent error is actually structured — the same items always harder, the same people always more variable — averaging doesn't cancel it, it obscures it. The error term in CTT is not a scientific description of noise; it is a confession that the model does not know where the noise came from. What is ironic is that researchers often <em>do</em> know about sources of this error <em>a priori</em> — that is, they know about different participants, or that participants have repeated some things but not others, or that the means they derived come from a certain set of items, etc. So why not <em>specify</em> such parameter details in your <em>statistical model</em>? This will be a major theme for why we want to argue to step away from ANOVA in the first place!
   </p>
+
+  <div class="callout callout-teal">
+    <div class="callout-title">Where we got to — a summary of the learning points</div>
+    <ol style="margin:0.5rem 0 0 0; padding-left:1.4rem; font-size:0.95rem; line-height:1.6;">
+      <li style="margin-bottom:0.7rem"><strong>The LLN.</strong> Averaging independent observations cancels random noise, and sample means drift toward μ as n grows. The error shrinks like 1/√n, not 1/n: more data helps, but precision gets more expensive the more of it you already have.</li>
+      <li style="margin-bottom:0.7rem"><strong>σ vs SE.</strong> Two standard deviations that describe two different things. σ is real variability in the population — a fixed property of the world. SE is error in our estimate of μ — a property of our inference procedure. One does not shrink with more data; the other does.</li>
+      <li style="margin-bottom:0.7rem"><strong>Sample SD (s) and Bessel's correction.</strong> In practice we estimate σ from the sample as <em>s</em>, with <em>n − 1</em> in the denominator to correct for sample points sitting closer to x̄ than to μ. The <em>n − 1</em> correction recurs throughout statistics.</li>
+      <li style="margin-bottom:0.7rem"><strong>The CLT.</strong> For sufficiently large n, the distribution of sample means is approximately normal, centred on μ, with spread σ/√n — no matter what the population distribution looks like. This is what makes inference on means mathematically tractable.</li>
+      <li style="margin-bottom:0.7rem"><strong>Confidence intervals describe a procedure, not a particular parameter.</strong> A 95% CI would capture μ 95% of the time across repeated studies; it is not a probability statement about any particular interval. Bayesian credible intervals (Part 2) attach probabilities to parameters directly.</li>
+      <li style="margin-bottom:0.7rem"><strong>Signal over noise.</strong> The t- and F-statistics are ratios: observed difference divided by the precision of the estimate. The signal-to-noise idea — and ratios more generally — recur throughout inferential statistics.</li>
+      <li style="margin-bottom:0.7rem"><strong>Two levels of averaging, same assumptions.</strong> Averaging items to form a person score (reliability, Cronbach's α) and averaging people to form a group estimate (CLT on means) rest on the same assumptions — independence, equal contribution, a single construct — and share the same failure modes.</li>
+      <li style="margin-bottom:0"><strong>Assumptions everywhere.</strong> Each step of the chain rests on assumptions that may not hold in real behavioural data: uncorrelated errors, tau-equivalence, a single latent construct, random rather than structured noise. When those assumptions break, the neat chain from LLN to valid inference breaks too — which is where Part 2 picks up.</li>
+    </ol>
+  </div>
 
   <div class="page2-teaser">
     <h3>Part 2: When the Chain Breaks</h3>
