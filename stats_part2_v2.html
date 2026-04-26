@@ -1,0 +1,1860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>When the Chain Breaks — ANOVA, LMM, and IRT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&family=Epilogue:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1714;
+    --paper: #f7f3ee;
+    --paper-mid: #ede8e1;
+    --paper-dark: #ddd6cb;
+    --amber: #c07c2a;
+    --amber-light: #e8a44a;
+    --amber-pale: #f5e8d0;
+    --teal: #2a6b6e;
+    --teal-light: #4a9b9e;
+    --teal-pale: #eaf4f4;
+    --red: #b84040;
+    --red-pale: #f5eaea;
+    --violet: #6b4a8e;
+    --violet-light: #9b7abf;
+    --violet-pale: #f0eaf8;
+    --muted: #7a7068;
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --sans: 'Epilogue', sans-serif;
+    --mono: 'DM Mono', monospace;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:19px;line-height:1.75;overflow-x:hidden;}
+  body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:1000;opacity:0.5;}
+
+  header{background:var(--ink);color:var(--paper);padding:5rem 2rem 4rem;position:relative;overflow:hidden;}
+  header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--violet),var(--teal-light),var(--amber));}
+  .header-grid{max-width:900px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:2rem;align-items:end;}
+  .header-eyebrow{font-family:var(--sans);font-size:0.7rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--amber-light);margin-bottom:1.2rem;}
+  header h1{font-size:clamp(2.2rem,5vw,3.8rem);font-weight:300;line-height:1.1;letter-spacing:-0.01em;}
+  header h1 em{font-style:italic;color:var(--amber-light);}
+  .header-subtitle{margin-top:1.2rem;font-size:1.05rem;font-weight:300;color:#b8b0a5;max-width:540px;font-style:italic;}
+  .header-nav{display:flex;flex-direction:column;gap:0.4rem;align-self:start;padding-top:0.5rem;}
+  .nav-item{font-family:var(--sans);font-size:0.7rem;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:#888;text-decoration:none;padding:0.25rem 0.6rem;border-left:2px solid transparent;transition:all 0.2s;white-space:nowrap;}
+  .nav-item:hover{color:var(--amber-light);border-left-color:var(--amber);}
+
+  .section{max-width:900px;margin:0 auto;padding:4rem 2rem;}
+  .section+.section{border-top:1px solid var(--paper-dark);}
+  .section-number{font-family:var(--mono);font-size:0.7rem;color:var(--amber);letter-spacing:0.1em;margin-bottom:0.6rem;display:block;}
+  .section h2{font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:600;line-height:1.15;margin-bottom:1.5rem;letter-spacing:-0.01em;}
+  .section h3{font-size:1.35rem;font-weight:600;margin:2rem 0 0.8rem;color:var(--teal);}
+  .section h3.violet{color:var(--violet);}
+  p{margin-bottom:1.1rem;}
+  strong{font-weight:600;}
+  em{font-style:italic;}
+
+  .lead{font-size:1.15rem;font-style:italic;color:#4a4540;border-left:3px solid var(--amber);padding-left:1.2rem;margin:1.5rem 0;}
+  .math-inline{font-family:var(--mono);font-size:0.85em;background:var(--paper-mid);padding:0.1em 0.4em;border-radius:3px;}
+
+  .equation-block{background:var(--paper-mid);border:1px solid var(--paper-dark);border-left:4px solid var(--teal);padding:1.2rem 1.5rem;margin:1.5rem 0;}
+  .equation-block.violet{border-left-color:var(--violet);}
+  .equation-block.amber{border-left-color:var(--amber);}
+  .eq-label{display:block;font-family:var(--sans);font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:0.6rem;}
+  .eq-main{font-family:var(--mono);font-size:1.05rem;text-align:center;letter-spacing:0.03em;display:block;margin-bottom:1rem;}
+  .eq-vars{font-size:0.82rem;color:#555;border-top:1px solid var(--paper-dark);padding-top:0.8rem;}
+  .eq-vars table{width:100%;border-collapse:collapse;font-family:var(--serif);}
+  .eq-vars td{padding:0.18rem 0.5rem 0.18rem 0;vertical-align:top;}
+  .eq-vars td:first-child{font-family:var(--mono);font-size:0.8rem;color:var(--teal);white-space:nowrap;width:9rem;}
+  .eq-vars td:first-child.violet{color:var(--violet);}
+
+  .diagram-container{background:var(--paper-mid);border:1px solid var(--paper-dark);border-radius:6px;padding:2rem 1.5rem;margin:2rem 0;overflow-x:auto;}
+  .diagram-title{font-family:var(--sans);font-size:0.65rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:1.5rem;text-align:center;}
+  .diagram-svg-wrap{max-width:700px;margin:0 auto;}
+  .diagram-caption{max-width:640px;margin:1rem auto 0;font-size:0.88rem;color:#555;text-align:center;font-style:italic;line-height:1.55;}
+
+  .callout{background:var(--amber-pale);border:1px solid #ddc89a;border-radius:4px;padding:1.2rem 1.5rem;margin:1.5rem 0;font-size:0.95rem;}
+  .callout-title{font-family:var(--sans);font-size:0.65rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--amber);margin-bottom:0.5rem;}
+  .callout.teal{background:var(--teal-pale);border-color:#b0d8da;}
+  .callout.teal .callout-title{color:var(--teal);}
+  .callout.red{background:var(--red-pale);border-color:#e0b0b0;}
+  .callout.red .callout-title{color:var(--red);}
+  .callout.violet{background:var(--violet-pale);border-color:#c8b0e0;}
+  .callout.violet .callout-title{color:var(--violet);}
+
+  .recall-box{background:linear-gradient(135deg,#1e2a2b,#1a1714);border:1px solid #2a4a4b;border-left:4px solid var(--teal);border-radius:4px;padding:1.1rem 1.4rem;margin:1.5rem 0;font-size:0.92rem;color:#c5c0ba;}
+  .recall-box strong{color:var(--teal-light);}
+  .recall-box .recall-label{font-family:var(--sans);font-size:0.6rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--teal);margin-bottom:0.5rem;display:block;}
+
+  .teaser{border:1px solid #c8b0e0;background:var(--violet-pale);border-left:4px solid var(--violet);border-radius:4px;margin:1.5rem 0;}
+  .teaser > summary{cursor:pointer;padding:1.1rem 1.4rem;outline:none;list-style:none;}
+  .teaser > summary::-webkit-details-marker{display:none;}
+  .teaser > summary::before{content:"\25B8";font-size:0.85em;margin-right:0.6em;color:var(--violet);display:inline-block;transition:transform 0.15s;}
+  .teaser[open] > summary::before{transform:rotate(90deg);}
+  .teaser .teaser-label{display:inline-block;font-family:var(--sans);font-size:0.6rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--violet);}
+  .teaser .teaser-title{display:block;font-family:var(--serif);font-size:1.02rem;font-weight:700;color:var(--violet);margin-top:0.4rem;padding-left:1.4em;}
+  .teaser .teaser-hint{display:block;font-family:var(--serif);font-size:0.85rem;font-weight:400;font-style:italic;color:#6a5f56;margin-top:0.35rem;padding-left:1.4em;}
+  .teaser[open] > summary{border-bottom:1px dashed #c8b0e0;}
+  .teaser-body{padding:1.2rem 1.4rem 0.6rem;}
+  .teaser-body > :first-child{margin-top:0;}
+
+  .sim-box{background:var(--ink);color:var(--paper);border-radius:6px;padding:2rem;margin:2rem 0;}
+  /* Light variant — paper background for easier reading of long narrative sim descriptions */
+  .sim-box.light{background:var(--paper);color:var(--ink);border:1px solid var(--paper-dark);}
+  .sim-box.light .sim-title{color:var(--ink);font-weight:700;}
+  .sim-box.light .sim-desc{color:var(--ink);font-style:normal;font-weight:700;}
+  .sim-box.light .slider-label{color:var(--ink);}
+  .sim-box.light .slider-val{color:var(--amber);}
+  .sim-box.light .canvas-label{color:var(--muted);}
+  .sim-box.light .stat-label{color:var(--muted);}
+  .sim-box.light .stat-value{color:var(--amber);}
+  .sim-box.light .stat-value.dim{color:var(--muted);}
+  .sim-box.light .stat-value.teal{color:var(--teal);}
+  .sim-box.light .stat-value.red{color:var(--red);}
+  .sim-box.light input[type=range]{background:#cfc9c0;}
+  .sim-box.light input[type=range]::-webkit-slider-thumb{background:var(--amber);}
+  .sim-title{font-family:var(--sans);font-size:0.65rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--amber-light);margin-bottom:0.4rem;}
+  .sim-desc{font-size:0.88rem;color:#aaa;margin-bottom:1.5rem;font-style:italic;line-height:1.55;}
+  .sim-controls{display:flex;gap:0.8rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:1.2rem;}
+  .btn{font-family:var(--sans);font-size:0.75rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:0.55rem 1.2rem;border:none;border-radius:3px;cursor:pointer;transition:all 0.15s;}
+  .btn-primary{background:var(--amber);color:white;}
+  .btn-primary:hover{background:var(--amber-light);}
+  .btn-secondary{background:transparent;color:#aaa;border:1px solid #444;}
+  .btn-secondary:hover{border-color:#888;color:#ddd;}
+  .btn-teal{background:var(--teal);color:white;}
+  .btn-teal:hover{background:var(--teal-light);}
+  .btn-violet{background:var(--violet);color:white;}
+  .btn-violet:hover{background:var(--violet-light);}
+
+  .sim-stat-row{display:flex;gap:1.5rem;flex-wrap:wrap;margin-bottom:1.2rem;}
+  .stat-chip{display:flex;flex-direction:column;}
+  .stat-label{font-family:var(--mono);font-size:0.58rem;letter-spacing:0.1em;color:#666;text-transform:uppercase;line-height:1.4;}
+  .stat-value{font-family:var(--mono);font-size:1.2rem;color:var(--amber-light);}
+  .stat-value.teal{color:#6bbbbf;}
+  .stat-value.green{color:#7ec87e;}
+  .stat-value.red{color:#e07070;}
+  .stat-value.violet{color:#b090d8;}
+  .stat-value.dim{color:#888;}
+
+  canvas{display:block;width:100%;}
+  .canvas-label{font-family:var(--mono);font-size:0.58rem;color:#666;margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.1em;}
+
+  input[type=range]{-webkit-appearance:none;background:#333;height:4px;border-radius:2px;outline:none;cursor:pointer;width:100%;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--amber);cursor:pointer;}
+  .slider-label{font-family:var(--mono);font-size:0.7rem;color:#aaa;display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:0.5rem;}
+  .slider-val{color:var(--amber-light);min-width:4ch;text-align:right;}
+  .slider-group{flex:1;min-width:180px;}
+
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin:1.5rem 0;}
+  .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.2rem;margin:1.5rem 0;}
+
+  @media (max-width: 640px) {
+    /* ===== Mobile layout ===== */
+
+    /* Baseline */
+    body { font-size: 17px; line-height: 1.65; }
+
+    /* Header */
+    header { padding: 3rem 1.2rem 2.5rem; }
+    .header-grid { grid-template-columns: 1fr; gap: 1.2rem; }
+    .header-nav { display: none; }
+    .header-subtitle { font-size: 1rem; }
+
+    /* Section layout */
+    .section { padding: 2.5rem 1.1rem; }
+    .section h2 { margin-bottom: 1.2rem; }
+    .section h3 { font-size: 1.15rem; margin-top: 1.6rem; }
+
+    /* Lead */
+    .lead { font-size: 1.02rem; padding-left: 0.9rem; margin: 1.2rem 0; }
+
+    /* Multi-column grids collapse to single column */
+    .two-col, .three-col { grid-template-columns: 1fr; gap: 1rem; }
+
+    /* Equation blocks: stack variable name above description */
+    .equation-block { padding: 1rem 1.1rem; }
+    .equation-block .eq-main { font-size: 0.95rem; word-break: break-word; }
+    .eq-vars td { display: block; padding: 0; }
+    .eq-vars td:first-child { width: auto; margin-top: 0.75rem; margin-bottom: 0.2rem; font-size: 0.82rem; }
+    .eq-vars tr:first-child td:first-child { margin-top: 0; }
+
+    /* Callouts */
+    .callout { padding: 1rem 1.1rem; font-size: 0.9rem; }
+
+    /* Recall boxes (the dark teal pull-back boxes) */
+    .recall-box { padding: 0.95rem 1.1rem; font-size: 0.88rem; }
+
+    /* Bayesian LMM teaser (collapsible) */
+    .teaser > summary { padding: 0.95rem 1.1rem; }
+    .teaser-body { padding: 1rem 1.1rem 0.5rem; }
+    .teaser .teaser-title { font-size: 0.96rem; }
+    .teaser .teaser-hint { font-size: 0.8rem; }
+
+    /* Simulation boxes */
+    .sim-box { padding: 1.2rem 1rem; margin: 1.6rem 0; }
+    .sim-desc { font-size: 0.84rem; }
+    .sim-controls { gap: 0.6rem; }
+    .btn { font-size: 0.7rem; padding: 0.5rem 0.9rem; }
+    .stat-value { font-size: 1.15rem; }
+    .sim-stat-row { gap: 1rem 1.5rem; }
+    .slider-group { min-width: 0; flex: 1 1 100%; }
+
+    /* Diagram containers — force horizontal scroll so SVG text stays readable */
+    .diagram-container { padding: 1rem 0.8rem; }
+    .diagram-svg-wrap { min-width: 580px; }
+
+    /* Inline chain (ANOVA → LMM → IRT) — stack vertically with arrows pointing down */
+    .chain { flex-direction: column; }
+    .chain-node { width: 100%; min-width: 0; }
+    .chain-arrow { transform: rotate(90deg); padding: 0.2rem 0; }
+
+    /* Part marker (Part I / Part II banners) */
+    .part-marker { padding: 1.4rem 1.2rem; }
+    .part-title { font-size: 1.3rem; }
+
+    /* Final summary chain — stack the 180px label column above the description */
+    .final-chain { padding: 1.8rem 1.2rem; }
+    .final-chain h3 { font-size: 1.1rem; }
+    .chain-row-item { grid-template-columns: 1fr; gap: 0.4rem; padding: 0.8rem 0; }
+    .cri-label { font-size: 0.72rem; }
+    .cri-desc { font-size: 0.88rem; }
+
+    /* IRT two-panel layout collapses */
+    .irt-panel { grid-template-columns: 1fr; }
+  }
+  .info-card{background:var(--paper-mid);border:1px solid var(--paper-dark);border-radius:4px;padding:1.2rem;}
+  .info-card-title{font-family:var(--sans);font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal);margin-bottom:0.6rem;}
+  .info-card-title.red{color:var(--red);}
+  .info-card-title.violet{color:var(--violet);}
+  .info-card p{font-size:0.88rem;margin-bottom:0;}
+
+  .legend-row{display:flex;gap:1.2rem;flex-wrap:wrap;margin-top:0.6rem;}
+  .legend-item{display:flex;align-items:center;gap:0.4rem;font-family:var(--mono);font-size:0.62rem;color:#999;text-transform:uppercase;letter-spacing:0.08em;}
+  .legend-swatch{width:20px;height:3px;border-radius:2px;flex-shrink:0;}
+
+  /* Chain */
+  .chain{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;margin:2rem 0;}
+  .chain-node{background:var(--ink);color:var(--paper);border-radius:5px;padding:0.8rem 1rem;font-family:var(--sans);font-size:0.75rem;font-weight:700;letter-spacing:0.03em;text-align:center;flex:1;min-width:100px;border-bottom:3px solid var(--amber);}
+  .chain-node span{display:block;font-size:0.72rem;font-weight:400;color:#ff6b6b;margin-top:0.35rem;letter-spacing:0.04em;line-height:1.4;}
+  .chain-node.teal{border-bottom-color:var(--teal);}
+  .chain-node.violet{border-bottom-color:var(--violet);}
+  .chain-node.highlight{background:#2a1a0a;border-bottom-color:var(--amber-light);}
+  .chain-arrow{font-size:1.2rem;color:var(--amber);padding:0 0.3rem;flex-shrink:0;display:flex;align-items:center;}
+
+  /* Part section marker */
+  .part-marker{background:var(--ink);color:var(--paper);text-align:center;padding:1.8rem 2rem;margin:0;}
+  .part-marker-inner{max-width:900px;margin:0 auto;}
+  .part-num{font-family:var(--mono);font-size:0.65rem;letter-spacing:0.2em;color:var(--amber);text-transform:uppercase;margin-bottom:0.4rem;}
+  .part-title{font-family:var(--serif);font-size:1.6rem;font-weight:300;}
+  .part-title em{font-style:italic;color:var(--amber-light);}
+
+  /* IRT curves area */
+  .irt-panel{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+
+  /* Summary chain at end */
+  .final-chain{background:var(--ink);border-radius:8px;padding:2.5rem 2rem;margin:2rem 0;}
+  .final-chain h3{color:var(--amber-light);font-size:1.3rem;margin-bottom:1.5rem;margin-top:0;}
+  .chain-row{display:flex;flex-direction:column;gap:0;}
+  .chain-row-item{display:grid;grid-template-columns:180px 1fr;gap:1.5rem;align-items:center;padding:0.9rem 0;border-bottom:1px solid #222;}
+  .chain-row-item:last-child{border-bottom:none;}
+  .cri-label{font-family:var(--sans);font-size:0.75rem;font-weight:700;color:var(--amber-light);}
+  .cri-label span{display:block;font-size:0.6rem;font-weight:400;color:#e07070;margin-top:0.15rem;letter-spacing:0.06em;text-transform:uppercase;}
+  .cri-desc{font-family:var(--serif);font-size:0.92rem;color:var(--paper-dark);line-height:1.6;}
+  .cri-arrow{color:var(--amber-light);font-size:0.9rem;padding:0.3rem 0;text-align:center;}
+
+  footer{background:var(--ink);color:#666;text-align:center;padding:2.5rem 2rem;font-size:0.8rem;font-family:var(--sans);letter-spacing:0.06em;}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity 0.55s ease,transform 0.55s ease;}
+  .reveal.visible{opacity:1;transform:translateY(0);}
+  #progress-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--violet),var(--teal-light),var(--amber));z-index:9999;transition:width 0.1s;}
+  .toc-indicator{position:fixed;right:1.5rem;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:100;}
+  .toc-dot{width:6px;height:6px;border-radius:50%;background:var(--paper-dark);transition:all 0.3s;cursor:pointer;}
+  .toc-dot.active{background:var(--amber);transform:scale(1.4);}
+  @media(max-width:768px){.toc-indicator{display:none;}}
+</style>
+</head>
+<body>
+<div id="progress-bar" style="width:0%"></div>
+<div class="toc-indicator">
+  <div class="toc-dot active" onclick="scrollToSec(0)"></div>
+  <div class="toc-dot" onclick="scrollToSec(1)"></div>
+  <div class="toc-dot" onclick="scrollToSec(2)"></div>
+  <div class="toc-dot" onclick="scrollToSec(3)"></div>
+  <div class="toc-dot" onclick="scrollToSec(4)"></div>
+  <div class="toc-dot" onclick="scrollToSec(5)"></div>
+</div>
+
+<header>
+  <div class="header-grid">
+    <div>
+      <div class="header-eyebrow">Statistical Foundations · Part 2 of 2</div>
+      <h1>When the <em>Chain</em> Breaks<br>— and How to Fix It</h1>
+      <p class="header-subtitle">ANOVA in depth, then what to do when its assumptions fail — Linear Mixed Models, and then the deeper question of measurement quality through IRT.</p>
+    </div>
+    <nav class="header-nav">
+      <a href="#s0" class="nav-item">Bridge from Part 1</a>
+      <a href="#s1" class="nav-item">Inside ANOVA</a>
+      <a href="#s2" class="nav-item">When Assumptions Break</a>
+      <a href="#s2b" class="nav-item">Repeated Measures</a>
+      <a href="#s3" class="nav-item">Linear Mixed Models</a>
+      <a href="#s4" class="nav-item">IRT &amp; Measurement</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ===== S0: BRIDGE ===== -->
+<section id="s0" class="section reveal">
+  <span class="section-number">§ 00</span>
+  <h2>Where Part 1 left us</h2>
+
+  <p class="lead">
+    Part 1 traced a logical chain from first principles to inference. We established <em>why</em> averaging works, and <em>what</em> it guarantees about the resulting means. Now we go deeper into that chain — first to understand ANOVA properly, then to ask what happens when its assumptions no longer hold.
+  </p>
+
+  <div class="chain">
+    <div class="chain-node">Law of Large Numbers<span>averaging → stable summaries</span></div>
+    <div class="chain-arrow">→</div>
+    <div class="chain-node">Central Limit Theorem<span>means → approximately normal</span></div>
+    <div class="chain-arrow">→</div>
+    <div class="chain-node">Group Means<span>each ~ N(μ, σ²/N)</span></div>
+    <div class="chain-arrow">→</div>
+    <div class="chain-node highlight">t-test / ANOVA<span>precision-weighted comparison</span></div>
+  </div>
+
+  <p>
+    The key insight from Part 1 was <strong>precision</strong>: larger N brings group means into sharper focus, and that sharpness — expressed as the standard error σ/√N — is what makes it possible to judge whether an observed difference between conditions is real. The t-statistic and the F-ratio are both, at bottom, measures of how large the observed difference is relative to the precision of our estimates — that is, the ratio of signal to noise.
+  </p>
+
+  <p>
+    In Part 2, we ask three questions in sequence. First: <em>how does ANOVA actually partition variance to arrive at the F-ratio?</em> The mechanics reveal why the assumptions exist — they are not arbitrary rules but direct consequences of the CLT logic we already have in hand (Part 1 · §05 introduced the t-test and ANOVA; §01 here opens up their machinery). Second: <em>what happens when those assumptions are violated?</em> This leads to Linear Mixed Models, which extend ANOVA by modelling the dependence structure the data actually contain. Third: <em>how good is the measurement feeding into any of these models?</em> This is the IRT question — precision at the item level, before the data even reach the statistical model.
+  </p>
+</section>
+
+<!-- ===== PART MARKER 1 ===== -->
+<div class="part-marker reveal">
+  <div class="part-marker-inner">
+    <div class="part-num">Part I</div>
+    <div class="part-title"><em>Inside ANOVA</em> — partitioning variance and understanding the assumptions</div>
+  </div>
+</div>
+
+<!-- ===== S1: ANOVA IN DEPTH ===== -->
+<section id="s1" class="section reveal">
+  <span class="section-number">§ 01</span>
+  <h2>How ANOVA actually works</h2>
+
+  <p>
+    Most introductory courses present ANOVA as a procedure: run the test, check if p &lt; .05. But ANOVA has a precise mechanical logic that makes it far more interpretable — and that connects directly back to the LLN and CLT we established in Part 1.
+  </p>
+
+  <h3>The fundamental partition</h3>
+
+  <p>
+    Start from a simple observation: every data point (which as we have seen is typically an individual mean) deviates from the grand mean of the whole dataset. ANOVA's core move is to ask <em>where does that deviation come from?</em> It partitions the total variability of the data-set we have into <em>two</em> non-overlapping sources:
+  </p>
+
+  <div class="equation-block">
+    <span class="eq-label">The ANOVA partition — total = between + within</span>
+    <span class="eq-main">SS<sub>total</sub> = SS<sub>between</sub> + SS<sub>within</sub></span>
+    <div class="eq-vars">
+      <table>
+        <tr><td>SS<sub>total</sub></td><td>Sum of squared deviations of every observation from the grand mean. The total variability in the dataset, ignoring group structure.</td></tr>
+        <tr><td>SS<sub>between</sub></td><td>Sum of squared deviations of each <em>group mean</em> from the grand mean, weighted by group size. This captures how far apart the conditions are from each other — the signal we are trying to detect.</td></tr>
+        <tr><td>SS<sub>within</sub></td><td>Sum of squared deviations of each observation from its own group mean. This captures variability within conditions — the noise against which the signal is judged.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <p>
+    This partition is exact and algebraically necessary — it always holds. The ratio of these two sources, once each is adjusted for degrees of freedom, gives the F-statistic:
+  </p>
+
+  <div class="equation-block amber">
+    <span class="eq-label">The F-ratio</span>
+    <span class="eq-main">F = MS<sub>between</sub> / MS<sub>within</sub> &nbsp;=&nbsp; (SS<sub>between</sub> / df<sub>between</sub>) / (SS<sub>within</sub> / df<sub>within</sub>)</span>
+    <div class="eq-vars">
+      <table>
+        <tr><td>MS<sub>between</sub></td><td>Mean square between — the between-groups variance per degree of freedom. Reflects how spread out the group means are.</td></tr>
+        <tr><td>MS<sub>within</sub></td><td>Mean square within — the average within-group variance. Reflects how much individuals vary within each condition. This is the baseline noise level.</td></tr>
+        <tr><td>F</td><td>When the group means are far apart relative to within-group scatter, F is large. When within-group noise is large relative to between-group differences, F shrinks. F = 1 means the two sources are equal — nothing unusual.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="callout teal">
+    <div class="callout-title">The precision connection</div>
+    <p>
+      It is worth pausing here to connect MS<sub>within</sub> back explicitly to the precision story from Part 1, because they are the same quantity viewed from two angles.
+    </p>
+    <p style="margin-top:0.8rem">
+      Part 1 framed precision as the standard error of a mean: SE = σ/√N. The SE shrinks with N — this is the CLT result that makes large samples give sharp estimates. But σ is a property of our target population from which we have sampled, so we do not have it directly. We have to estimate it from the data, and the estimator is the within-group variance. <strong>MS<sub>within</sub> is ANOVA's estimate of σ²</strong> — pooled across groups on the assumption that each condition shares the same underlying noise level.
+    </p>
+    <p style="margin-top:0.8rem">
+      Once MS<sub>within</sub> is in hand, the SE of each group mean follows immediately: SE<sub>group</sub> = √(MS<sub>within</sub> / N). This is exactly the σ/√N formula from Part 1, with the estimated σ² dropped in. Larger N per group shrinks this SE just as the CLT predicted. The F-ratio then compares the spread of the group means (MS<sub>between</sub>) against that same noise level (MS<sub>within</sub>) — asking whether the means are further apart than their individual precision would suggest they should be by chance.
+    </p>
+    <p style="margin-top:0.8rem">
+      ANOVA is not a new framework. It is the Part 1 precision story packaged as a variance ratio: estimate σ² from the within-group scatter, use it to set the precision of each group mean, then ask whether the observed separation between means exceeds that precision.
+    </p>
+  </div>
+
+  <h3>Explore it: what drives the F-ratio?</h3>
+
+  <div class="sim-box light">
+    <div class="sim-title">Simulation — ANOVA Variance Partition</div>
+    <div class="sim-desc">Imagine the face-recognition experiment from Part 1, now extended to three conditions: upright faces, inverted faces, and scrambled faces. Each group of participants is tested in one condition and produces a set of recognition scores. The <em>experimental effect</em> — whether the manipulation matters at all — shows up as systematic differences between the three condition means. Everything else is within-group noise.
+    <br><br>
+    The two main sliders map directly onto the quantities the partition is built from. <strong>Group mean separation</strong> is the signal — it feeds straight into MS<sub>between</sub>. <strong>Within-group scatter (σ)</strong> is the noise level — it feeds straight into MS<sub>within</sub>. The F-ratio is simply the first divided by the second.
+    <br><br>
+    Once you have played with the sliders freely, work through these three reference patterns and watch how F and the partition respond:
+    <br>
+    &nbsp;&nbsp;(a) <strong>Large separation, small scatter</strong> — a real effect with consistent participants. MS<sub>between</sub> dominates MS<sub>within</sub>; F is large; p is small. This is the pattern a well-run experiment aims for.
+    <br>
+    &nbsp;&nbsp;(b) <strong>Small separation, small scatter</strong> — no experimental effect, but each group mean is estimated precisely. F stays close to 1 because there is no signal to detect, even though the measurements are clean.
+    <br>
+    &nbsp;&nbsp;(c) <strong>Large separation, large scatter</strong> — a real effect exists, but individual variability is so high that MS<sub>within</sub> catches up with MS<sub>between</sub>. F shrinks, and the real effect can be missed even though it is present in the means.
+    <br>
+    &nbsp;&nbsp;(d) <strong>Hold separation and scatter fixed, slide N per group up and down</strong> — the group means are the same on average, and the noise level σ is the same, but each group mean is now a sharper estimate of its true condition mean (recall SE = σ/√N from Part 1). The same signal stands out more cleanly against the same noise floor; MS<sub>between</sub>, which weights by N, grows relative to MS<sub>within</sub>; F climbs and p drops. This is the precision lever from Part 1, now visible inside the ANOVA output — raising N improves precision, and the F-ratio rewards that precision directly.</div>
+
+    <div class="sim-controls">
+      <div class="slider-group">
+        <div class="slider-label"><span>Group mean separation (→ MS<sub>between</sub>)</span><span class="slider-val" id="sep-val">1.5</span></div>
+        <input type="range" min="0" max="4" step="0.1" value="1.5" id="sep-slider" oninput="ANOVA_SIM.update()">
+      </div>
+      <div class="slider-group">
+        <div class="slider-label"><span>Within-group scatter σ (→ MS<sub>within</sub>)</span><span class="slider-val" id="scatter-val">1.0</span></div>
+        <input type="range" min="0.3" max="3" step="0.1" value="1.0" id="scatter-slider" oninput="ANOVA_SIM.update()">
+      </div>
+      <div class="slider-group">
+        <div class="slider-label"><span>N per group</span><span class="slider-val" id="n-val">20</span></div>
+        <input type="range" min="5" max="60" step="1" value="20" id="n-slider" oninput="ANOVA_SIM.update()">
+      </div>
+    </div>
+
+    <div class="sim-stat-row">
+      <div class="stat-chip"><span class="stat-label">SS between</span><span class="stat-value amber" id="ss-between">—</span></div>
+      <div class="stat-chip"><span class="stat-label">SS within</span><span class="stat-value dim" id="ss-within">—</span></div>
+      <div class="stat-chip"><span class="stat-label">F ratio</span><span class="stat-value" id="f-ratio">—</span></div>
+      <div class="stat-chip"><span class="stat-label">p value (approx)</span><span class="stat-value" id="p-val">—</span></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:1rem;">
+      <div>
+        <div class="canvas-label">Data — three groups (dots = individual observations)</div>
+        <canvas id="anova-dots" height="320"></canvas>
+      </div>
+      <div>
+        <div class="canvas-label">Variance partition</div>
+        <canvas id="anova-bars" height="320"></canvas>
+      </div>
+    </div>
+
+    <div class="legend-row" style="margin-top:0.8rem">
+      <div class="legend-item"><div class="legend-swatch" style="background:#4a9b9e"></div>Group A</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#e8a44a"></div>Group B</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#b090d8"></div>Group C</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#555;height:1px"></div>Grand mean</div>
+    </div>
+  </div>
+
+  <h3>Why squares? — Laplace, Gauss, and the error distribution</h3>
+
+  <p>
+    A question the SS notation raises but rarely answers: why do we <em>square</em> the deviations? Why not simply sum the absolute distances between each observation and its group mean — which would also measure spread? The answer connects ANOVA to a deeper historical argument about what makes an estimator optimal.
+  </p>
+
+  <div class="callout" style="border-left-color:var(--violet);background:var(--violet-pale)">
+    <div class="callout-title" style="color:var(--violet)">Historical note — Laplace, Gauss, and the geometry of error</div>
+    <p>
+      In the late eighteenth and early nineteenth centuries, Laplace and Gauss independently grappled with a fundamental question: given a set of imperfect measurements, what is the best way to combine them into a single estimate? Laplace's profound insight was that there is no universal answer — the optimal aggregation method depends on what you assume about the <em>distribution of errors</em> in your measurements.
+    </p>
+    <p style="margin-top:0.8rem">
+      Laplace himself initially favoured minimising the sum of <em>absolute</em> deviations — what we now call L1 estimation — because he was working under a different assumed error distribution (the double-exponential, or Laplace, distribution). The critical insight came when it was established that if errors are <strong>normally distributed</strong>, then minimising the sum of <em>squared</em> deviations is the optimal strategy. Under normality, least squares is not just computationally convenient — it is the <em>maximum likelihood estimator (MLE)</em>. Maximum likelihood is one of the central pieces of machinery in frequentist statistics: given an assumed distribution for the data, it picks the parameter values that make the observed data most probable. When errors are Gaussian, those values are exactly the ones that minimise the sum of squared deviations — so least squares is not a computational shortcut but the MLE for a normal error distribution, and it extracts the most information the data can provide under that assumption.
+    </p>
+    <p style="margin-top:0.8rem">
+      This is where the argument connects directly back to Part 1. The CLT is the reason we expect errors to be approximately Gaussian in the first place — when an observation is the sum of many small, independent influences and no single source of error dominates, the CLT guarantees the combined error is close to normal. That is also why, before running an ANOVA or a t-test, researchers actively prefer data whose distribution looks approximately normal: the loss function built into the method was chosen for that distribution. The decision to use squared deviations and the expectation that errors will be Gaussian are not two separate assumptions bolted onto the method — they are the same design decision, both resting on the CLT.
+    </p>
+    <p style="margin-top:0.8rem">
+      Squaring does something geometrically important: it penalises large deviations disproportionately. An error of 4 contributes 16 to the sum of squares, not just 4. This aggressive penalisation of large deviations is precisely what the normal distribution implies — under normality, large errors are exponentially rare, and the estimator should reflect that by being pulled strongly away from them. Under a heavier-tailed distribution, where large errors are more common, squaring overpenalises and a different strategy is superior.
+    </p>
+    <p style="margin-top:0.8rem">
+      <strong>The consequence for ANOVA</strong> is that the normality assumption is doing two jobs simultaneously. It makes the F-distribution valid for generating p-values — the standard justification given in textbooks. But it also makes the sum-of-squares approach the <em>right way to measure deviation</em> in the first place. When normality fails, both justifications fail together: the p-values are wrong, and the SS partition is no longer the optimal way to quantify signal and noise.
+    </p>
+  </div>
+
+  <h3>The assumptions — now they make sense</h3>
+
+  <p>
+    ANOVA's assumptions are usually taught as a checklist before the method is explained. But if you understand the CLT basis of ANOVA, the assumptions are not arbitrary — each one is a condition that the underlying mathematics <em>requires</em> to be valid.
+  </p>
+
+  <div class="three-col">
+    <div class="info-card" style="border-top:3px solid var(--teal)">
+      <div class="info-card-title">Independence</div>
+      <p>The LLN requires observations to be independent draws. If one observation tells you something about another — because they come from the same person, the same school, the same trial block — the noise does not cancel cleanly. MS<sub>within</sub> underestimates true variability, F is inflated, and p-values are too small.</p>
+    </div>
+    <div class="info-card" style="border-top:3px solid var(--amber)">
+      <div class="info-card-title">Normality of residuals</div>
+      <p>The F-distribution used to generate p-values assumes that the within-group deviations — the <em>residuals</em> — are normally distributed. A residual is another name for what we have been calling the error up to now: the leftover for each observation once its group mean has been subtracted off. This follows from the CLT: if each observation is a sum of many small independent influences, the residuals will be approximately normal. With large N the CLT makes this robust — small samples are where it matters most.</p>
+      <p style="margin-top:0.8rem">This is also precisely why, as we saw above in "Why squares?", the sum-of-squares partition requires normality — both justifications stand or fall together.</p>
+    </div>
+    <div class="info-card" style="border-top:3px solid var(--red)">
+      <div class="info-card-title">Homogeneity of variance</div>
+      <p>MS<sub>within</sub> is a <em>pooled</em> estimate — it averages within-group variances across <em>all</em> conditions. This pooling only makes sense as a process if the conditions have similar variance. If one group is much more variable (spread out) than another, the pooled estimate is naturally misleading and the F-ratio will be subsequently distorted. Note in the simulation above I selected to illustrate "within-group scatter σ" using a single slider rather than three — consequentially the three groups shared one σ because ANOVA pools them. In a <em>real</em> dataset with potential heterogeneous variances, that shared slider does not exist, and the pooled MS<sub>within</sub> is averaging variances that should not be averaged together.</p>
+    </div>
+  </div>
+
+  <div class="callout teal">
+    <div class="callout-title">Aside — residuals and the "cancelling errors" picture from Part 1</div>
+    <p>Part 1 talked about random errors cancelling out when we average many observations. The word "residual" is the observable version of the same idea.</p>
+    <p style="margin-top:0.8rem">In the CLT framing, each observation is the true mean plus a random error: <span class="math-inline">Y<sub>i</sub> = μ + ε<sub>i</sub></span>. The ε<sub>i</sub>'s are what cancel — positive and negative values balance in expectation, and their average shrinks toward zero at rate 1/√N as N grows.</p>
+    <p style="margin-top:0.8rem">In practice we do not have μ. We estimate it with the sample mean x̄, and write <span class="math-inline">Y<sub>i</sub> = x̄ + r<sub>i</sub></span>. The r<sub>i</sub> here is a <em>residual</em>. By construction, residuals from a least-squares fit sum to <em>exactly</em> zero — not approximately, exactly — because x̄ was chosen to make that happen. That is what being the least-squares estimate of the mean means. An equivalent way to say the same thing in likelihood vocabulary: <strong>x̄ is the value that maximises the Gaussian likelihood of the data</strong>. Under normal errors, the two statements — "the residuals sum to exactly zero because x̄ was chosen to make that happen" and "x̄ is the value that maximises the Gaussian likelihood" — are the same equation, written in different vocabulary.</p>
+    <p style="margin-top:0.8rem">
+      — <strong>Errors ε<sub>i</sub></strong> are deviations from the true mean μ. They cancel <em>in expectation</em> (the CLT result from Part 1).<br>
+      — <strong>Residuals r<sub>i</sub></strong> are deviations from the fitted mean x̄. They cancel <em>mechanically</em> — they sum to zero exactly.
+    </p>
+    <p style="margin-top:0.8rem">Residuals are our best reconstruction of the errors, with one unavoidable caveat: the sample mean has eaten one piece of information out of the data. That is why we divide by N−1 rather than N when estimating variance from residuals — Bessel's correction from Part 1 exists because the residuals have one degree of freedom fewer than the errors did. The CLT says the errors <em>would</em> cancel if we could see them directly; residuals are what appear on the page once we fit x̄ and force the balance.</p>
+  </div>
+
+  <h3>ANOVA as a special case of regression</h3>
+
+  <p>
+    One issue with the way statistics is often conventionally taught is to separately mention ANOVA and linear regression as if they were in some sense different underlying statistical beasts. They <em>aren't</em>! Knowing this actually makes later extensions feel natural rather than arbitrary. A between-groups ANOVA is, algebraically, a special case of linear regression where the predictors are categorical group memberships — you are trying to fit a set of predicted values that minimise the sum of squared residuals. For two groups, that reduces to a straight line between the two group means. For more than two groups, β₀ sets a horizontal baseline at the reference group's mean, and each further β coefficient is simply the vertical distance from that baseline to another group's mean. In either case the groups in our data are represented by dummy-coded variables (0 or 1), the intercept becomes the reference group's mean, and each slope coefficient represents the deviation of another group's mean from that reference:
+  </p>
+
+  <div class="equation-block amber">
+    <span class="eq-label">ANOVA as a regression equation</span>
+    <span class="eq-main">Y = β₀ + β₁X₁ + β₂X₂ + … + ε</span>
+    <div class="eq-vars">
+      <table>
+        <tr><td>β₀</td><td>The intercept — equal to the reference group's mean. All other groups are compared against this baseline.</td></tr>
+        <tr><td>β₁, β₂, …</td><td>The slopes — each is the difference between one group's mean and the reference group's mean. These are the coefficients the model is estimating.</td></tr>
+        <tr><td>X₁, X₂, …</td><td>Dummy variables: 1 if the observation belongs to that group, 0 otherwise. They act as switches — turning each group's β coefficient on or off, so the fitted value for any observation is β₀ plus whichever group coefficient applies.</td></tr>
+        <tr><td>ε</td><td>The residual — each person's deviation from their group mean. This is MS<sub>within</sub> in the variance partition. The F-test asks: does knowing group membership predict scores significantly better than just using the grand mean (a flat line)?</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="diagram-container">
+    <div class="diagram-title">Picturing the regression equation — two groups vs. three groups</div>
+    <div class="diagram-svg-wrap">
+      <svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;font-family:'Epilogue',sans-serif">
+        <defs>
+          <marker id="arrU" markerWidth="7" markerHeight="7" refX="3" refY="3" orient="auto"><path d="M0,6 L3,0 L6,6 Z" fill="#1a1714"/></marker>
+          <marker id="arrD" markerWidth="7" markerHeight="7" refX="3" refY="3" orient="auto"><path d="M0,0 L3,6 L6,0 Z" fill="#1a1714"/></marker>
+        </defs>
+
+        <!-- ============ PANEL A — TWO GROUPS (line) ============ -->
+        <g transform="translate(0,0)">
+          <rect x="10" y="10" width="330" height="300" rx="5" fill="#f7f3ee" stroke="#ddd6cb"/>
+          <text x="175" y="30" font-size="10" fill="#7a7068" text-anchor="middle" letter-spacing="1.2" font-weight="700">(a) TWO GROUPS — A LINE THROUGH TWO MEANS</text>
+          <text x="175" y="48" font-size="11" fill="#1a1714" text-anchor="middle" font-family="'DM Mono',monospace">Ŷ = β₀ + β₁X</text>
+
+          <!-- axes -->
+          <line x1="70" y1="70" x2="70" y2="260" stroke="#7a7068" stroke-width="1"/>
+          <line x1="70" y1="260" x2="310" y2="260" stroke="#7a7068" stroke-width="1"/>
+          <text x="62" y="74" font-size="9" fill="#7a7068" text-anchor="end">Y</text>
+          <text x="310" y="276" font-size="9" fill="#7a7068" text-anchor="end">X (dummy)</text>
+
+          <!-- x ticks -->
+          <line x1="130" y1="260" x2="130" y2="264" stroke="#7a7068"/>
+          <line x1="250" y1="260" x2="250" y2="264" stroke="#7a7068"/>
+          <text x="130" y="278" font-size="9.5" fill="#1a1714" text-anchor="middle">X = 0</text>
+          <text x="130" y="292" font-size="8.5" fill="#7a7068" text-anchor="middle">(Group A · ref)</text>
+          <text x="250" y="278" font-size="9.5" fill="#1a1714" text-anchor="middle">X = 1</text>
+          <text x="250" y="292" font-size="8.5" fill="#7a7068" text-anchor="middle">(Group B)</text>
+
+          <!-- Group A scatter (teal) around (130, 184) -->
+          <g fill="#2a6b6e" opacity="0.55">
+            <circle cx="120" cy="172" r="3.2"/>
+            <circle cx="138" cy="178" r="3.2"/>
+            <circle cx="125" cy="192" r="3.2"/>
+            <circle cx="134" cy="166" r="3.2"/>
+            <circle cx="143" cy="196" r="3.2"/>
+            <circle cx="118" cy="188" r="3.2"/>
+            <circle cx="130" cy="180" r="3.2"/>
+          </g>
+          <!-- Group B scatter (violet) around (250, 118) -->
+          <g fill="#6b4a8e" opacity="0.55">
+            <circle cx="242" cy="106" r="3.2"/>
+            <circle cx="258" cy="114" r="3.2"/>
+            <circle cx="247" cy="130" r="3.2"/>
+            <circle cx="253" cy="98" r="3.2"/>
+            <circle cx="240" cy="124" r="3.2"/>
+            <circle cx="262" cy="120" r="3.2"/>
+            <circle cx="250" cy="108" r="3.2"/>
+          </g>
+
+          <!-- β₀ baseline dashed extension from y-axis to Group A mean -->
+          <line x1="70" y1="184" x2="130" y2="184" stroke="#c07c2a" stroke-width="1" stroke-dasharray="3,3" opacity="0.7"/>
+          <text x="66" y="187" font-size="9.5" fill="#c07c2a" text-anchor="end" font-weight="700">β₀</text>
+
+          <!-- regression line through the two group means -->
+          <line x1="130" y1="184" x2="250" y2="118" stroke="#1a1714" stroke-width="2"/>
+
+          <!-- group mean markers -->
+          <line x1="110" y1="184" x2="150" y2="184" stroke="#2a6b6e" stroke-width="3"/>
+          <line x1="230" y1="118" x2="270" y2="118" stroke="#6b4a8e" stroke-width="3"/>
+
+          <!-- β₁ rise annotation at X=1 -->
+          <line x1="280" y1="184" x2="280" y2="118" stroke="#c07c2a" stroke-width="1.2" stroke-dasharray="3,3"/>
+          <line x1="275" y1="184" x2="285" y2="184" stroke="#c07c2a" stroke-width="1"/>
+          <line x1="275" y1="118" x2="285" y2="118" stroke="#c07c2a" stroke-width="1"/>
+          <text x="290" y="155" font-size="9.5" fill="#c07c2a" font-weight="700">β₁</text>
+
+          <!-- mean label callouts -->
+          <text x="108" y="177" font-size="8.5" fill="#2a6b6e" text-anchor="end">ȳ<tspan font-size="6.5" baseline-shift="sub">A</tspan> = β₀</text>
+          <text x="272" y="111" font-size="8.5" fill="#6b4a8e" text-anchor="start">ȳ<tspan font-size="6.5" baseline-shift="sub">B</tspan> = β₀ + β₁</text>
+        </g>
+
+        <!-- ============ PANEL B — MULTIPLE GROUPS (each β as a slope from β₀) ============ -->
+        <g transform="translate(360,0)">
+          <rect x="10" y="10" width="330" height="300" rx="5" fill="#f7f3ee" stroke="#ddd6cb"/>
+          <text x="175" y="30" font-size="10" fill="#7a7068" text-anchor="middle" letter-spacing="1.2" font-weight="700">(b) THREE OR MORE GROUPS — EACH β AS A SLOPE FROM β₀</text>
+          <text x="175" y="48" font-size="11" fill="#1a1714" text-anchor="middle" font-family="'DM Mono',monospace">Ŷ = β₀ + β₁X₁ + β₂X₂ + β₃X₃</text>
+
+          <!-- axes -->
+          <line x1="70" y1="70" x2="70" y2="260" stroke="#7a7068" stroke-width="1"/>
+          <line x1="70" y1="260" x2="310" y2="260" stroke="#7a7068" stroke-width="1"/>
+          <text x="62" y="74" font-size="9" fill="#7a7068" text-anchor="end">Y</text>
+
+          <!-- x ticks -->
+          <line x1="95" y1="260" x2="95" y2="264" stroke="#7a7068"/>
+          <line x1="160" y1="260" x2="160" y2="264" stroke="#7a7068"/>
+          <line x1="225" y1="260" x2="225" y2="264" stroke="#7a7068"/>
+          <line x1="290" y1="260" x2="290" y2="264" stroke="#7a7068"/>
+          <text x="95" y="278" font-size="9.5" fill="#1a1714" text-anchor="middle">Group 1</text>
+          <text x="95" y="291" font-size="8" fill="#7a7068" text-anchor="middle">(reference)</text>
+          <text x="160" y="278" font-size="9.5" fill="#1a1714" text-anchor="middle">Group 2</text>
+          <text x="225" y="278" font-size="9.5" fill="#1a1714" text-anchor="middle">Group 3</text>
+          <text x="290" y="278" font-size="9.5" fill="#1a1714" text-anchor="middle">Group 4</text>
+
+          <!-- β₀ baseline: solid teal horizontal line spanning plot -->
+          <line x1="70" y1="175" x2="310" y2="175" stroke="#2a6b6e" stroke-width="2"/>
+          <text x="66" y="178" font-size="9.5" fill="#2a6b6e" text-anchor="end" font-weight="700">β₀</text>
+
+          <!-- scatter dots (muted grey) — all same colour so the β lines carry the story -->
+          <g fill="#7a7068" opacity="0.5">
+            <!-- Group 1 around (95, 175) -->
+            <circle cx="85" cy="155" r="3"/><circle cx="105" cy="155" r="3"/>
+            <circle cx="83" cy="175" r="3"/><circle cx="107" cy="175" r="3"/>
+            <circle cx="85" cy="195" r="3"/><circle cx="105" cy="195" r="3"/>
+            <circle cx="95" cy="175" r="3"/>
+            <!-- Group 2 around (160, 222) -->
+            <circle cx="150" cy="202" r="3"/><circle cx="170" cy="202" r="3"/>
+            <circle cx="148" cy="222" r="3"/><circle cx="172" cy="222" r="3"/>
+            <circle cx="150" cy="242" r="3"/><circle cx="170" cy="242" r="3"/>
+            <circle cx="160" cy="222" r="3"/>
+            <!-- Group 3 around (225, 127) -->
+            <circle cx="215" cy="107" r="3"/><circle cx="235" cy="107" r="3"/>
+            <circle cx="213" cy="127" r="3"/><circle cx="237" cy="127" r="3"/>
+            <circle cx="215" cy="147" r="3"/><circle cx="235" cy="147" r="3"/>
+            <circle cx="225" cy="127" r="3"/>
+            <!-- Group 4 around (290, 146) -->
+            <circle cx="280" cy="126" r="3"/><circle cx="300" cy="126" r="3"/>
+            <circle cx="278" cy="146" r="3"/><circle cx="302" cy="146" r="3"/>
+            <circle cx="280" cy="166" r="3"/><circle cx="300" cy="166" r="3"/>
+            <circle cx="290" cy="146" r="3"/>
+          </g>
+
+          <!-- slope segments (red): each β_i as rise from (previous_x, β₀) to (this_x, this_group_mean) -->
+          <line x1="95"  y1="175" x2="160" y2="222" stroke="#b84040" stroke-width="2.2"/>
+          <line x1="160" y1="175" x2="225" y2="127" stroke="#b84040" stroke-width="2.2"/>
+          <line x1="225" y1="175" x2="290" y2="146" stroke="#b84040" stroke-width="2.2"/>
+
+          <!-- group mean markers (dark short horizontal dashes — the "intercepts at each level") -->
+          <line x1="80"  y1="175" x2="110" y2="175" stroke="#1a1714" stroke-width="2.5"/>
+          <line x1="145" y1="222" x2="175" y2="222" stroke="#1a1714" stroke-width="2.5"/>
+          <line x1="210" y1="127" x2="240" y2="127" stroke="#1a1714" stroke-width="2.5"/>
+          <line x1="275" y1="146" x2="305" y2="146" stroke="#1a1714" stroke-width="2.5"/>
+
+          <!-- β₁, β₂, β₃ slope labels (near midpoint of each segment, offset off the line) -->
+          <text x="134" y="212" font-size="10" fill="#b84040" font-weight="700">β₁</text>
+          <text x="190" y="144" font-size="10" fill="#b84040" font-weight="700">β₂</text>
+          <text x="256" y="153" font-size="10" fill="#b84040" font-weight="700">β₃</text>
+        </g>
+      </svg>
+    </div>
+    <div class="diagram-caption">
+      Left: with two groups, the dummy-coded regression is a straight line between the two group means — β₀ is the intercept (the reference group's mean at X = 0), and β₁ is the rise to the second group's mean at X = 1. Right: with three or more groups, β₀ (teal) is the reference group's mean, drawn as a horizontal baseline across the plot; each group's mean is the short black dash at that group's position; and each β<sub>i</sub> coefficient (red) is a slope — the rise or fall from the β₀ baseline over a unit x-step — whose vertical change equals the difference between that group's mean and β₀. In both cases the fit is the set of predicted values that minimises the sum of squared residuals.
+    </div>
+  </div>
+
+  <p>
+    Recognising this equivalence pays dividends immediately. Adding a continuous covariate to this equation gives you ANCOVA — the same model, one extra predictor. Multiplying two predictors together gives you an interaction term — the same arithmetic, now capturing whether the effect of one variable depends on the level of another. Factorial ANOVA, ANCOVA, and multiple regression are not separate techniques; they are the same linear model with different types of predictors. The F-ratio is just the test for whether the model explains significantly more variance than a flat line at the grand mean — in every case.
+  </p>
+
+  <h3>The slope is an estimate — and it wobbles</h3>
+
+  <p>
+    Thinking of the condition effect as a regression slope brings a critical insight into view: <strong>the slope is not a truth, it is an estimate</strong>. Like all estimates, it has uncertainty around it — a degree of wobble that reflects how much individual participants diverge from the group-level effect. In an ideal experiment, every participant follows the group pattern closely: condition A is higher than condition B for everyone by roughly the same amount. The slope is tight and unwobbly, and we have high precision on the condition effect.
+  </p>
+
+  <p>
+    But when participants vary substantially in how they respond to the conditions — some showing a large effect, others showing none, others going in the opposite direction — the slope estimate is blurry. The residual ε is large not because the conditions have no effect, but because the effect is heterogeneous across people. Classical ANOVA has no mechanism to distinguish "no effect" from "highly variable effect" — both show up as large MS<sub>within</sub> and a suppressed F-ratio. The wobble in the slope and the noise in the denominator are, from ANOVA's perspective, the same thing.
+  </p>
+
+  <p>
+    The same "it is an estimate" logic applies to the group means that feed into MS<sub>between</sub> in the first place. Those group means are themselves estimates, with standard errors that depend on each group's internal spread — and if the within-group variances differ, the means are estimated with different precisions. This is the homogeneity of variance assumption from §01 seen from another angle. It was introduced there as the condition under which pooling within-group variances into a single MS<sub>within</sub> is sensible; here we meet the same assumption mattering for a different reason, in the numerator — group means drawn from groups with different within-group spreads are not equally trustworthy estimates, and that is something ANOVA has no machinery to reflect.
+  </p>
+
+  <p>
+    To make the point concrete: consider two groups with the same N but very different within-group spreads — one tight, one diffuse. The mean from the diffuse group has a much larger standard error; it could shift substantially with a different sample. ANOVA enters both means into MS<sub>between</sub> with equal weight and then attempts to compensate by inflating the pooled denominator — a blunt correction that does not actually solve the underlying problem.
+  </p>
+
+  <div class="callout teal">
+    <div class="callout-title">Welch's correction — weighting by precision</div>
+    <p>
+      Welch's ANOVA addresses this properly by computing a <em>weighted</em> grand mean, where groups with tighter distributions (smaller variances, more trustworthy means) contribute more weight than groups with wider distributions. Degrees of freedom are also adjusted downward to reflect the reduced effective information. This is the same precision logic from Part 1 — a mean estimated with high precision (small SE) deserves more influence than one estimated imprecisely. When group variances differ substantially (a rough rule of thumb is a ratio greater than 3:1 or 4:1), Welch's is the more principled choice.
+    </p>
+  </div>
+
+  <p>
+    Once the homogeneity assumption fails, the F-ratio is computing a signal-to-noise ratio using a signal component whose trustworthiness it cannot assess.
+  </p>
+
+  <p>
+    The standard advice is to check the homogeneity assumption with Levene's test and proceed if it comes back non-significant. But there is a tension here: small samples (which is often the case), and thus a scenario where researchers most need the check to work — ironically, this is <em>exactly</em> where Levene's has the <em>least statistical power</em>, and also the regime where the CLT has not fully kicked in for the normality-of-residuals assumption either. All three assumptions — independence, homogeneity, normality — are simultaneously least satisfied and least detectable by formal checks at precisely the sample sizes where researchers most need them to hold. Visual inspection of group distributions is often more informative than the formal test in this regime.
+  </p>
+
+  <div class="callout red">
+    <div class="callout-title">The small-N trap</div>
+    <p style="font-style:italic; padding-left:1rem; border-left:2px solid var(--amber)">
+      Small N → more likely to have unequal variances &nbsp;·&nbsp; Small N → less power to detect them &nbsp;·&nbsp; Therefore: more likely to have the problem AND more likely to conclude you don't.
+    </p>
+  </div>
+</section>
+
+<!-- ===== PART MARKER 2 ===== -->
+<div class="part-marker reveal" style="background:#111">
+  <div class="part-marker-inner">
+    <div class="part-num" style="color:var(--teal-light)">Part II</div>
+    <div class="part-title">When assumptions break — <em>Linear Mixed Models</em></div>
+  </div>
+</div>
+
+<!-- ===== S2: ASSUMPTIONS BREAK ===== -->
+<section id="s2" class="section reveal">
+  <span class="section-number">§ 02</span>
+  <h2>The problem with assuming independence</h2>
+
+  <p>
+    Independence is the assumption we have kept returning to. It is what licenses the LLN in Part 1, what lets the CLT produce a well-behaved sampling distribution, and what makes MS<sub>within</sub> an honest estimate of noise in ANOVA. It is also the assumption most commonly violated in behavioural science. Repeated measures (the same participant contributing in multiple conditions, sharing a baseline) and nested designs (students within classrooms, trials within participants) both produce observations that are not independent of each other.
+  </p>
+
+  <p>
+    In both cases, the problem is the same: <strong>MS<sub>within</sub> no longer isolates random noise</strong>. Within-group variance should reflect only random individual fluctuation — the noise against which we judge the signal. But when data are clustered or repeated, some of that "within-group" variance is actually systematic individual-difference variance: Person A is reliably faster than Person B across all conditions. ANOVA cannot distinguish these sources, so it lumps them together as noise.
+  </p>
+
+  <div class="recall-box">
+    <span class="recall-label">← Recall from Part 1 · §02</span>
+    The CLT gives us normally distributed group means <em>provided observations are independent</em>. When they are not, the standard error formula <span class="math-inline">σ/√N</span> is wrong — the effective sample size is smaller than N suggests, because correlated observations carry less information than independent ones. Precision is lower than it appears.
+  </div>
+
+  <p>
+    The natural objection — "but doesn't repeated-measures ANOVA already handle this?" — is taken up in §03. First, the simulation below illustrates what happens to the F-ratio if you ignore the dependence and run a standard ANOVA on data with a within-subjects structure.
+  </p>
+
+  <div class="sim-box">
+    <div class="sim-title">Simulation — The Hidden Structure in Within-Group Variance</div>
+    <div class="sim-desc">Each dot is one observation. In a repeated-measures design, each participant contributes one observation per condition. The dots are colour-coded by participant. Notice that much of the within-group scatter is actually consistent individual differences (some people are always higher, some always lower) — structure that ANOVA treats as undifferentiated noise.</div>
+
+    <div class="sim-controls">
+      <div class="slider-group">
+        <div class="slider-label"><span>Individual differences (between-person SD)</span><span class="slider-val" id="ind-diff-val">1.5</span></div>
+        <input type="range" min="0" max="3" step="0.1" value="1.5" id="ind-diff-slider" oninput="INDIFF.update()">
+      </div>
+      <div class="slider-group">
+        <div class="slider-label"><span>Condition effect (mean difference)</span><span class="slider-val" id="cond-eff-val">0.8</span></div>
+        <input type="range" min="0" max="3" step="0.1" value="0.8" id="cond-eff-slider" oninput="INDIFF.update()">
+      </div>
+    </div>
+
+    <div class="sim-stat-row">
+      <div class="stat-chip"><span class="stat-label">ANOVA F (naive)</span><span class="stat-value red" id="naive-f">—</span></div>
+      <div class="stat-chip"><span class="stat-label">ANOVA p (naive)</span><span class="stat-value red" id="naive-p">—</span></div>
+      <div class="stat-chip"><span class="stat-label">True condition effect</span><span class="stat-value teal" id="true-eff">—</span></div>
+      <div class="stat-chip"><span class="stat-label">Individual variation (noise in ANOVA)</span><span class="stat-value dim" id="ind-noise">—</span></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+      <div>
+        <div class="canvas-label">What ANOVA sees — ignoring participant structure</div>
+        <canvas id="naive-canvas" height="220"></canvas>
+      </div>
+      <div>
+        <div class="canvas-label">The hidden structure — same data, colour by participant</div>
+        <canvas id="lmm-canvas" height="220"></canvas>
+      </div>
+    </div>
+    <div style="margin-top:1rem;background:#111;border-radius:4px;padding:0.9rem 1rem;font-size:0.82rem;color:#aaa;font-family:var(--serif);line-height:1.6">
+      <strong style="color:var(--amber-light);font-family:var(--sans);font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase">What to notice:</strong> Increase individual differences and watch ANOVA's F weaken — even though the condition effect hasn't changed. The individual variation is swamping the signal. But look at the right panel: each participant shows a clear within-person shift between conditions. A model that knows about this structure can recover that signal.
+    </div>
+  </div>
+
+</section>
+
+<!-- ===== S2B: REPEATED MEASURES ===== -->
+<section id="s2b" class="section reveal">
+  <span class="section-number">§ 03</span>
+  <h2>Repeated measures — structured dependence</h2>
+
+  <p>
+    Before turning to repeated measures, the model we are heading toward deserves a brief introduction. A <strong>Linear Mixed Model (LMM)</strong> is not a different kind of statistics — it is the same regression framework we have been working with, extended so that the model carries information about which observations belong together (same participant, same item, same cluster). The full machinery is built up in §04.
+  </p>
+
+  <p class="lead">
+    The natural objection before we get there: surely ANOVA already handles within-subjects data? Repeated-measures ANOVA exists. It does acknowledge that observations from the same participant are related. So why do we need LMMs at all?
+  </p>
+
+  <p>
+    The answer starts by recalling something we saw in §01: ANOVA is just a special case of regression. Regression always has a baseline — an intercept — and coefficients that represent shifts away from it. RM-ANOVA's key move is that <em>each participant gets their own intercept</em> instead of a single shared baseline: every person has their own overall level that lifts or lowers all their scores uniformly across conditions. In LMM parlance — which we will set out formally in §04 — this is called introducing a "per-participant random intercept". So although RM-ANOVA was developed as its own technique, its core machinery is the same one LMMs use: algebraically, RM-ANOVA is a Linear Mixed Model with only a per-participant random intercept and nothing else. On a balanced, complete dataset the two models produce identical F-statistics and identical p-values. Holding that equivalence in view is what makes the rest of this section work — the sphericity assumption, the role of random slopes, and the cases where LMMs do things RM-ANOVA cannot all follow from asking what the random-intercepts-only model can and cannot represent.
+  </p>
+
+  <h3>What repeated-measures ANOVA actually does</h3>
+
+  <p>
+    In a within-subjects design, the same participants contribute observations in every condition. RM-ANOVA acknowledges this dependence by pulling each participant's overall mean out of the error term before the condition effect is tested. In effect, the model subtracts each person from themselves, and then asks whether the residual pattern is consistent with a systematic condition effect. Independence is assumed between participants, not within them.
+  </p>
+
+  <div class="equation-block">
+    <span class="eq-label">Repeated-measures ANOVA — partition</span>
+    <span class="eq-main">Y<sub>ij</sub> = μ + α<sub>i</sub> + β<sub>j</sub> + (αβ)<sub>ij</sub></span>
+    <div class="eq-vars">
+      <table>
+        <tr><td>Y<sub>ij</sub></td><td>The observation for person i in condition j.</td></tr>
+        <tr><td>μ</td><td>Grand mean — the overall average across conditions and people.</td></tr>
+        <tr><td>α<sub>i</sub></td><td>The <strong>subject effect</strong> — person i's overall deviation from the grand mean. Partitioned out of the error term rather than lumped into it.</td></tr>
+        <tr><td>β<sub>j</sub></td><td>The <strong>fixed effect</strong> of condition j — the quantity the F-test is targeting.</td></tr>
+        <tr><td>(αβ)<sub>ij</sub></td><td>The <strong>subject × condition interaction</strong> — what RM-ANOVA treats as error. Residual variability left over after subject and condition main effects are removed.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <p>
+    The key move is that α<sub>i</sub> — the participant's stable individual level — is treated as a nuisance factor and removed. The F-test for the condition effect β<sub>j</sub> is built against the (αβ)<sub>ij</sub> interaction as its error term, which is a considerably <em>smaller</em> quantity than the undifferentiated MS<sub>within</sub> of a between-subjects ANOVA. Individual differences no longer contaminate the signal. This is a genuine improvement over between-subjects ANOVA whenever a within-subjects design is possible. But this action, treating <em>individual differences</em> as simply error may seem a bit strange, after all aren't many psychologists <em>actually interested</em> in individual differences. Remember that for later.
+  </p>
+
+  <h3>The sphericity assumption — what it actually requires</h3>
+
+  <p>
+    In a within-subjects design, the same participant contributes one score to each condition. Those scores are not independent of each other. A participant who is fast overall will tend to be fast in every condition; a participant who finds one condition hard may also find a related condition hard. Whenever we have repeated measures, we have to keep track of two things at once: how variable each condition is on its own, and how strongly each pair of conditions moves together across participants. This is what a <strong>covariance matrix</strong> records. It has one row and one column per condition. The diagonal entries are the variances within each condition (written σ², where σ is the standard deviation). The off-diagonal entries are the covariances between pairs of conditions (written ρ, here used as shorthand for the covariance between two conditions rather than a correlation in the narrow sense). With four conditions, the matrix is 4 × 4: four diagonal entries and twelve off-diagonal entries, though each off-diagonal pair is symmetric, so really six distinct pairwise numbers.
+  </p>
+
+  <p>
+    Sphericity is a constraint on that covariance matrix. The formal statement is that the <em>variance of the differences</em> between any two conditions must be the same for every pair — if you compute (condition 1 − condition 2) across participants and measure its spread, and then do the same for (condition 1 − condition 3), and for every other pair, you must get the same number every time. This is a structural echo of the homogeneity of variance assumption from §01 — both exist because the test statistic is built by pooling several quantities (there, within-group variances pooled into MS<sub>within</sub>; here, the variances of pairwise condition differences pooled into the F-test for repeated measures), and pooling only produces a meaningful summary when the things being pooled are roughly equivalent. An equivalent and easier pattern to read off the matrix is <em>compound symmetry</em>: every condition has the same variance σ², and every pair of conditions has the same covariance ρ. Every diagonal entry is identical. Every off-diagonal entry is identical. The matrix labelled compound symmetry below is exactly this pattern.
+  </p>
+
+  <div class="two-col" style="margin:1.5rem 0">
+    <div class="info-card">
+      <div class="info-card-title">Compound symmetry</div>
+<pre style="font-family:var(--mono);font-size:0.78rem;line-height:1.5;color:#555;margin:0.6rem 0 0;white-space:pre">┌ σ²   ρ    ρ    ρ  ┐
+│ ρ    σ²   ρ    ρ  │
+│ ρ    ρ    σ²   ρ  │
+└ ρ    ρ    ρ    σ² ┘</pre>
+      <p style="margin-top:0.7rem;font-size:0.85rem;font-style:italic">Every condition has the same variance (σ²). Every pair of conditions has the same covariance (ρ). One number on the diagonal, one number off it. This is the pattern RM-ANOVA assumes, and it is also the pattern a random-intercepts-only LMM implies.</p>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title red">Sphericity violated</div>
+<pre style="font-family:var(--mono);font-size:0.78rem;line-height:1.5;color:#555;margin:0.6rem 0 0;white-space:pre">┌ 1.00  0.72  0.48  0.22 ┐
+│ 0.72  1.20  0.68  0.41 │
+│ 0.48  0.68  0.90  0.65 │
+└ 0.22  0.41  0.65  1.10 ┘</pre>
+      <p style="margin-top:0.7rem;font-size:0.85rem;font-style:italic">Diagonal: condition variances differ (1.00, 1.20, 0.90, 1.10) — no shared σ². Off-diagonal: covariances decay with distance from the diagonal — adjacent conditions are strongly correlated (~0.7), distant conditions weakly so (0.22 between conditions 1 and 4). This is what real repeated-measures data often look like: conditions tested close together in time are more correlated than ones tested far apart. RM-ANOVA cannot represent this directly; it can only adjust the degrees of freedom to compensate.</p>
+    </div>
+  </div>
+
+  <p>
+    In real datasets, sphericity is routinely violated. Two patterns are common. First, conditions tested close together in time are more correlated than conditions separated by many others, so the off-diagonal entries are not constant — nearby pairs have larger ρ than distant pairs (see sphericity violated example earlier). Second, conditions differ in difficulty or variability, so the diagonal entries are not constant either. The standard response — Greenhouse–Geisser or Huynh–Feldt corrections — adjusts the degrees of freedom of the F-test to compensate, but leaves the underlying model unchanged. These are patches on a symptom, not fixes to the model.
+  </p>
+
+  <div class="callout violet">
+    <div class="callout-title">The structural equivalence</div>
+    <p>
+      Sphericity is not a separate or mysterious assumption imposed on RM-ANOVA. It is <em>the covariance structure produced by a model that lets each participant have their own personal baseline (their own intercept) but forces them all to share the same response slope across conditions</em>. Picture every participant's regression line as parallel to every other participant's — the line can sit higher or lower for different people, but its slope is identical for everyone. (This "each person has their own intercept but a shared slope" setup is what is meant by a "random intercept per participant", and we will return to it formally in §04.) Once each person is reduced to a single offset plus random noise around a shared slope, equal variances at every condition and equal covariances between every pair follow automatically — exactly compound symmetry. The reason RM-ANOVA struggles when sphericity is violated is not that a diagnostic test has failed. It is that the underlying model is too rigid to represent what the data actually contain: it has no way to let one participant's response slope be steeper or flatter than another's. Greenhouse–Geisser does not make the model richer; it adjusts the distribution of the test statistic to compensate for a rigid model fitting data it was never designed for.
+    </p>
+  </div>
+
+  <h3 class="violet">What fixes sphericity — random slopes</h3>
+
+  <p>
+    Sphericity is violated mainly because participants differ in their response to the conditions. Some show a large condition effect, others a small one, others a reversed one. A model with only a random intercept cannot represent that — it lets subjects differ in their personal baseline, but forces every line to share the same slope across conditions. That rigidity — the parallel-lines setup we just named — is what produces compound symmetry in the first place.
+  </p>
+
+  <p>
+    The fix follows directly from naming the rigidity. If the model lets participants differ in baseline but not in slope, the obvious extension is to let the slope vary too. Adding a <strong>random slope</strong> does exactly this: each participant gets their own condition effect, drawn from a distribution with its own variance. The parallel-lines picture relaxes — every participant's line can now have its own steepness as well as its own starting point. This single extension does two things at once. It captures the individual differences in the effect that RM-ANOVA cannot see, and it relaxes compound symmetry from the inside of the model — because once subjects have their own slopes, the variances at different conditions and the covariances between them are no longer constrained to be equal.
+  </p>
+
+  <p>
+    Random slopes are a capability RM-ANOVA does not have, and this is where the two frameworks actually diverge. If you never need to fit slopes — if a shared per-subject intercept really is all the individual-level information the data asks for, and if the design is balanced and complete — RM-ANOVA and the random-intercepts LMM give the same answer and there is nothing to choose between them. The case for LMMs is not that they do ANOVA "better". It is that they generalise, and allowing each person an individual slope is the most common and most important way that generalisation shows up in practice.
+  </p>
+
+  <div class="recall-box">
+    <span class="recall-label">← Recall from §02 · Simulation</span>
+    You have already seen what random slopes model. In the earlier simulation <em>The Hidden Structure in Within-Group Variance</em>, the right-hand panel drew a line per participant connecting their two condition observations. Each of those lines <em>is</em> that participant's slope — and they were not all parallel: different people had different gradients. That visible non-parallelism is exactly what a random-intercepts-only model (and therefore RM-ANOVA) cannot represent — it would force every line to be parallel, just sitting at different heights. A random slope is the statistical machinery for letting each line have its own steepness as well as its own starting point, taking the structure that was already on the page and putting it into the model as information rather than averaging it away as noise.
+  </div>
+
+  <h3 class="violet">The deeper move — LMMs let us stop aggregating</h3>
+
+  <p>
+    Random slopes change more than the sphericity story. Almost everything in this resource up to here has been about generating <em>summary statistics</em> — means for our participants collapsed across trials, differences of means to consider experimental effects, ratios of variances to compute precision. That was not arbitrary. The CLT is what justified it: with enough independent observations, sample means behave predictably, so inference at the level of aggregates was safe. But every aggregation step threw information away, and every summary came with its own chain of assumptions — independence, normality of residuals, homogeneity, sphericity.
+  </p>
+
+  <p>
+    Linear mixed models let us stop aggregating. Instead of reducing each participant to one or two cell means and then running an F-test on the reduced numbers, we can fit the model to the individual trials directly. Each participant's condition effect becomes a slope estimated from the full set of their trial-level observations — not a straight line between two cell means, but a regression line through the complete distribution of their responses. The within-condition variability that RM-ANOVA would have averaged away is information the model uses to tell how precisely each person's slope is known. A key intuition to take away here for LMMs is that our ultimate goal is to compute estimates of things and we strive to achieve the best <em>precision</em> for such estimates (remember me talking about blurry lines?) — the message throughout so far, the impression you should get, is that LMMs naturally lead to improved precision in the main, if for no other reason than you aren't throwing away information.
+  </p>
+
+  <p>
+    ANOVA asked: is the difference between group means large enough relative to the pooled noise? LMMs ask: what is the structure of the data at the level they were actually generated — trial by trial, participant by participant — and what does that tell us about the effect? The F-ratio is one summary drawn from a richer fit.
+  </p>
+
+  <h3 class="violet">Other places the equivalence breaks down</h3>
+
+  <p>
+    Random slopes are the most important generalisation, but LMMs extend their benefits beyond RM-ANOVA in three further ways that matter in practice.
+  </p>
+
+  <div class="three-col">
+    <div class="info-card" style="border-top:3px solid var(--red)">
+      <div class="info-card-title red">Missing data</div>
+      <p>RM-ANOVA drops any participant who is missing an observation in any condition — listwise deletion, even if only one cell of many is missing. An LMM uses every available observation for every participant, estimating effects under a missing-at-random assumption rather than discarding cases.</p>
+    </div>
+    <div class="info-card" style="border-top:3px solid var(--red)">
+      <div class="info-card-title red">Unbalanced or varying designs</div>
+      <p>If different participants have different numbers of trials per condition — standard in trial-level data, in longitudinal designs, whenever participants vary in compliance — RM-ANOVA has no principled handling. LMMs handle unbalanced designs natively.</p>
+    </div>
+    <div class="info-card" style="border-top:3px solid var(--red)">
+      <div class="info-card-title red">Explicit covariance structures</div>
+      <p>When random slopes alone are not the right fix — for example, when adjacent timepoints in a longitudinal design are more correlated than distant ones — the covariance structure can be specified directly as unstructured, autoregressive, or Toeplitz. This requires going beyond standard <code>lmer</code> into tools like <code>nlme::gls</code> or <code>glmmTMB</code>, but it is unavailable to RM-ANOVA in any form.</p>
+    </div>
+  </div>
+
+  <div class="callout teal">
+    <div class="callout-title">Where this leaves RM-ANOVA</div>
+    <p>Repeated-measures ANOVA is not a different tool from LMMs — it is a <em>special case</em> of an LMM, the one where the only allowed random effect is a per-participant intercept. When that restricted model fits the data well, the two give identical answers. When it does not — because individuals differ in their response to conditions, because data are missing, or because the covariance structure is richer than compound symmetry — the LMM generalises, and RM-ANOVA is left with a patched F-statistic and no way to represent the structure the data contain. I guess you need to ask yourself: if you have used RM-ANOVA — and I have established you are already a closet LMM-user — why not embrace the approach more overtly?</p>
+  </div>
+</section>
+
+<!-- ===== S3: LMM ===== -->
+<section id="s3" class="section reveal">
+  <span class="section-number">§ 04</span>
+  <h2>Linear Mixed Models — modelling the dependence structure</h2>
+
+  <p>
+    So it should be clear by now that a Linear Mixed Model (LMM) is not a fundamentally different kind of statistics. It is the basic framework that RM-ANOVA is quietly leaning on, extended by giving the model more information about how the data were generated. As we have just illustrated, an LMM knows that some observations belong to the same person — and it uses that knowledge to partition variance more intelligently. But there are a lot more benefits to this kind of <em>model specification</em> strategy than that, as we will see.
+  </p>
+
+  <h3 class="violet">Fixed effects and random effects</h3>
+
+  <p>
+    An LMM decomposes each observation into three parts rather than two:
+  </p>
+
+  <div class="equation-block violet">
+    <span class="eq-label">LMM — basic decomposition</span>
+    <span class="eq-main">Y<sub>ij</sub> = μ + β·X<sub>j</sub> + u<sub>i</sub> + ε<sub>ij</sub></span>
+    <div class="eq-vars">
+      <table>
+        <tr><td class="violet">Y<sub>ij</sub></td><td>The observation for person i in condition j.</td></tr>
+        <tr><td class="violet">μ</td><td>The grand mean — the overall average across conditions and people.</td></tr>
+        <tr><td class="violet">β·X<sub>j</sub></td><td>The <strong>fixed effect</strong> of condition j — the systematic shift in mean level that applies to everyone equally. This is what ANOVA estimates too. β is the parameter we care about: the true condition effect.</td></tr>
+        <tr><td class="violet">u<sub>i</sub></td><td>The <strong>random effect</strong> of person i — their individual deviation from the grand mean, assumed to be drawn from N(0, τ²). This captures the fact that some people are reliably higher or lower than average. ANOVA cannot see this; LMM estimates it explicitly.</td></tr>
+        <tr><td class="violet">ε<sub>ij</sub></td><td>The residual error — the truly random, unexplained fluctuation. This is what the model cannot account for. Smaller ε means better precision.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <h3 class="violet">Why smarter partitioning improves <em>precision</em></h3>
+
+  <p>
+    The crucial move is what happens to the error term ε<sub>ij</sub>. In ANOVA, the within-group variance includes both genuine random noise <em>and</em> systematic individual differences (the u<sub>i</sub> terms) — they are inseparable. The MS<sub>within</sub> denominator is therefore inflated, F is suppressed, and the model has low precision for detecting the condition effect.
+  </p>
+
+  <p>
+    In an LMM, the random effects u<sub>i</sub> are estimated from the data and removed from the residuals. What remains — the ε<sub>ij</sub> — is the truly unexplained variation. This residual variance is smaller. A smaller residual means a smaller SE for the fixed effect β. And a smaller SE means a sharper, more precise estimate of the true condition effect. This is the same precision logic from Part 1: more information going into the model → tighter estimates → clearer focus on what we care about.
+  </p>
+
+  <div class="callout violet">
+    <div class="callout-title">The key intuition</div>
+    <p>ANOVA is a model that knows only about conditions. It sees all within-condition variation as noise. An LMM is the same framework extended to also know about people — it recognises stable individual differences and estimates them explicitly. The residual shrinks; fixed-effect estimates sharpen. ANOVA's no-individual-differences assumption is almost always wrong in behavioural data, and when it is, you end up with a blurrier picture than you could have. <strong>LMM does not require more data; it requires a more accurate description of the data you already have.</strong></p>
+  </div>
+
+  <h3 class="violet">Random slopes: when individual differences are not just in level</h3>
+
+  <div class="recall-box">
+    <span class="recall-label">← Recall from §03</span>
+    Random slopes came up several times in §03. As the principled fix for sphericity violations — a random-intercepts-only model (and therefore RM-ANOVA) forces every participant's regression line to be parallel, and a random slope is what lets each line have its own steepness. As the formal version of what the §02 simulation already showed visually: the non-parallel lines per participant in the right-hand panel. And as the move that motivates fitting the model on individual trials rather than on cell means. Here is the equation that makes explicit what a random slope is doing mathematically.
+  </div>
+
+  <p>
+    The model above gives each person their own intercept (baseline level) but assumes the condition effect β is the same for everyone (this was what we saw for the RM-ANOVA structure). Sometimes individual differences extend to the effect itself: some people show a large face-inversion effect, others show almost none. This is modelled by adding a <strong>random slope</strong>:
+  </p>
+
+  <div class="equation-block violet">
+    <span class="eq-label">LMM with random slopes</span>
+    <span class="eq-main">Y<sub>ij</sub> = μ + (β + v<sub>i</sub>)·X<sub>j</sub> + u<sub>i</sub> + ε<sub>ij</sub></span>
+    <div class="eq-vars">
+      <table>
+        <tr><td class="violet">v<sub>i</sub></td><td>Person i's deviation from the average condition effect β. If v<sub>i</sub> is large and positive, this person shows a stronger condition effect than average; if negative, a weaker one. Estimating these allows the model to capture individual-level treatment response — and removes yet more systematic variance from the error term.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <p>
+    Each layer of structure added to the model — random intercepts, random slopes, nested clustering — is the same move: giving the model more knowledge about how the data were generated, which removes more systematic variance from the residuals, which sharpens the estimates of what we actually care about.
+  </p>
+
+  <h3 class="violet">Partial pooling — borrowing strength across participants</h3>
+
+  <p>
+    There is a subtle but important mechanism underlying how LMMs estimate individual random effects, called <strong>partial pooling</strong> (sometimes called "shrinkage"). Understanding it reveals why LMMs are not only more honest about structure, but often more accurate at the individual level.
+  </p>
+
+  <p>
+    Consider estimating each participant's individual slope — their personal condition effect. One extreme would be to estimate each person's slope entirely from their own data, ignoring all other participants. This is <em>no pooling</em>: independent estimates, each based on whatever trials that person completed. With many trials per person this is fine; with few trials, the estimates are highly variable and unreliable. The other extreme would be to ignore individual differences in the effect altogether and give everyone the same slope — the group mean. This is <em>complete pooling</em>. In LMM terms, complete pooling is what you get when the random-effect variances are fixed to zero — the model is forbidden from estimating individual variation in the parts of the equation where the variance is zeroed out. Both classical ANOVA and RM-ANOVA are special cases of an LMM in exactly this sense. Classical ANOVA fixes every random effect to zero: no individual differences in baseline, no individual differences in response. RM-ANOVA relaxes this for the intercept (each participant gets their own baseline — the parallel-lines picture from §03), but the slope variance is still fixed to zero, forcing a single shared β across everyone. The pooling logic itself is the same move we first met in §01 with MS<sub>within</sub>: within-group variance from every group pooled into a single shared σ² on the assumption that all groups draw from a common noise distribution. Applied to the slope, the same logic gives one β for everyone, with individual differences in the effect set to zero by construction.
+  </p>
+
+  <p>
+    LMMs do neither. They <strong>partially pool</strong>: each person's slope estimate is a weighted compromise between their own data and the group average, where the weight is determined by how much data that person contributes and how noisy their responses are. In later web content I will go further into detail about partial pooling and how it is connected to improved estimates through a process called <em>shrinkage</em>.
+  </p>
+
+  <div class="callout violet">
+    <div class="callout-title">Extraordinary individual differences require extraordinary data</div>
+    <p>
+      A participant with many clean, consistent trials earns a slope estimate that stays close to their own data — their evidence is strong enough to support an individualised estimate. A participant with few trials, or highly variable responses, has their estimate pulled back toward the group mean — the model borrows strength from the rest of the sample to stabilise the estimate where individual data are thin.
+    </p>
+    <p style="margin-top:0.8rem">
+      This is exactly the right behaviour. We do not want to over-interpret a noisy participant who happened to show an extreme pattern in a handful of trials. Equally, we do not want to ignore a participant who consistently and clearly shows a pattern that differs from the group. Partial pooling implements this logic automatically — without any researcher degrees of freedom.
+    </p>
+    <p style="margin-top:0.8rem">
+      The group-level distribution of slopes also provides a principled regulariser: it tells the model what range of individual differences is plausible, and keeps estimates from wandering into implausible territory when data are sparse. This is why LMMs are often described as "borrowing strength" from the full dataset — information flows across participants in a way that benefits everyone's estimates.
+    </p>
+  </div>
+
+  <div class="callout violet">
+    <div class="callout-title">The design incentive problem — and how LMMs remove it</div>
+    <p>
+      Because ANOVA's MS<sub>within</sub> bundles genuine individual differences with random noise, there is a structural incentive to <em>suppress</em> individual differences by design — recruiting homogeneous samples, using easy tasks where everyone performs similarly, averaging away within-person fluctuation. All of these shrink MS<sub>within</sub> and inflate F. The cost is that designs optimised for large F-ratios are exactly the designs that minimise the very individual differences psychologists most often care about. LMMs invert this. By partitioning individual-difference variance rather than treating it as noise, a heterogeneous sample with high variability is no longer a problem to be designed away — it is information the model can use.
+    </p>
+  </div>
+
+  <h3 class="violet">Random effects for items, too</h3>
+
+  <p>
+    So far the LMM has been written as if participants were the only grouping factor. The data contain another one: the items. In most behavioural experiments each participant completes many trials, and those trials draw from a set of items — faces, words, scenes, sentences, problem instances — that differ from each other in the same ways participants do. Some items are harder, some easier; some elicit a larger condition effect than others.
+  </p>
+
+  <p>
+    Because the model is now fitted on trial-level data rather than on cell means, we have the machinery to put items directly into the model alongside participants. A random intercept for items captures differences in baseline difficulty across the stimulus set. A random slope for items captures the fact that the condition effect varies from one item to another. Participants and items sit side by side as two separate grouping factors, neither nested inside the other — a structure called <strong>crossed random effects</strong>.
+  </p>
+
+  <p>
+    The consequence for inference is practical. Analyses that ignore item variance tacitly treat the items actually tested as the complete population of items, rather than as a sample drawn from a larger pool — which they almost always are. That produces standard errors that are too narrow and p-values that are too small, because the model is not crediting the item-level variability that a replication with different stimuli would produce. Modelling items explicitly forces the condition effect to hold across participants <em>and</em> across the item sample before it is declared reliable — the inference generalises to both populations, not just to the participant one. The take home message is always the same: we use a better model to get better estimates based on better precision.
+  </p>
+
+  <p>
+    There is another way to estimate these models that builds directly on the standard LMM — a <em>Bayesian</em> LMM. The model structure is identical; what changes is how the parameters are estimated and how uncertainty is expressed. We will cover Bayesian inference properly later in the resource, so there is no need to dig into it here. If you are already curious, the preview below unpacks what changes and why it matters. Otherwise, skip past it.
+  </p>
+
+  <details class="teaser">
+    <summary>
+      <span class="teaser-label">Teaser — coming later</span>
+      <span class="teaser-title">From LMM to Bayesian LMM — same structure, different estimation engine</span>
+      <span class="teaser-hint">Click to expand. You can safely skip this on a first read — we will cover Bayesian inference properly in a later part of the resource.</span>
+    </summary>
+    <div class="teaser-body">
+      <p>
+        A frequentist LMM and a Bayesian LMM have identical model structure: fixed effects, random intercepts, random slopes, residual error. The difference is in how parameters are estimated and how uncertainty is expressed. Where the frequentist approach finds the parameter values that make the observed data most likely (maximum likelihood / REML), the Bayesian approach combines prior beliefs about plausible parameter values with the evidence from the data, producing a <em>posterior distribution</em> for every parameter.
+      </p>
+
+      <div class="recall-box">
+        <span class="recall-label">← Recall from Part 1 · §03</span>
+        Part 1 contrasted a frequentist confidence interval — a statement about the procedure over many hypothetical repetitions — with a Bayesian credible interval, which is a direct probability statement about the parameter itself. The same distinction is playing out here at the model level. A Bayesian LMM does not just estimate effects differently; it produces posterior distributions that support the kinds of statements researchers actually want to make about their estimates.
+      </div>
+
+      <p>
+        This distinction matters practically in five ways:
+      </p>
+
+      <div class="three-col">
+        <div class="info-card" style="border-top:3px solid var(--violet)">
+          <div class="info-card-title violet">Full uncertainty</div>
+          <p>Every parameter — condition effects, individual slopes, variance components — has a full posterior distribution, not just a point estimate ± SE. You can make direct probability statements: "There is a 97% probability the condition effect is positive" — exactly the credible-interval interpretation we set against the frequentist confidence interval in Part 1 §03. For individual slopes, you get a posterior per person, revealing not just whether people differ but how uncertain we are about each person's estimate.</p>
+        </div>
+        <div class="info-card" style="border-top:3px solid var(--violet)">
+          <div class="info-card-title violet">Priors as regularisation</div>
+          <p>Weakly informative priors — "most effects are probably between −2 and +2 on the outcome scale", "very large variance components are unlikely" — keep estimates stable. Complex frequentist LMMs often fail to converge or produce boundary estimates (variance components of exactly zero). Bayesian LMMs typically resolve these instabilities, replacing silent failure with an honest posterior that reflects remaining uncertainty.</p>
+        </div>
+        <div class="info-card" style="border-top:3px solid var(--violet)">
+          <div class="info-card-title violet">Explicit partial pooling</div>
+          <p>The shrinkage logic described above becomes fully transparent in the Bayesian frame. Each person's posterior slope is explicitly a compromise between their own data and the group-level prior — and the degree of shrinkage is a visible, interpretable quantity rather than a background computation. Participants with sparse data are pulled toward the group; participants with rich data stay near their own estimates.</p>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top:1.2rem">
+        <div class="info-card" style="border-top:3px solid var(--teal)">
+          <div class="info-card-title">Direct probability statements</div>
+          <p>Instead of "assuming the null is true, the probability of data at least this extreme is p = .04", you can say "there is an 85% probability the variance in slopes exceeds a practically meaningful threshold" or "for this participant, there is a 90% probability their effect is below the group average." These are the statements researchers — and clinicians, and real humans — actually care about.</p>
+        </div>
+        <div class="info-card" style="border-top:3px solid var(--teal)">
+          <div class="info-card-title">Realistic likelihoods</div>
+          <p>Binary accuracy data, ordinal ratings, skewed reaction times — all can be embedded in the same hierarchical structure with appropriate likelihoods (Bernoulli, ordinal, ex-Gaussian), still with random intercepts, random slopes, priors, and posteriors. The model is built to match how the data were generated, not forced into normality assumptions that the CLT only partially rescues.</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <h3 class="violet">What LMMs fix — and what they do not</h3>
+
+  <p>
+    The progression from ANOVA → RM-ANOVA → LMM looks like a story of increasingly weak assumptions, which in one sense it is. But an honest characterisation is more specific: <em>LMMs relax the dependence structure, not the distributional assumptions.</em> Once this distinction is clear, the places where LMMs continue to mislead — and where further machinery is needed — come into focus.
+  </p>
+
+  <p>
+    Three things LMMs genuinely fix. <strong>Non-independence</strong>: observations from the same participant, item, or trial cluster are explicitly modelled via random effects, not treated as independent. <strong>Variance decomposition</strong>: between-participant, between-item, and residual variance are estimated separately rather than lumped into one error term. <strong>Partial pooling</strong>: individual estimates (a participant's slope, an item's effect) are weighted compromises between that unit's own data and the group-level distribution — sparse or noisy units borrow strength from the rest of the sample to stabilise their estimates, where ANOVA can only pool fully or not at all. These are substantial gains, and they change the conclusion of many analyses that ANOVA would have mishandled.
+  </p>
+
+  <p>
+    Note that partial pooling and the lowest-level residual assumptions are on different axes. Partial pooling is a capability ANOVA never had — it stabilises individual-level estimates by borrowing strength across the sample, and it operates on the random-effect estimation regardless of which likelihood the model uses. The residual-level assumptions are something else.
+  </p>
+
+  <p>
+    Every test we have considered so far in this resource — t-tests, ANOVA, RM-ANOVA, and the standard LMM — is fitted by <strong>ordinary least squares (OLS)</strong>, an estimation procedure based on a single underlying <em>likelihood</em>: the assumption that the response, conditional on the predictors, is normally distributed. That one likelihood is what <em>defines</em> OLS — squaring deviations to measure error (as we saw in §01), the F-distribution that licences p-values, the assumption that residuals are Gaussian, independent, and identically distributed (iid) — all of these follow from it. Different response types (binary outcomes, counts, ordinal ratings, skewed reaction times) need a different likelihood, and a model that uses one of those is no longer a member of this family — it is a <strong>Generalised Linear Model (GLM)</strong>, or a <strong>Generalised Linear Mixed Model (GLMM)</strong> when random effects are also needed. The fix for residual misspecification lives there, in stepping out of the Gaussian linear family altogether. We will consider statistical models for dependent variables that are binary (Y/N) or ordinal, and the tests that use a different likelihood model (GLM and GLMM), in a later website.
+  </p>
+
+  <p>
+    So at the fundamental level, an LMM (like all other models that use OLS) still assumes residuals are approximately normally distributed, homoscedastic, and independent <em>after</em> the modelled dependence has been removed. When those conditions fail, the LMM can still return estimates and standard errors that appear reasonable but are miscalibrated.
+  </p>
+
+  <div class="three-col">
+    <div class="info-card" style="border-top:3px solid var(--red)">
+      <div class="info-card-title red">Residual assumptions persist</div>
+      <p>Even within the Gaussian family, the strict iid assumptions can fail: heteroscedasticity, skewed residuals, unmodelled correlation in the errors. The fixes here stay within OLS — robust (sandwich) standard errors, weighted regression, response transformations, residual correlation structures — rather than stepping out into a different likelihood family altogether.</p>
+    </div>
+    <div class="info-card" style="border-top:3px solid var(--red)">
+      <div class="info-card-title red">Misspecified random effects</div>
+      <p>Omitting a random slope that is warranted, ignoring item-level or trial-level clustering, or missing temporal dependence — all of these push structure back into the residuals. The model then estimates the wrong standard error for the fixed effects. Barr et al.'s "maximal random-effect structure" recommendation addresses this, but many published LMMs are specified too austerely.</p>
+    </div>
+    <div class="info-card" style="border-top:3px solid var(--red)">
+      <div class="info-card-title red">Distributional mismatch</div>
+      <p>Reaction times are skewed and heavy-tailed; accuracy is binary; ratings are ordinal. A Gaussian LMM applied to any of these is a misspecified likelihood. Generalised LMMs with appropriate likelihoods (Bernoulli, ordinal, ex-Gaussian, lognormal) fix this, but a standard <code style="font-family:var(--mono);font-size:0.85em">lmer()</code> call does not — the estimates look clean and the output is miscalibrated.</p>
+    </div>
+  </div>
+
+  <p>
+    A further subtlety: LMMs handle <em>clustering</em> — participants, items, groups — but not automatically other forms of within-cluster dependence. Autocorrelation between adjacent trials, learning or fatigue effects across a session, carryover between successive conditions — all of these must be explicitly modelled, either through additional random effects or through a residual correlation structure. An LMM that assumes residuals are independent <em>given</em> the random intercepts is miscalibrated whenever the trials are ordered in time and no such ordering is accounted for.
+  </p>
+
+  <div class="callout teal">
+    <div class="callout-title">Why does everyone go on about normality? — and how the CLT fits in</div>
+    <p>
+      Because the classical inference tools — t-tests on coefficients, F-tests for overall model fit, confidence intervals, p-values — are derived assuming residuals are approximately normal. When that assumption fails badly, those tests can return numbers that look fine but are miscalibrated.
+    </p>
+    <p style="margin-top:0.8rem">
+      In practice, though, the picture is more nuanced than "all residual assumptions, always". The "iid Gaussian residuals" assumption breaks into three pieces — <em>independent</em>, <em>identically distributed</em> (homoscedastic), <em>Gaussian</em> — and the CLT helps with one of them strongly, the other two not at all.
+    </p>
+    <p style="margin-top:0.8rem;margin-left:1rem">
+      <strong>Normality of residuals (the G in iid G residuals) — CLT does most of the work for you.</strong> In moderate-to-large samples, the CLT delivers an approximately Gaussian sampling distribution for sample means (and F-ratios, and t-statistics) regardless of the underlying residual shape. So in the large-N regime, residual normality stops being something you need to worry much about — your inference will still be approximately calibrated. This is what "robust to non-normality in large samples" means. Worry mainly when N is small <em>and</em> residuals look badly non-Gaussian — that combination is where the CLT has not yet kicked in and the assumption it would have rescued is also violated.
+    </p>
+    <p style="margin-top:0.4rem;margin-left:1rem">
+      <strong>Homoscedasticity (equal variances, the id in iid G residuals) — CLT does nothing.</strong> If groups have different residual variances, MS<sub>within</sub> pools them under the assumption they're equal; if they aren't, the pooled estimate is meaningless regardless of N. The Welch correction we discussed in §01 is the actual fix, not larger sample size. More N just makes you more confidently miscalibrated.
+    </p>
+    <p style="margin-top:0.4rem;margin-left:1rem">
+      <strong>Independence (the i in iid G residuals) — CLT does nothing.</strong> Correlated observations (repeated measures, clustering) have smaller effective sample size than N suggests, so CLT-derived standard errors are too small. The whole §02–§04 discussion of LMMs exists precisely because the CLT does not save you from violations of independence.
+    </p>
+    <p style="margin-top:0.8rem">
+      So the practical takeaway: in large samples, residual normality matters less than textbooks often imply. But homoscedasticity and independence matter at any sample size, and these are where the real diagnostic effort should go.
+    </p>
+  </div>
+
+  <div class="callout red">
+    <div class="callout-title">What to take away</div>
+    <p>
+      <strong>ANOVA:</strong> strong assumptions about independence and error structure — often violated.<br><br>
+      <strong>LMM:</strong> weaker assumptions about dependence structure — but still a model with distributional assumptions that must be checked. LMMs solve "my data are clustered." The rest of the residual story — what the CLT does and does not bail you out of — is unpacked in the callout above.<br><br>
+      I hope by this point it is clear now that LMMs can provide substantial structural upgrades over ANOVA. Largely because LMMs move you closer to the structure of the data, not all the way to it. You still have to check residuals, model the right dependencies, and ensure the likelihood is appropriate for the data you actually have.<br><br>
+      The progression is not about statistical fashion — it is about building models that increasingly match how the data were actually generated.
+    </p>
+  </div>
+</section>
+
+<!-- ===== PART MARKER 3 ===== -->
+<div class="part-marker reveal" style="background:#12101a">
+  <div class="part-marker-inner">
+    <div class="part-num" style="color:var(--violet-light)">Part III</div>
+    <div class="part-title">How good is the measurement itself? — <em>Item Response Theory</em></div>
+  </div>
+</div>
+
+<!-- ===== S4: IRT ===== -->
+<section id="s4" class="section reveal">
+  <span class="section-number">§ 05</span>
+  <h2>The measurement question: precision at the item level</h2>
+
+  <p class="lead">
+    We have now built increasingly sophisticated statistical models — from ANOVA to LMM — to extract sharper estimates from the same data. But there is a prior question we have not yet asked: how good is the measurement that produces the data in the first place?
+  </p>
+
+  <div class="callout" style="border-left-color:var(--amber);background:var(--amber-pale)">
+    <div class="callout-title">A question before we begin</div>
+    <p>Suppose you want to measure how strong someone is. You have 20 dumbbells, but you do not know how much any of them weighs. You ask the person to lift as many as they can — just once — and you count the number they managed: say, 10. Now a second person also lifts 10.</p>
+    <p style="margin-top:0.7rem">Are those two people equally strong? You cannot know. The dumbbells might vary wildly in weight. Lifting 10 light dumbbells requires very different strength from lifting 10 heavy ones. Lifting the same 10 on a single occasion might not reflect what either person could do on a different day, with different dumbbells, after different rest. The count of 10 is a summary — but it is a summary that discards all the information about the items that produced it.</p>
+    <p style="margin-top:0.7rem">This is exactly the situation with psychological measurement using summed or averaged scores. The "items" — questionnaire items, recognition trials, reaction time stimuli — vary in difficulty, discriminating power, and relevance to the construct. Treating them as interchangeable and counting how many a person "passes" discards the most important information: <em>which</em> items, with <em>what</em> characteristics. Item Response Theory exists to put that information back.</p>
+  </div>
+
+  <div class="recall-box">
+    <span class="recall-label">← Recall from Part 1 — Level 1 averaging</span>
+    Part 1 identified two levels of averaging. Level 2 (across people → group mean) is what ANOVA and LMM work on. Level 1 is averaging within a person — across items on a questionnaire, or across trials in a task — to produce each person's score. Classical test theory and Cronbach's α operate here, and their logic rests on the same LLN assumptions: items should be independent and approximately exchangeable (tau-equivalent). When they are not, the person-level score is an imprecise proxy for the latent trait — and no amount of LMM sophistication can recover precision that was lost in the measurement.
+  </div>
+
+  <p>
+    Item Response Theory (IRT) is the answer to this problem at Level 1. Rather than assuming all items are interchangeable and simply summing or averaging them, IRT models the relationship between each individual item and the latent trait explicitly. I will discuss the utility of IRT as an approach in psychometrics that allows researchers to carefully <em>hone</em> the items they use for their study in later web content — at this point I want to just give a brief overview, since it so obviously relates to something people ignore as they blissfully generate summary statistics based on averages/sums of sets of items.
+  </p>
+
+  <h3 class="violet">The item characteristic curve</h3>
+
+  <p>
+    In IRT, every item has a characteristic curve describing the probability of a correct (or endorsed) response as a function of a person's latent trait level θ (theta). The most common model — the 2-parameter logistic (2PL) — is governed by two item parameters:
+  </p>
+
+  <div class="equation-block violet">
+    <span class="eq-label">2-Parameter Logistic IRT model</span>
+    <span class="eq-main">P(correct | θ) = 1 / (1 + exp(−a(θ − b)))</span>
+    <div class="eq-vars">
+      <table>
+        <tr><td class="violet">θ (theta)</td><td>The person's position on the latent trait — e.g. face recognition ability, anxiety level, cognitive capacity. This is what we want to estimate.</td></tr>
+        <tr><td class="violet">a (discrimination)</td><td>How steeply the curve rises — how sharply the item distinguishes between people just below and just above its threshold. A high-a item is highly informative; a low-a item barely discriminates. In CTT terms, this is the item-total correlation.</td></tr>
+        <tr><td class="violet">b (difficulty / location)</td><td>Where on the θ scale the curve is centred — the trait level at which a person has a 50% chance of responding correctly. An item with b = 2 is only informative for people high on the trait; one with b = −1 is informative at lower levels.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="sim-box">
+    <div class="sim-title">Simulation — Item Characteristic Curves &amp; Information</div>
+    <div class="sim-desc">Each curve shows how the probability of a correct response changes with trait level θ for three items with different discrimination (a) and difficulty (b) parameters. The information panel shows where on the θ scale each item is most informative — its contribution to precision of measurement.</div>
+
+    <div style="margin-bottom:1rem;display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;">
+      <div>
+        <div style="font-family:var(--mono);font-size:0.62rem;color:var(--teal-light);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.1em">Item 1 (teal)</div>
+        <div class="slider-label"><span>Discrimination (a)</span><span class="slider-val" id="a1-val">1.0</span></div>
+        <input type="range" min="0.3" max="3" step="0.1" value="1.0" id="a1" oninput="IRT.draw()">
+        <div class="slider-label" style="margin-top:0.4rem"><span>Difficulty (b)</span><span class="slider-val" id="b1-val">-1.0</span></div>
+        <input type="range" min="-3" max="3" step="0.1" value="-1.0" id="b1" oninput="IRT.draw()">
+      </div>
+      <div>
+        <div style="font-family:var(--mono);font-size:0.62rem;color:var(--amber-light);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.1em">Item 2 (amber)</div>
+        <div class="slider-label"><span>Discrimination (a)</span><span class="slider-val" id="a2-val">1.8</span></div>
+        <input type="range" min="0.3" max="3" step="0.1" value="1.8" id="a2" oninput="IRT.draw()">
+        <div class="slider-label" style="margin-top:0.4rem"><span>Difficulty (b)</span><span class="slider-val" id="b2-val">0.0</span></div>
+        <input type="range" min="-3" max="3" step="0.1" value="0.0" id="b2" oninput="IRT.draw()">
+      </div>
+      <div>
+        <div style="font-family:var(--mono);font-size:0.62rem;color:#b090d8;margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.1em">Item 3 (violet)</div>
+        <div class="slider-label"><span>Discrimination (a)</span><span class="slider-val" id="a3-val">0.6</span></div>
+        <input type="range" min="0.3" max="3" step="0.1" value="0.6" id="a3" oninput="IRT.draw()">
+        <div class="slider-label" style="margin-top:0.4rem"><span>Difficulty (b)</span><span class="slider-val" id="b3-val">1.5</span></div>
+        <input type="range" min="-3" max="3" step="0.1" value="1.5" id="b3" oninput="IRT.draw()">
+      </div>
+    </div>
+
+    <div class="irt-panel">
+      <div>
+        <div class="canvas-label">Item characteristic curves — P(correct) vs trait level θ</div>
+        <canvas id="icc-canvas" height="220"></canvas>
+      </div>
+      <div>
+        <div class="canvas-label">Item information — precision contributed at each θ level</div>
+        <canvas id="info-canvas" height="220"></canvas>
+      </div>
+    </div>
+
+    <div class="legend-row" style="margin-top:0.8rem">
+      <div class="legend-item"><div class="legend-swatch" style="background:#4a9b9e"></div>Item 1</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#e8a44a"></div>Item 2</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#b090d8"></div>Item 3</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#eee"></div>Total information</div>
+    </div>
+
+    <div style="margin-top:1rem;background:#111;border-radius:4px;padding:0.9rem 1rem;font-size:0.82rem;color:#aaa;font-family:var(--serif);line-height:1.6">
+      <strong style="color:var(--amber-light);font-family:var(--sans);font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase">What to notice:</strong> High discrimination (a) makes the curve steep — the item sharply separates people near its difficulty level. Low discrimination makes it flat — the item barely helps regardless of trait level. The information panel shows that each item contributes precision primarily near its own difficulty location b. A good test covers the trait range with overlapping, high-discrimination items. A poor one has flat curves (low a) clustered in the wrong part of the range.
+    </div>
+  </div>
+
+  <h3 class="violet">How IRT improves precision</h3>
+
+  <p>
+    A summed score treats all items as equal — a correct response on an easy item adds the same to your score as a correct response on a hard one. But an easy item that almost everyone passes tells you very little about where in the upper range of ability a person sits; a hard item that very few pass tells you almost nothing about the lower range. IRT weights each item's contribution to θ estimation by how informative it actually is at that location.
+  </p>
+
+  <p>
+    The result is a person-level estimate θ̂ that comes with a known standard error — the inverse of the square root of the total information at that point on the trait scale. This is the precision of the measurement, not just assumed but calculated. In regions of the trait scale where the test has many high-discrimination items, estimates are sharp. Where the test has few items or weak items, estimates are blurry — and the model tells you so.
+  </p>
+
+  <div class="two-col">
+    <div class="info-card" style="border-top:3px solid var(--violet)">
+      <div class="info-card-title violet">What CTT/summed scores cannot tell you</div>
+      <p>A raw score of 18/30 carries no information about how precisely it estimates the underlying trait level. Two people with the same summed score could have very different true trait levels if they got different subsets of items correct. The SE of a CTT score is assumed constant across the trait range.</p>
+    </div>
+    <div class="info-card" style="border-top:3px solid var(--teal)">
+      <div class="info-card-title">What IRT provides</div>
+      <p>Each θ̂ estimate has its own SE, varying across the trait range according to how much information the test provides there. Measurement precision is not assumed — it is calculated. This connects directly back to the SE logic in Part 1: precision of the measurement has the same structure as precision of the mean estimate.</p>
+    </div>
+  </div>
+
+  <div class="callout" style="border-left-color:var(--amber);background:var(--amber-pale)">
+    <div class="callout-title">A note on PCA and other summary methods</div>
+    <p>The problems with summed scores are not unique to simple averaging. Principal Components Analysis (PCA) is often used as a quick alternative to factor analysis — extracting component scores that summarise a set of items. But PCA makes no model of how items relate to an underlying trait; it finds directions of maximum variance in the observed data, which may or may not correspond to meaningful latent constructs. Researchers who interpret PCA component scores as measures of a psychological construct are making the same implicit assumptions as those who interpret summed scores — without testing them. The same questions apply: Is the component unidimensional? Do items contribute equivalently? Is the extracted variance signal or noise? PCA does not answer these questions; it sidesteps them.</p>
+  </div>
+
+  <h3 class="violet">The connection upward: measurement precision feeds statistical power</h3>
+
+  <p>
+    Poor measurement at Level 1 propagates upward to Level 2. When a summed score is a noisy proxy for the true latent trait, the person-level scores used in ANOVA or LMM carry extra measurement error on top of whatever natural variability exists in the trait itself. That extra error shows up in the statistical model as additional within-group variance — noise that obscures the condition effect, inflates MS<sub>within</sub>, suppresses F, and reduces statistical power. This is the same chain Part 1 established: σ at the item level propagates through σ/√k at the person level, and from there into the SE of every group mean the inferential model consumes. Unreliable measurement at the bottom of the chain weakens every stage above it — no matter how sophisticated the statistical model at the top.
+  </p>
+
+  <p>
+    Improving measurement quality — whether by adding more items (the LLN route), selecting higher-discrimination items (the IRT route), or matching item difficulty to the target population — reduces this contamination. Better measurement means cleaner person-level estimates, smaller residuals in the LMM, and sharper inference at the group level. Precision compounds across levels.
+  </p>
+
+  <div class="callout teal">
+    <div class="callout-title">The complete picture</div>
+    <p>Statistical power is not only a function of sample size N. It is a function of the entire chain: how precise are the item-level measurements (IRT), how well do the person-level estimates capture the latent trait (reliability), how intelligently does the statistical model partition the variance it receives (LMM vs ANOVA), and how large is the true effect relative to the residual noise. Improving any link in the chain improves power — and IRT addresses the link that is usually treated as fixed. The chain itself continues beyond what we have covered here: stepping outside the Gaussian linear family altogether (binary outcomes, counts, skewed reaction times) is the GLM and GLMM territory we will pick up in a later resource.</p>
+  </div>
+
+  <!-- FINAL CHAIN -->
+  <div class="final-chain">
+    <h3>The complete chain — precision at every level</h3>
+    <div class="chain-row">
+      <div class="chain-row-item">
+        <div class="cri-label">Law of Large Numbers<span>Part 1 · §01</span></div>
+        <div class="cri-desc">Averaging independent observations produces a stable summary. More observations → mean closer to true value at rate σ/√N. Noise cancels; signal accumulates.</div>
+      </div>
+      <div class="cri-arrow">↓</div>
+      <div class="chain-row-item">
+        <div class="cri-label">Central Limit Theorem<span>Part 1 · §02</span></div>
+        <div class="cri-desc">The distribution of sample means becomes approximately normal regardless of population shape. Standard error σ/√N governs precision — the key precision measure.</div>
+      </div>
+      <div class="cri-arrow">↓</div>
+      <div class="chain-row-item">
+        <div class="cri-label">Confidence intervals<span>Part 1 · §03</span></div>
+        <div class="cri-desc">Frequentist procedures that contain the true parameter a fixed proportion of the time under the stated assumptions. A single interval is a single realisation of that procedure — the interpretation is about the procedure, not about this particular interval.</div>
+      </div>
+      <div class="cri-arrow">↓</div>
+      <div class="chain-row-item">
+        <div class="cri-label">Two-level averaging<span>Part 1 · §04</span></div>
+        <div class="cri-desc">CLT operates at Level 1 (items → person score) and Level 2 (people → group mean). Cronbach's α is one index of internal consistency, computed from the pattern of inter-item covariances — it rises with k following the LLN, but is only a reliability estimate under restrictive assumptions and says nothing about unidimensionality.</div>
+      </div>
+      <div class="cri-arrow">↓</div>
+      <div class="chain-row-item">
+        <div class="cri-label">t-test / ANOVA<span>Part 1 · §05 · Part 2 · §01</span></div>
+        <div class="cri-desc">Group means compared via F-ratio (MS_between / MS_within). Inference procedures rest on the OLS likelihood — residuals independent, identically distributed, Gaussian. The CLT helps with the Gaussian piece in large samples; the other two must be handled separately.</div>
+      </div>
+      <div class="cri-arrow">↓</div>
+      <div class="chain-row-item">
+        <div class="cri-label">Linear Mixed Models<span>Part 2 · §02–04</span></div>
+        <div class="cri-desc">When independence fails (repeated measures, clustering), LMM partitions individual-difference variance via random intercepts and slopes. Partial pooling stabilises sparse individual estimates; crossed random effects let participants and items both vary. Smaller residuals → sharper fixed-effect estimates → better precision without collecting more data.</div>
+      </div>
+      <div class="cri-arrow">↓</div>
+      <div class="chain-row-item">
+        <div class="cri-label">Item Response Theory<span>Part 2 · §05</span></div>
+        <div class="cri-desc">When item exchangeability fails, IRT models each item's discriminating power and difficulty explicitly. Person estimates carry known, location-specific SEs. Better measurement → cleaner person scores → less noise contaminating everything above.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>Statistical Foundations · Part 2 of 2 &nbsp;·&nbsp; Teaching Materials</p>
+  <p style="margin-top:0.5rem;font-size:0.7rem;opacity:0.6">ANOVA → LMM → IRT · Precision at every level of the chain</p>
+</footer>
+
+<script>
+// ================================================================
+// CANVAS UTILITY
+// ================================================================
+function mkCanvas(id, h) {
+  const c = document.getElementById(id); if (!c) return null;
+  const dpr = window.devicePixelRatio || 1;
+  const w = c.parentElement.clientWidth || 400;
+  c.width = w * dpr; c.height = h * dpr;
+  c.style.width = w + 'px'; c.style.height = h + 'px';
+  const ctx = c.getContext('2d'); ctx.scale(dpr, dpr);
+  return { ctx, w, h };
+}
+
+// ================================================================
+// ANOVA SIMULATION
+// ================================================================
+const ANOVA_SIM = (() => {
+  // Reliable p-value via Lentz continued fractions for regularized incomplete beta
+  function logGamma(z) {
+    const c=[76.18009172947146,-86.50532032941677,24.01409824083091,-1.231739572450155,0.1208650973866179e-2,-0.5395239384953e-5];
+    let x=z,y=z,tmp=x+5.5,ser=1.000000000190015;
+    tmp-=(x+0.5)*Math.log(tmp);
+    for(let j=0;j<6;j++) ser+=c[j]/++y;
+    return -tmp+Math.log(2.5066282746310005*ser/x);
+  }
+  function logBeta(a,b){return logGamma(a)+logGamma(b)-logGamma(a+b);}
+  function betacf(a,b,x){
+    const MAXIT=200,EPS=3e-7,FPMIN=1e-30;
+    const qab=a+b,qap=a+1,qam=a-1;
+    let c=1,d=1-qab*x/qap;
+    if(Math.abs(d)<FPMIN)d=FPMIN; d=1/d; let h=d;
+    for(let m=1;m<=MAXIT;m++){
+      const m2=2*m;
+      let aa=m*(b-m)*x/((qam+m2)*(a+m2));
+      d=1+aa*d; if(Math.abs(d)<FPMIN)d=FPMIN;
+      c=1+aa/c; if(Math.abs(c)<FPMIN)c=FPMIN;
+      d=1/d; h*=d*c;
+      aa=-(a+m)*(qab+m)*x/((a+m2)*(qap+m2));
+      d=1+aa*d; if(Math.abs(d)<FPMIN)d=FPMIN;
+      c=1+aa/c; if(Math.abs(c)<FPMIN)c=FPMIN;
+      d=1/d; const del=d*c; h*=del;
+      if(Math.abs(del-1)<EPS)break;
+    }
+    return h;
+  }
+  function betai(a,b,x){
+    if(x<=0)return 0; if(x>=1)return 1;
+    const lbt=a*Math.log(x)+b*Math.log(1-x)-logBeta(a,b);
+    return x<(a+1)/(a+b+2)
+      ? Math.exp(lbt)*betacf(a,b,x)/a
+      : 1-Math.exp(lbt)*betacf(b,a,1-x)/b;
+  }
+  function pFromF(f,df1,df2){
+    if(f<=0)return 1;
+    const x=df1*f/(df1*f+df2);
+    return Math.max(0.00001,Math.min(1,1-betai(df1/2,df2/2,x)));
+  }
+
+  const COLS = ['#4a9b9e','#e8a44a','#b090d8'];
+  const MAX_N = 60;
+  // Base samples generated once per sep/scatter change; N slider just slices them
+  let baseData = [[],[],[]];
+  let lastSep = null, lastScatter = null;
+  let data = [];
+
+  // Seeded PRNG (mulberry32) for reproducible, deterministic base samples
+  function mulberry32(a){
+    return function(){
+      a|=0; a=a+0x6D2B79F5|0;
+      var t=Math.imul(a^a>>>15,1|a);
+      t=t+Math.imul(t^t>>>7,61|t)^t;
+      return((t^t>>>14)>>>0)/4294967296;
+    };
+  }
+  function seededRandn(rng){
+    let u=0,v=0;
+    while(u===0)u=rng(); while(v===0)v=rng();
+    return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
+  }
+
+  function generateData(sep, scatter, n) {
+    if(sep!==lastSep||scatter!==lastScatter){
+      // Means scaled to [-sep/2, 0, sep/2] so max sep + max scatter
+      // needs genuinely larger N to reach significance.
+      // At sep=4, scatter=3: E[F] ~2.2*n, so N~5 is non-significant,
+      // N~15-20 crosses the threshold, N~40-60 is clearly significant.
+      const means=[-sep/2,0,sep/2];
+      baseData=means.map((m,gi)=>{
+        const seed=0xABCD1234^(Math.round(sep*100)*997+Math.round(scatter*100)*31+gi*7919);
+        const rng=mulberry32(seed);
+        const raw=Array.from({length:MAX_N},()=>seededRandn(rng));
+        // Standardise full base sample to exact mean=0, sd=1, then rescale
+        const mu=raw.reduce((a,b)=>a+b,0)/MAX_N;
+        const sd=Math.sqrt(raw.reduce((a,b)=>a+(b-mu)**2,0)/(MAX_N-1));
+        return raw.map(v=>m+(sd>0?(v-mu)/sd:0)*scatter);
+      });
+      lastSep=sep; lastScatter=scatter;
+    }
+    data=baseData.map((pts,gi)=>pts.slice(0,n).map(y=>({g:gi,y})));
+  }
+
+  function update() {
+    const sep = parseFloat(document.getElementById('sep-slider').value);
+    const scatter = parseFloat(document.getElementById('scatter-slider').value);
+    const n = parseInt(document.getElementById('n-slider').value);
+    document.getElementById('sep-val').textContent = sep.toFixed(1);
+    document.getElementById('scatter-val').textContent = scatter.toFixed(1);
+    document.getElementById('n-val').textContent = n;
+    generateData(sep, scatter, n);
+    const all = data.flat();
+    const grand = all.reduce((a,b)=>a+b.y,0)/all.length;
+    const groupMeans = data.map(g => g.reduce((a,b)=>a+b.y,0)/g.length);
+    const SSb = groupMeans.reduce((a,m)=>a+(m-grand)**2*n, 0);
+    const SSw = data.reduce((a,g,gi)=>a+g.reduce((b,p)=>b+(p.y-groupMeans[gi])**2,0),0);
+    const df1=2, df2=3*(n-1);
+    const MSb=SSb/df1, MSw=SSw/df2;
+    const F=MSb/MSw;
+    const p=pFromF(F,df1,df2);
+    document.getElementById('ss-between').textContent=SSb.toFixed(1);
+    document.getElementById('ss-within').textContent=SSw.toFixed(1);
+    document.getElementById('f-ratio').textContent=F.toFixed(2);
+    document.getElementById('p-val').textContent=p<0.001?'< .001':p.toFixed(3);
+    document.getElementById('f-ratio').style.color=F>4?'#7ec87e':F>2?'#e8a44a':'#e07070';
+    drawDots(grand, groupMeans);
+    drawBars(SSb, SSw);
+  }
+
+  function drawDots(grand, groupMeans) {
+    const r = mkCanvas('anova-dots', 320); if (!r) return;
+    const {ctx,w,h}=r;
+    ctx.fillStyle='#1a1714'; ctx.fillRect(0,0,w,h);
+    const pad={l:30,r:10,t:14,b:10};
+    const pw=w-pad.l-pad.r, ph=h-pad.t-pad.b;
+    const allY=data.flat().map(p=>p.y);
+    const ymin=Math.min(...allY)-0.5, ymax=Math.max(...allY)+0.5;
+    const toY=y=>pad.t+ph*(1-(y-ymin)/(ymax-ymin));
+    const gx=[0.18,0.5,0.82];
+    // Grand mean
+    const gy=toY(grand);
+    ctx.strokeStyle='#444'; ctx.lineWidth=1.5; ctx.setLineDash([6,4]);
+    ctx.beginPath(); ctx.moveTo(pad.l,gy); ctx.lineTo(pad.l+pw,gy); ctx.stroke();
+    ctx.setLineDash([]);
+    // Y axis ticks
+    ctx.fillStyle='#555'; ctx.font=`9px 'DM Mono',monospace`; ctx.textAlign='right';
+    [Math.round(ymin),Math.round(grand),Math.round(ymax)].forEach(v=>{
+      const y=toY(v); ctx.fillText(v,pad.l-4,y+3);
+      ctx.strokeStyle='#2a2a2a'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+pw,y); ctx.stroke();
+    });
+    data.forEach((g,gi)=>{
+      const cx=pad.l+gx[gi]*pw;
+      g.forEach(p=>{
+        ctx.beginPath(); ctx.arc(cx+(Math.random()-0.5)*pw*0.12,toY(p.y),2.5,0,Math.PI*2);
+        ctx.fillStyle=COLS[gi]+'aa'; ctx.fill();
+      });
+      // Group mean line
+      const gm=toY(groupMeans[gi]);
+      ctx.strokeStyle=COLS[gi]; ctx.lineWidth=2.5;
+      ctx.beginPath(); ctx.moveTo(cx-pw*0.1,gm); ctx.lineTo(cx+pw*0.1,gm); ctx.stroke();
+      // Group label
+      ctx.fillStyle=COLS[gi]; ctx.font=`10px 'DM Mono',monospace`; ctx.textAlign='center';
+      ctx.fillText('ABC'[gi], cx, pad.t+ph+8);
+    });
+  }
+
+  function drawBars(SSb, SSw) {
+    const r = mkCanvas('anova-bars', 320); if (!r) return;
+    const {ctx,w,h}=r;
+    ctx.fillStyle='#1a1714'; ctx.fillRect(0,0,w,h);
+    const pad={l:10,r:10,t:30,b:40};
+    const pw=w-pad.l-pad.r, ph=h-pad.t-pad.b;
+    const total=SSb+SSw;
+    if(total===0) return;
+    const pctB=SSb/total, pctW=SSw/total;
+    const bw=pw*0.32;
+    // Between bar
+    const bh=pctB*ph;
+    ctx.fillStyle='#e8a44a99'; ctx.fillRect(pad.l+pw*0.1,pad.t+ph-bh,bw,bh);
+    ctx.strokeStyle='#e8a44a'; ctx.lineWidth=1.5; ctx.strokeRect(pad.l+pw*0.1,pad.t+ph-bh,bw,bh);
+    // Within bar
+    const wh=pctW*ph;
+    ctx.fillStyle='#55555566'; ctx.fillRect(pad.l+pw*0.58,pad.t+ph-wh,bw,wh);
+    ctx.strokeStyle='#666'; ctx.lineWidth=1.5; ctx.strokeRect(pad.l+pw*0.58,pad.t+ph-wh,bw,wh);
+    // Labels
+    ctx.fillStyle='#e8a44a'; ctx.font=`bold 10px 'DM Mono',monospace`; ctx.textAlign='center';
+    ctx.fillText('BETWEEN',(pad.l+pw*0.1)+bw/2,pad.t+ph+14);
+    ctx.fillText((pctB*100).toFixed(0)+'%',(pad.l+pw*0.1)+bw/2,pad.t+ph+26);
+    ctx.fillStyle='#888';
+    ctx.fillText('WITHIN',(pad.l+pw*0.58)+bw/2,pad.t+ph+14);
+    ctx.fillText((pctW*100).toFixed(0)+'%',(pad.l+pw*0.58)+bw/2,pad.t+ph+26);
+    // Title
+    ctx.fillStyle='#666'; ctx.font=`9px 'DM Mono',monospace`;
+    ctx.fillText('% of SS_total',w/2,pad.t-10);
+  }
+
+  setTimeout(update, 400);
+  window.addEventListener('resize', update);
+  return { update };
+})();
+
+// ================================================================
+// INDIVIDUAL DIFFERENCES SIM
+// ================================================================
+const INDIFF = (() => {
+  const N_PEOPLE = 12;
+  const COLS12 = ['#e87070','#e8a44a','#d4e870','#7ec87e','#70e8c8','#4a9b9e','#70a4e8','#9b7abf','#e870c8','#e87070','#aaaaaa','#c8b070'];
+
+  function randn() {
+    let u=0,v=0;
+    while(!u) u=Math.random(); while(!v) v=Math.random();
+    return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
+  }
+
+  // Base z-scores generated once. Sliders rescale these — they do NOT
+  // regenerate the dataset. Same 12 people throughout; only the spread
+  // (individual differences) and the condition shift change.
+  let baseZ = null;
+  function ensureBase() {
+    if (baseZ) return;
+    baseZ = {
+      baselines:  Array.from({length: N_PEOPLE}, () => randn()),
+      cond1Noise: Array.from({length: N_PEOPLE}, () => randn()),
+      cond2Noise: Array.from({length: N_PEOPLE}, () => randn())
+    };
+  }
+
+  function update() {
+    ensureBase();
+    const indDiff = parseFloat(document.getElementById('ind-diff-slider').value);
+    const condEff = parseFloat(document.getElementById('cond-eff-slider').value);
+    document.getElementById('ind-diff-val').textContent = indDiff.toFixed(1);
+    document.getElementById('cond-eff-val').textContent = condEff.toFixed(1);
+    document.getElementById('true-eff').textContent = condEff.toFixed(2);
+    document.getElementById('ind-noise').textContent = indDiff.toFixed(2);
+
+    // Build the dataset by rescaling the fixed base z-scores.
+    // baseline z is multiplied by the current individual-differences SD;
+    // residual noise is fixed at SD 0.3 (a constant, not a slider).
+    const people = [];
+    for (let i = 0; i < N_PEOPLE; i++) {
+      const baseline = baseZ.baselines[i] * indDiff;
+      people.push({
+        cond1: baseline + baseZ.cond1Noise[i] * 0.3,
+        cond2: baseline + condEff + baseZ.cond2Noise[i] * 0.3,
+        color: COLS12[i % COLS12.length]
+      });
+    }
+
+    // Naive ANOVA (ignoring person structure)
+    const g1 = people.map(p=>p.cond1);
+    const g2 = people.map(p=>p.cond2);
+    const all = [...g1,...g2];
+    const grand = all.reduce((a,b)=>a+b,0)/all.length;
+    const m1=g1.reduce((a,b)=>a+b,0)/N_PEOPLE;
+    const m2=g2.reduce((a,b)=>a+b,0)/N_PEOPLE;
+    const SSb = N_PEOPLE*((m1-grand)**2+(m2-grand)**2);
+    const SSw = g1.reduce((a,x)=>a+(x-m1)**2,0)+g2.reduce((a,x)=>a+(x-m2)**2,0);
+    const df1=1, df2=2*(N_PEOPLE-1);
+    const F=Math.max(0,(SSb/df1)/(SSw/df2));
+    document.getElementById('naive-f').textContent = F.toFixed(2);
+    document.getElementById('naive-f').style.color = F>4?'#7ec87e':F>2?'#e8a44a':'#e07070';
+    // rough p
+    const p = F>10?'< .01':F>4?'< .05':F>2?'< .20':'n.s.';
+    document.getElementById('naive-p').textContent = p;
+
+    drawNaive(people, m1, m2);
+    drawLMM(people);
+  }
+
+  function drawNaive(people, m1, m2) {
+    const r = mkCanvas('naive-canvas', 220); if (!r) return;
+    const {ctx,w,h}=r;
+    ctx.fillStyle='#1a1714'; ctx.fillRect(0,0,w,h);
+    const pad={l:20,r:20,t:14,b:30};
+    const pw=w-pad.l-pad.r, ph=h-pad.t-pad.b;
+    const all=[...people.map(p=>p.cond1),...people.map(p=>p.cond2)];
+    const ymin=Math.min(...all)-0.5, ymax=Math.max(...all)+0.5;
+    const toY=y=>pad.t+ph*(1-(y-ymin)/(ymax-ymin));
+    const cx1=pad.l+pw*0.28, cx2=pad.l+pw*0.72;
+    people.forEach(p=>{
+      const y1=toY(p.cond1), y2=toY(p.cond2);
+      ctx.beginPath(); ctx.arc(cx1+(Math.random()-0.5)*pw*0.15,y1,3,0,Math.PI*2);
+      ctx.fillStyle='#4a9b9eaa'; ctx.fill();
+      ctx.beginPath(); ctx.arc(cx2+(Math.random()-0.5)*pw*0.15,y2,3,0,Math.PI*2);
+      ctx.fillStyle='#e8a44aaa'; ctx.fill();
+    });
+    [cx1,cx2].forEach((cx,i)=>{
+      const m=toY([m1,m2][i]);
+      ctx.strokeStyle=['#4a9b9e','#e8a44a'][i]; ctx.lineWidth=2.5;
+      ctx.beginPath(); ctx.moveTo(cx-pw*0.1,m); ctx.lineTo(cx+pw*0.1,m); ctx.stroke();
+    });
+    ctx.fillStyle='#888'; ctx.font=`10px 'DM Mono',monospace`; ctx.textAlign='center';
+    ctx.fillText('Cond 1',cx1,h-6); ctx.fillText('Cond 2',cx2,h-6);
+  }
+
+  function drawLMM(people) {
+    const r = mkCanvas('lmm-canvas', 220); if (!r) return;
+    const {ctx,w,h}=r;
+    ctx.fillStyle='#1a1714'; ctx.fillRect(0,0,w,h);
+    const pad={l:20,r:20,t:14,b:30};
+    const pw=w-pad.l-pad.r, ph=h-pad.t-pad.b;
+    const all=[...people.map(p=>p.cond1),...people.map(p=>p.cond2)];
+    const ymin=Math.min(...all)-0.5, ymax=Math.max(...all)+0.5;
+    const toY=y=>pad.t+ph*(1-(y-ymin)/(ymax-ymin));
+    const cx1=pad.l+pw*0.28, cx2=pad.l+pw*0.72;
+    people.forEach((p,i)=>{
+      const y1=toY(p.cond1), y2=toY(p.cond2);
+      ctx.strokeStyle=p.color+'66'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(cx1,y1); ctx.lineTo(cx2,y2); ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx1,y1,3,0,Math.PI*2); ctx.fillStyle=p.color; ctx.fill();
+      ctx.beginPath(); ctx.arc(cx2,y2,3,0,Math.PI*2); ctx.fillStyle=p.color; ctx.fill();
+    });
+    ctx.fillStyle='#888'; ctx.font=`10px 'DM Mono',monospace`; ctx.textAlign='center';
+    ctx.fillText('Cond 1',cx1,h-6); ctx.fillText('Cond 2',cx2,h-6);
+  }
+
+  setTimeout(update, 500);
+  window.addEventListener('resize', update);
+  return { update };
+})();
+
+// ================================================================
+// IRT SIMULATION
+// ================================================================
+const IRT = (() => {
+  function logistic(a, b, theta) {
+    return 1 / (1 + Math.exp(-a * (theta - b)));
+  }
+  function information(a, b, theta) {
+    const p = logistic(a, b, theta);
+    return a * a * p * (1 - p);
+  }
+
+  function draw() {
+    const params = [1,2,3].map(i => ({
+      a: parseFloat(document.getElementById('a'+i).value),
+      b: parseFloat(document.getElementById('b'+i).value),
+      col: ['#4a9b9e','#e8a44a','#b090d8'][i-1]
+    }));
+    [1,2,3].forEach(i=>{
+      document.getElementById('a'+i+'-val').textContent = parseFloat(document.getElementById('a'+i).value).toFixed(1);
+      document.getElementById('b'+i+'-val').textContent = parseFloat(document.getElementById('b'+i).value).toFixed(1);
+    });
+    drawICC(params);
+    drawInfo(params);
+  }
+
+  function drawICC(params) {
+    const r = mkCanvas('icc-canvas', 220); if (!r) return;
+    const {ctx,w,h}=r;
+    ctx.fillStyle='#1a1714'; ctx.fillRect(0,0,w,h);
+    const pad={l:36,r:10,t:14,b:30};
+    const pw=w-pad.l-pad.r, ph=h-pad.t-pad.b;
+    const TMIN=-3.5,TMAX=3.5;
+    // Grid
+    [0,0.25,0.5,0.75,1].forEach(v=>{
+      const y=pad.t+ph*(1-v);
+      ctx.strokeStyle=v===0.5?'#2a3a3a':'#1e1e1e'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+pw,y); ctx.stroke();
+      ctx.fillStyle='#555'; ctx.font=`9px 'DM Mono',monospace`; ctx.textAlign='right';
+      ctx.fillText(v.toFixed(2),pad.l-4,y+3);
+    });
+    [-3,-2,-1,0,1,2,3].forEach(t=>{
+      const x=pad.l+((t-TMIN)/(TMAX-TMIN))*pw;
+      ctx.strokeStyle='#1e1e1e'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(x,pad.t); ctx.lineTo(x,pad.t+ph); ctx.stroke();
+      ctx.fillStyle='#555'; ctx.font=`9px 'DM Mono',monospace`; ctx.textAlign='center';
+      ctx.fillText(t,x,pad.t+ph+12);
+    });
+    ctx.fillStyle='#666'; ctx.font=`9px 'DM Mono',monospace`; ctx.textAlign='center';
+    ctx.fillText('θ (trait level)',pad.l+pw/2,h-2);
+    ctx.save(); ctx.translate(10,pad.t+ph/2); ctx.rotate(-Math.PI/2);
+    ctx.fillText('P(correct)',0,0); ctx.restore();
+    // 0.5 line
+    const y50=pad.t+ph*0.5;
+    ctx.strokeStyle='#333'; ctx.lineWidth=1; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(pad.l,y50); ctx.lineTo(pad.l+pw,y50); ctx.stroke();
+    ctx.setLineDash([]);
+    // Curves
+    params.forEach(p=>{
+      ctx.strokeStyle=p.col; ctx.lineWidth=2.5; ctx.beginPath();
+      for(let i=0;i<=200;i++){
+        const t=TMIN+(i/200)*(TMAX-TMIN);
+        const prob=logistic(p.a,p.b,t);
+        const x=pad.l+(i/200)*pw;
+        const y=pad.t+ph*(1-prob);
+        i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+      // b marker
+      const bx=pad.l+((p.b-TMIN)/(TMAX-TMIN))*pw;
+      ctx.beginPath(); ctx.arc(bx,y50,4,0,Math.PI*2);
+      ctx.fillStyle=p.col; ctx.fill();
+    });
+  }
+
+  function drawInfo(params) {
+    const r = mkCanvas('info-canvas', 220); if (!r) return;
+    const {ctx,w,h}=r;
+    ctx.fillStyle='#1a1714'; ctx.fillRect(0,0,w,h);
+    const pad={l:36,r:10,t:14,b:30};
+    const pw=w-pad.l-pad.r, ph=h-pad.t-pad.b;
+    const TMIN=-3.5,TMAX=3.5;
+    const STEPS=200;
+    const thetas=Array.from({length:STEPS+1},(_,i)=>TMIN+(i/STEPS)*(TMAX-TMIN));
+    // Total information
+    const totalInfo=thetas.map(t=>params.reduce((a,p)=>a+information(p.a,p.b,t),0));
+    const maxInfo=Math.max(...totalInfo,0.01);
+    // Grid
+    [0,0.25,0.5,0.75,1].forEach(v=>{
+      const y=pad.t+ph*(1-v);
+      ctx.strokeStyle='#1e1e1e'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+pw,y); ctx.stroke();
+      ctx.fillStyle='#555'; ctx.font=`9px 'DM Mono',monospace`; ctx.textAlign='right';
+      ctx.fillText((v*maxInfo).toFixed(2),pad.l-4,y+3);
+    });
+    [-3,-2,-1,0,1,2,3].forEach(t=>{
+      const x=pad.l+((t-TMIN)/(TMAX-TMIN))*pw;
+      ctx.strokeStyle='#1e1e1e'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(x,pad.t); ctx.lineTo(x,pad.t+ph); ctx.stroke();
+      ctx.fillStyle='#555'; ctx.font=`9px 'DM Mono',monospace`; ctx.textAlign='center';
+      ctx.fillText(t,x,pad.t+ph+12);
+    });
+    ctx.fillStyle='#666'; ctx.font=`9px 'DM Mono',monospace`; ctx.textAlign='center';
+    ctx.fillText('θ (trait level)',pad.l+pw/2,h-2);
+    // Total info fill
+    ctx.beginPath();
+    thetas.forEach((t,i)=>{
+      const x=pad.l+(i/STEPS)*pw;
+      const y=pad.t+ph*(1-totalInfo[i]/maxInfo);
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    });
+    ctx.lineTo(pad.l+pw,pad.t+ph); ctx.lineTo(pad.l,pad.t+ph); ctx.closePath();
+    ctx.fillStyle='#ffffff18'; ctx.fill();
+    // Individual item info curves
+    params.forEach(p=>{
+      ctx.strokeStyle=p.col; ctx.lineWidth=2; ctx.beginPath();
+      thetas.forEach((t,i)=>{
+        const x=pad.l+(i/STEPS)*pw;
+        const y=pad.t+ph*(1-information(p.a,p.b,t)/maxInfo);
+        i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+      });
+      ctx.stroke();
+    });
+    // Total info outline
+    ctx.strokeStyle='#eee'; ctx.lineWidth=1.5; ctx.setLineDash([4,3]); ctx.beginPath();
+    thetas.forEach((t,i)=>{
+      const x=pad.l+(i/STEPS)*pw;
+      const y=pad.t+ph*(1-totalInfo[i]/maxInfo);
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    });
+    ctx.stroke(); ctx.setLineDash([]);
+  }
+
+  setTimeout(draw, 600);
+  window.addEventListener('resize', draw);
+  return { draw };
+})();
+
+// ================================================================
+// SCROLL / REVEAL
+// ================================================================
+const sections=document.querySelectorAll('.section,.part-marker');
+const dots=document.querySelectorAll('.toc-dot');
+const progressBar=document.getElementById('progress-bar');
+const observer=new IntersectionObserver(e=>{
+  e.forEach(x=>{ if(x.isIntersecting) x.target.classList.add('visible'); });
+},{threshold:0, rootMargin:'0px 0px -5% 0px'});
+sections.forEach(s=>observer.observe(s));
+window.addEventListener('scroll',()=>{
+  const pct=window.scrollY/(document.body.scrollHeight-window.innerHeight)*100;
+  progressBar.style.width=Math.min(100,pct)+'%';
+  const arr=Array.from(document.querySelectorAll('section.section'));
+  let active=0;
+  arr.forEach((s,i)=>{if(s.getBoundingClientRect().top<window.innerHeight*0.5) active=i;});
+  dots.forEach((d,i)=>d.classList.toggle('active',i===active));
+});
+function scrollToSec(i){
+  const els=Array.from(document.querySelectorAll('section.section'));
+  if(els[i]) els[i].scrollIntoView({behavior:'smooth'});
+}
+// Reveal all sections already in view on load
+setTimeout(()=>{
+  document.querySelectorAll('.section,.part-marker').forEach(s=>{
+    const r=s.getBoundingClientRect();
+    if(r.top<window.innerHeight) s.classList.add('visible');
+  });
+},150);
+</script>
+</body>
+</html>
