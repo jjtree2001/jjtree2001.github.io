@@ -3,609 +3,331 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Pub, the Coin, and the Octopus</title>
+<title>Statistical Foundations &amp; Psychometric Methods — A Teaching Collection</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&family=Epilogue:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink: #1a1714;
+  --paper: #f7f3ee;
+  --paper-mid: #ede8e1;
+  --paper-dark: #ddd6cb;
+  --amber: #c07c2a;
+  --amber-light: #e8a44a;
+  --amber-pale: #f5e8d0;
+  --teal: #2a6b6e;
+  --teal-light: #4a9b9e;
+  --teal-pale: #eaf4f4;
+  --teal-mid: #5DCAA5;
+  --teal-track-b: #1D9E75;
+  --red: #b84040;
+  --coral: #D85A30;
+  --violet: #6b4a8e;
+  --muted: #7a7068;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Epilogue', sans-serif;
+  --mono: 'DM Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--paper); color: var(--ink); font-family: var(--serif); font-size: 19px; line-height: 1.75; }
 
-  :root {
-    --bg: #faf9f6;
-    --surface: #ffffff;
-    --surface2: #f3f2ef;
-    --border: rgba(0,0,0,0.1);
-    --border-mid: rgba(0,0,0,0.18);
-    --text: #1a1917;
-    --text-mid: #4a4845;
-    --text-muted: #7a7875;
-    --blue: #185FA5;
-    --blue-bg: #E6F1FB;
-    --blue-border: #85B7EB;
-    --amber: #BA7517;
-    --amber-bg: #FAEEDA;
-    --amber-border: #EF9F27;
-    --red: #A32D2D;
-    --red-bg: #FCEBEB;
-    --green: #3B6D11;
-    --green-bg: #EAF3DE;
-    --green-border: #97C459;
-    --radius: 10px;
-    --radius-sm: 6px;
-  }
+/* ── HEADER ── */
+header { background: var(--ink); color: #fff; padding: 5.5rem 2rem 4rem; position: relative; overflow: hidden; text-align: center; }
+header::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 50% at 50% 35%, rgba(232,164,74,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+header::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(90deg, var(--violet), var(--teal-mid), var(--amber-light), var(--coral));
+}
+header h1 { font-family: var(--serif); font-weight: 300; font-size: clamp(2.2rem, 5vw, 3.6rem); line-height: 1.15; letter-spacing: -0.01em; max-width: 800px; margin: 0 auto 1.4rem; position: relative; z-index: 1; }
+header h1 .title-a { color: var(--amber-light); }
+header h1 .title-b { color: var(--teal-mid); font-style: italic; }
+header h1 .ampersand { color: rgba(255,255,255,0.55); font-weight: 300; }
+header .subtitle { font-style: italic; font-weight: 300; color: rgba(255,255,255,0.75); max-width: 640px; margin: 0 auto 0.5rem; font-size: 1.1rem; position: relative; z-index: 1; }
+header .meta-row { font-family: var(--sans); font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.45); margin-top: 1.8rem; position: relative; z-index: 1; display: flex; justify-content: center; align-items: center; gap: 1rem; flex-wrap: wrap; }
+header .meta-dot { width: 4px; height: 4px; background: rgba(255,255,255,0.3); border-radius: 50%; }
 
-  html { scroll-behavior: smooth; }
+/* ── SECTIONS ── */
+section { max-width: 1100px; margin: 0 auto; padding: 4rem 2rem 3rem; }
+.section-track-a { /* Track A — amber-themed */ }
+.section-track-b { background: var(--paper-mid); margin-top: 1rem; padding-top: 4rem; padding-bottom: 4rem; }
+.section-track-b-inner { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+.section-paths { padding-bottom: 5rem; }
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    line-height: 1.6;
-  }
+/* Track header with badge + title */
+.track-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.6rem; flex-wrap: wrap; }
+.track-badge { font-family: var(--sans); font-size: 0.65rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; padding: 0.35rem 0.9rem; border-radius: 3px; flex-shrink: 0; }
+.track-badge.a { background: var(--amber-pale); color: var(--amber); border: 1px solid #ddc89a; }
+.track-badge.b { background: var(--teal-pale); color: var(--teal-track-b); border: 1px solid #b0d8da; }
+section h2 { font-family: var(--serif); font-size: clamp(1.8rem, 3.5vw, 2.4rem); font-weight: 600; line-height: 1.15; letter-spacing: -0.01em; }
+section h2 em { font-style: italic; }
+.section-track-a h2 em { color: var(--amber); }
+.section-track-b h2 em { color: var(--teal-track-b); }
+.section-paths h2 em { color: var(--violet); }
+.section-lead { font-size: 1.05rem; color: var(--muted); font-style: italic; max-width: 760px; margin: 0.6rem 0 2rem; line-height: 1.65; }
 
-  /* ── Header ── */
-  header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 3rem 1.5rem 2.5rem;
-    text-align: center;
-  }
-  .kicker {
-    font-size: 11px;
-    letter-spacing: .14em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    font-weight: 500;
-    margin-bottom: .6rem;
-  }
-  header h1 {
-    font-family: 'Lora', serif;
-    font-size: clamp(1.9rem, 4vw, 2.8rem);
-    font-weight: 600;
-    line-height: 1.2;
-    color: var(--text);
-    margin-bottom: .6rem;
-  }
-  header .subtitle {
-    font-size: 1rem;
-    color: var(--text-mid);
-    font-style: italic;
-    font-family: 'Lora', serif;
-    margin-bottom: 1.2rem;
-  }
-  .tag-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
-  .tag {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: .06em;
-    text-transform: uppercase;
-    padding: 3px 10px;
-    border-radius: 99px;
-    border: 1px solid var(--border-mid);
-    color: var(--text-muted);
-    background: var(--surface2);
-  }
+/* ── CARD GRID ── */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.2rem; margin-top: 1.5rem; }
+.card { background: #fff; border: 1px solid var(--paper-dark); border-radius: 6px; padding: 1.5rem 1.4rem 1.3rem; text-decoration: none; color: var(--ink); display: flex; flex-direction: column; gap: 0.55rem; transition: all 0.18s ease; position: relative; }
+.card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+.card.a { border-top: 4px solid var(--amber); }
+.card.a:hover { border-color: var(--amber-light); border-top-color: var(--amber); }
+.card.b { border-top: 4px solid var(--teal-mid); }
+.card.b:hover { border-color: var(--teal-mid); border-top-color: var(--teal-track-b); }
+.card-num { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; }
+.card.a .card-num { color: var(--amber); }
+.card.b .card-num { color: var(--teal-track-b); }
+.card-title { font-family: var(--serif); font-size: 1.15rem; font-weight: 600; line-height: 1.25; color: var(--ink); }
+.card-title em { font-style: italic; }
+.card.a .card-title em { color: var(--amber); }
+.card.b .card-title em { color: var(--teal-track-b); }
+.card-desc { font-size: 0.92rem; color: var(--muted); line-height: 1.6; flex-grow: 1; }
+.card-cta { font-family: var(--sans); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; padding-top: 0.7rem; margin-top: 0.3rem; border-top: 1px solid var(--paper-dark); }
+.card.a .card-cta { color: var(--amber); }
+.card.b .card-cta { color: var(--teal-track-b); }
+.card:hover .card-cta { color: var(--ink); }
 
-  /* ── Nav ── */
-  nav {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(250,249,246,.92);
-    backdrop-filter: blur(8px);
-    border-bottom: 1px solid var(--border);
-    padding: 0 1.5rem;
-    display: flex;
-    gap: 0;
-    overflow-x: auto;
-  }
-  nav a {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-muted);
-    text-decoration: none;
-    padding: .75rem 1.1rem;
-    border-bottom: 2px solid transparent;
-    white-space: nowrap;
-    transition: color .15s, border-color .15s;
-  }
-  nav a:hover { color: var(--text); border-bottom-color: var(--border-mid); }
-  nav a.active { color: var(--blue); border-bottom-color: var(--blue); }
+/* ── PATHS ── */
+.paths-wrap { background: #fff; border: 1px solid var(--paper-dark); border-radius: 6px; padding: 0; margin-top: 1.6rem; overflow: hidden; }
+.path-row { display: grid; grid-template-columns: 220px 1fr; gap: 1.5rem; padding: 1.2rem 1.6rem; border-bottom: 1px solid var(--paper-dark); align-items: baseline; }
+.path-row:last-child { border-bottom: none; }
+.path-row:hover { background: var(--paper); }
+.path-name { font-family: var(--sans); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); }
+.path-seq { font-family: var(--serif); font-size: 1rem; line-height: 1.7; color: var(--muted); }
+.path-seq a { color: var(--amber); text-decoration: none; font-weight: 500; border-bottom: 1px dashed transparent; }
+.path-seq a:hover { border-bottom-color: var(--amber); }
+.path-seq a.b { color: var(--teal-track-b); }
+.path-seq a.b:hover { border-bottom-color: var(--teal-track-b); }
+.path-seq .arrow { color: var(--paper-dark); margin: 0 0.3rem; font-weight: 300; }
+.path-note { display: block; font-size: 0.85rem; font-style: italic; color: var(--muted); margin-top: 0.35rem; line-height: 1.5; }
 
-  /* ── Layout ── */
-  main { max-width: 760px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
+/* ── DESIGN-NOTE BOX ── */
+.design-note { background: var(--paper-mid); border: 1px solid var(--paper-dark); border-left: 3px solid var(--violet); border-radius: 0 6px 6px 0; padding: 1.2rem 1.5rem; margin-top: 2rem; font-size: 0.95rem; color: var(--ink); }
+.design-note .design-label { font-family: var(--sans); font-size: 0.6rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--violet); margin-bottom: 0.4rem; }
 
-  section { margin-bottom: 3.5rem; }
+/* ── FOOTER ── */
+footer { background: var(--ink); color: rgba(247,243,238,0.55); text-align: center; padding: 2.8rem 2rem; font-family: var(--sans); font-size: 0.78rem; letter-spacing: 0.04em; }
+footer p { margin-bottom: 0.4rem; color: rgba(247,243,238,0.55); }
+footer p:last-child { margin-bottom: 0; }
+footer strong { color: rgba(247,243,238,0.85); font-weight: 600; }
+footer a { color: var(--teal-mid); text-decoration: none; }
+footer a:hover { color: var(--amber-light); }
 
-  .section-label {
-    font-size: 10px;
-    letter-spacing: .16em;
-    text-transform: uppercase;
-    font-weight: 500;
-    color: var(--text-muted);
-    margin-bottom: .4rem;
-  }
-  section > h2 {
-    font-family: 'Lora', serif;
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 1rem;
-    padding-bottom: .75rem;
-    border-bottom: 1px solid var(--border);
-  }
-
-  p { font-size: 15px; line-height: 1.8; color: var(--text-mid); margin-bottom: 1rem; }
-  p strong { font-weight: 500; color: var(--text); }
-  p em { font-style: italic; }
-
-  /* ── Cards ── */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.5rem;
-    margin-bottom: 1.25rem;
-  }
-  .card-label {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: .1em;
-    font-weight: 500;
-    color: var(--text-muted);
-    margin-bottom: .8rem;
-  }
-
-  /* ── Callouts ── */
-  .callout {
-    border-left: 3px solid var(--blue-border);
-    background: var(--blue-bg);
-    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-    padding: 1rem 1.2rem;
-    margin: 1rem 0;
-    font-size: 14px;
-    line-height: 1.75;
-    color: var(--text);
-  }
-  .callout.amber { border-left-color: var(--amber-border); background: var(--amber-bg); }
-  .callout.green { border-left-color: var(--green-border); background: var(--green-bg); }
-
-  /* ── Coin sim ── */
-  .coin-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 1.2rem 0; }
-  .coin {
-    width: 48px; height: 48px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.2rem;
-    font-weight: 500;
-    border: 1.5px solid var(--border-mid);
-    background: var(--surface2);
-    color: var(--text-muted);
-    transition: transform .25s ease, background .3s, border-color .3s, color .3s;
-    user-select: none;
-  }
-  .coin.heads {
-    background: var(--blue-bg);
-    border-color: var(--blue-border);
-    color: var(--blue);
-    transform: rotateY(0deg);
-  }
-  .coin.flip-anim { animation: flipIn .35s ease; }
-  @keyframes flipIn {
-    0%   { transform: rotateY(90deg) scale(.8); opacity:0; }
-    100% { transform: rotateY(0deg) scale(1); opacity:1; }
-  }
-
-  /* ── Prob bar ── */
-  .bar-wrap { margin: 1.2rem 0 .5rem; }
-  .bar-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); margin-bottom: 5px; }
-  .bar-bg { height: 10px; background: var(--surface2); border-radius: 99px; overflow: hidden; border: 1px solid var(--border); }
-  .bar-fill {
-    height: 100%;
-    border-radius: 99px;
-    background: var(--blue);
-    transition: width .5s ease, background .4s;
-    width: 0%;
-  }
-
-  /* ── Stats row ── */
-  .stats-row { display: flex; gap: 10px; margin: 1rem 0; flex-wrap: wrap; }
-  .stat {
-    flex: 1;
-    min-width: 120px;
-    background: var(--surface2);
-    border-radius: var(--radius-sm);
-    padding: .9rem 1rem;
-  }
-  .stat .s-label { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); margin-bottom: 5px; }
-  .stat .s-val { font-family: 'Lora', serif; font-size: 1.3rem; font-weight: 600; color: var(--text); }
-  .stat .s-val.blue { color: var(--blue); }
-  .stat .s-val.red { color: var(--red); }
-  .stat .s-val.amber { color: var(--amber); }
-
-  /* ── Buttons ── */
-  .btn {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: .55rem 1.2rem;
-    font-size: 14px; font-weight: 500;
-    border: 1px solid var(--border-mid);
-    border-radius: var(--radius-sm);
-    background: var(--surface);
-    color: var(--text);
-    cursor: pointer;
-    transition: background .15s, transform .1s;
-    font-family: 'DM Sans', sans-serif;
-  }
-  .btn:hover { background: var(--surface2); }
-  .btn:active { transform: scale(.97); }
-  .btn.primary { background: var(--blue-bg); border-color: var(--blue-border); color: var(--blue); }
-  .btn:disabled { opacity: .4; cursor: default; pointer-events: none; }
-  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 1rem; }
-
-  /* ── Verdict ── */
-  #verdict {
-    margin-top: 1rem;
-    font-size: 14px;
-    line-height: 1.75;
-    color: var(--text-mid);
-    min-height: 1.5rem;
-    font-style: italic;
-  }
-
-  /* ── Prior cards ── */
-  .prior-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin: 1.25rem 0; }
-  .prior-card {
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.1rem;
-    cursor: pointer;
-    transition: border-color .2s, background .2s;
-    background: var(--surface);
-  }
-  .prior-card:hover { border-color: var(--blue-border); background: var(--blue-bg); }
-  .prior-card.active { border-color: var(--blue); background: var(--blue-bg); }
-  .pc-name { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 5px; }
-  .pc-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.6; }
-  #prior-result { margin-top: 1rem; }
-
-  /* ── Formula ── */
-  .formula {
-    font-family: 'Lora', serif;
-    font-style: italic;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    display: inline-block;
-    padding: .6rem 1.2rem;
-    border-radius: var(--radius-sm);
-    font-size: 15px;
-    margin: .75rem 0;
-    color: var(--text);
-  }
-
-  /* ── Key points ── */
-  .key-points { display: flex; flex-direction: column; gap: .9rem; margin: 1.25rem 0; }
-  .kp { display: flex; gap: 12px; align-items: flex-start; }
-  .kp-num {
-    min-width: 28px; height: 28px;
-    border-radius: 50%;
-    background: var(--blue-bg);
-    border: 1px solid var(--blue-border);
-    color: var(--blue);
-    font-size: 13px; font-weight: 500;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .kp-text { font-size: 14.5px; line-height: 1.75; color: var(--text-mid); }
-  .kp-text strong { font-weight: 500; color: var(--text); }
-
-  /* ── Octo block ── */
-  .octo-block {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.3rem 1.5rem;
-    margin: 1.25rem 0;
-  }
-  .octo-block .ob-tag {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: .12em;
-    color: var(--text-muted);
-    font-weight: 500;
-    margin-bottom: .5rem;
-  }
-  .octo-block p { font-size: 14.5px; }
-
-  /* ── Divider ── */
-  hr { border: none; border-top: 1px solid var(--border); margin: 3rem 0; }
-
-  /* ── Footer ── */
-  footer {
-    border-top: 1px solid var(--border);
-    text-align: center;
-    padding: 1.5rem;
-    font-size: 12px;
-    color: var(--text-muted);
-  }
-
-  @media (max-width: 540px) {
-    main { padding: 1.5rem 1rem 4rem; }
-    .stats-row { flex-direction: column; }
-    .prior-grid { grid-template-columns: 1fr; }
-  }
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  body { font-size: 17px; line-height: 1.65; }
+  header { padding: 3rem 1.2rem 2.5rem; }
+  header h1 { font-size: 1.7rem; }
+  header .subtitle { font-size: 0.95rem; }
+  header .meta-row { font-size: 0.55rem; gap: 0.5rem; letter-spacing: 0.12em; }
+  section { padding: 2.5rem 1.1rem 2rem; }
+  .section-track-b { padding: 2.5rem 0; margin-top: 0.5rem; }
+  .section-track-b-inner { padding: 0 1.1rem; }
+  .section-paths { padding-bottom: 3rem; }
+  section h2 { font-size: 1.45rem; }
+  .section-lead { font-size: 0.95rem; margin-bottom: 1.4rem; }
+  .track-header { gap: 0.6rem; }
+  .track-badge { font-size: 0.58rem; padding: 0.3rem 0.7rem; }
+  .card-grid { grid-template-columns: 1fr; gap: 0.8rem; }
+  .card { padding: 1.2rem 1.1rem; }
+  .card-title { font-size: 1.05rem; }
+  .card-desc { font-size: 0.88rem; }
+  .path-row { grid-template-columns: 1fr; gap: 0.5rem; padding: 1rem 1.1rem; }
+  .path-name { font-size: 0.62rem; }
+  .path-seq { font-size: 0.92rem; }
+  .design-note { padding: 1rem 1.1rem; font-size: 0.88rem; }
+  footer { padding: 2rem 1.2rem; font-size: 0.7rem; }
+}
 </style>
 </head>
 <body>
 
 <header>
-  <div class="kicker">Lecture Resource &mdash; Inferential Statistics</div>
-  <h1>The Pub, the Coin,<br>and the Octopus</h1>
-  <p class="subtitle">A narrative introduction to p-values, null hypothesis testing, and Bayesian priors</p>
-  <div class="tag-row">
-    <span class="tag">Null Hypothesis Testing</span>
-    <span class="tag">p-values</span>
-    <span class="tag">Bayesian Priors</span>
-    <span class="tag">Gambler's Fallacy</span>
+  <div class="eyebrow">A teaching collection · seven self-contained sites</div>
+  <h1>Statistical Foundations <span class="ampersand">&amp;</span><br><em>Psychometric Methods</em></h1>
+  <p class="subtitle">Two parallel teaching tracks — one on inference from first principles, one on the measurement assumptions inference rests on.</p>
+  <div class="meta-row">
+    <span>Track A · 4 parts</span>
+    <span class="meta-dot"></span>
+    <span>Track B · 3 parts</span>
+    <span class="meta-dot"></span>
+    <span>Mobile-friendly</span>
   </div>
 </header>
 
-<nav id="main-nav">
-  <a href="#pete" class="active">Pete's Wager</a>
-  <a href="#priors">Priors</a>
-  <a href="#octopus">The Octopus</a>
-  <a href="#summary">Summary</a>
-</nav>
+<!-- ════════════════════════════════════════
+     TRACK A — STATISTICAL FOUNDATIONS
+════════════════════════════════════════ -->
+<section class="section-track-a">
+  <div class="track-header">
+    <span class="track-badge a">Track A · 4 parts</span>
+    <h2>Statistical <em>Foundations</em></h2>
+  </div>
+  <p class="section-lead">Building inference from first principles — what averaging buys you, how the standard inferential tests actually work, when their assumptions hold, and how to plan a study honestly.</p>
 
-<main>
+  <div class="card-grid">
+    <a class="card a" href="lln_website_v2.html">
+      <div class="card-num">Part 1</div>
+      <div class="card-title">LLN, CLT, &amp; <em>Standard Error</em></div>
+      <div class="card-desc">Why averaging produces precise estimates. The Law of Large Numbers, the Central Limit Theorem, and the σ/√N formula that drives all of inference.</div>
+      <div class="card-cta">Read Part 1 →</div>
+    </a>
+    <a class="card a" href="stats_part2_v2.html">
+      <div class="card-num">Part 2</div>
+      <div class="card-title">When the <em>Chain Breaks</em></div>
+      <div class="card-desc">ANOVA in detail, then what to do when its assumptions fail — Linear Mixed Models, partial pooling, and an introduction to IRT.</div>
+      <div class="card-cta">Read Part 2 →</div>
+    </a>
+    <a class="card a" href="generativestats.html">
+      <div class="card-num">Part 3</div>
+      <div class="card-title">Where Does Your <em>Data Come From?</em></div>
+      <div class="card-desc">Generative distributions, the mean–variance independence question, and the model-matching map for non-Gaussian DVs (GLMs and GLMMs).</div>
+      <div class="card-cta">Read Part 3 →</div>
+    </a>
+    <a class="card a" href="effect_size_power.html">
+      <div class="card-num">Part 4</div>
+      <div class="card-title">Effect Size &amp; <em>Power Analysis</em></div>
+      <div class="card-desc">Cohen's d, the SD-vs-SE replication bridge, the d² scaling rule, and the AnCred framework for credibility beyond p &lt; .05.</div>
+      <div class="card-cta">Read Part 4 →</div>
+    </a>
+  </div>
+</section>
 
-  <!-- PART 1 -->
-  <section id="pete">
-    <div class="section-label">Part 1</div>
-    <h2>Pete's Wager</h2>
-
-    <p>Imagine you are at the pub with your friend Pete. He suggests a bet: he will toss a coin, and if it comes up heads you have to buy the drinks. Seems fair enough &mdash; a fifty-fifty chance &mdash; so you agree.</p>
-    <p>He tosses the coin. It comes up <strong>heads</strong>. You buy the drinks. You grit your teeth and head off to the bar.</p>
-    <p>Come the next round, Pete makes the same offer. You agree. <strong>Heads again.</strong> Then again. And again.</p>
-    <p>Work through Pete's tosses using the button below. After each result, ask yourself: <em>at what point do you start to suspect the coin is not fair?</em></p>
-
-    <div class="card">
-      <div class="card-label">Pete's tosses</div>
-      <div class="coin-row" id="coin-row">
-        <div class="coin" id="c0">?</div>
-        <div class="coin" id="c1">?</div>
-        <div class="coin" id="c2">?</div>
-        <div class="coin" id="c3">?</div>
-        <div class="coin" id="c4">?</div>
-      </div>
-
-      <div class="bar-wrap">
-        <div class="bar-labels">
-          <span>Probability of this result (fair coin)</span>
-          <span id="prob-pct">&mdash;</span>
-        </div>
-        <div class="bar-bg"><div class="bar-fill" id="bar-fill"></div></div>
-      </div>
-
-      <div class="stats-row">
-        <div class="stat">
-          <div class="s-label">Tosses</div>
-          <div class="s-val" id="toss-count">0 / 5</div>
-        </div>
-        <div class="stat">
-          <div class="s-label">p-value</div>
-          <div class="s-val" id="p-val">&mdash;</div>
-        </div>
-        <div class="stat">
-          <div class="s-label">Conventional threshold</div>
-          <div class="s-val blue">p &lt; .05</div>
-        </div>
-      </div>
-
-      <div class="btn-row">
-        <button class="btn primary" id="flip-btn" onclick="nextToss()">Toss the coin</button>
-        <button class="btn" onclick="resetToss()">Reset</button>
-      </div>
-
-      <div id="verdict"></div>
+<!-- ════════════════════════════════════════
+     TRACK B — MEASUREMENT &amp; PSYCHOMETRICS
+════════════════════════════════════════ -->
+<section class="section-track-b">
+  <div class="section-track-b-inner">
+    <div class="track-header">
+      <span class="track-badge b">Track B · 3 parts</span>
+      <h2>Measurement &amp; <em>Psychometrics</em></h2>
     </div>
+    <p class="section-lead">A companion track on what is actually being measured — the assumptions every Likert scale silently makes, the reliability of psychological measurement, and what attenuation does to the inferences that follow.</p>
 
-    <p>After five consecutive heads, the probability of that sequence &mdash; assuming a perfectly fair coin &mdash; is 0.5x 0.5 x 0.5 x 0.5 x 0.5 or <strong>(½)⁵ = 0.031</strong>. This falls below the conventional significance threshold of &alpha; = .05 (or p=<0.05). In other words, five heads in a row is, by the standard logic of null hypothesis significance testing, a <em>statistically significant</em> result: we would reject the null hypothesis that Pete's coin is fair.</p>
-
-    <div class="callout">
-      <strong>Why p &lt; .05?</strong> The 5% threshold was popularised by Ronald Fisher in the 1920s &mdash; a convenient rule of thumb rather than a mathematical law. Its ubiquity in science is largely historical accident. The coin-toss example gives you an intuitive feel for where that number sits: five consecutive heads is just "suspicious enough."
+    <div class="card-grid">
+      <a class="card b" href="measurement_fallacies.html">
+        <div class="card-num">Part B1</div>
+        <div class="card-title">Three <em>Fallacies</em> of Measurement</div>
+        <div class="card-desc">The fallacy of opinion, the ordinal fallacy, and the fallacy of the instrument — why your Likert scale might not be the measurement you think it is.</div>
+        <div class="card-cta">Read Part B1 →</div>
+      </a>
+      <a class="card b" href="psychometrics_teaching_v2.html">
+        <div class="card-num">Part B2</div>
+        <div class="card-title">Measuring What We <em>Cannot See</em></div>
+        <div class="card-desc">Classical Test Theory, Cronbach's alpha (and the alpha trap), the omega family, and Item Response Theory in depth — Rasch, 2PL, fit, dimensionality.</div>
+        <div class="card-cta">Read Part B2 →</div>
+      </a>
+      <a class="card b" href="reliability_final.html">
+        <div class="card-num">Part B3</div>
+        <div class="card-title">The <em>Reliability</em> Problem</div>
+        <div class="card-desc">From Spearman's attenuation to Rouder &amp; Mehrvarz's signal-to-noise framework — what unreliability does to correlations, group differences, and replication.</div>
+        <div class="card-cta">Read Part B3 →</div>
+      </a>
     </div>
+  </div>
+</section>
 
-    <h3 style="font-family:'Lora',serif;font-size:1.1rem;font-weight:600;margin:1.5rem 0 .5rem;color:var(--text);">A note on the gambler's fallacy</h3>
-    <p>Notice that after four heads you might have felt sure that "tails must be due now." This is the <strong>gambler's fallacy</strong>: the mistaken belief that past independent outcomes influence future ones. For a fair coin, each toss is entirely independent. Pete's fifth toss has exactly the same probability of landing tails as his very first one did.</p>
-    <p>What <em>does</em> accumulate is the joint probability of the full sequence &mdash; the p-value. We are not saying tails is more likely next time; we are saying that the overall pattern of five heads is increasingly hard to explain by chance.</p>
-  </section>
+<!-- ════════════════════════════════════════
+     SUGGESTED READING PATHS
+════════════════════════════════════════ -->
+<section class="section-paths">
+  <h2>Suggested <em>reading paths</em></h2>
+  <p class="section-lead">The seven sites are self-contained and cross-linked, so there is no single right order. A few curated paths through the collection that work well for different starting points:</p>
 
-  <hr>
-
-  <!-- PART 2 -->
-  <section id="priors">
-    <div class="section-label">Part 2</div>
-    <h2>What You Already Know About Pete</h2>
-
-    <p>Here is the crucial insight: the decision to "reject the null hypothesis" does not happen in a vacuum. It depends &mdash; whether we admit it or not &mdash; on what we already believe before the data arrive. In Bayesian statistics this is called the <strong>prior probability</strong>.</p>
-    <p>The same five heads can warrant very different conclusions depending on who Pete is. Select a version of Pete below:</p>
-
-    <div class="prior-grid">
-      <div class="prior-card active" id="pc-honest" onclick="setPrior('honest', this)" role="button" tabindex="0">
-        <div class="pc-name">Pete is scrupulously honest</div>
-        <div class="pc-desc">You have known him for years. He would be mortified at the thought of cheating anyone out of anything. He once handed back &pound;5 change that a cashier gave him by mistake.</div>
-      </div>
-      <div class="prior-card" id="pc-joker" onclick="setPrior('joker', this)" role="button" tabindex="0">
-        <div class="pc-name">Pete is a bit of a joker</div>
-        <div class="pc-desc">Pete loves a prank. He once put googly eyes on every item in the office fridge. Coin tricks are exactly the kind of thing he would attempt.</div>
-      </div>
-      <div class="prior-card" id="pc-cheat" onclick="setPrior('cheat', this)" role="button" tabindex="0">
-        <div class="pc-name">Pete is a notorious cheat</div>
-        <div class="pc-desc">Pete was banned from the local poker night last year. Everyone has heard the stories. You are fairly sure he owns trick coins.</div>
+  <div class="paths-wrap">
+    <div class="path-row">
+      <div class="path-name">First-principles arc</div>
+      <div class="path-seq">
+        <a href="lln_website_v2.html">Part 1</a>
+        <span class="arrow">→</span>
+        <a href="stats_part2_v2.html">Part 2</a>
+        <span class="arrow">→</span>
+        <a href="generativestats.html">Part 3</a>
+        <span class="arrow">→</span>
+        <a href="effect_size_power.html">Part 4</a>
+        <span class="path-note">The complete Statistical Foundations spine — read straight through. Best if you want the full inferential-statistics arc from foundations to study planning.</span>
       </div>
     </div>
-
-    <div id="prior-result">
-      <div class="callout">
-        Even with five heads &mdash; a statistically significant result &mdash; your strong prior that Pete is honest gives you good reason to remain sceptical that the coin is rigged. Five heads is improbable, but so is honest Pete deciding to cheat. The p-value tells you the probability of the data <em>given</em> the null hypothesis; it says nothing about the probability of the null hypothesis <em>given</em> your prior beliefs. These are very different quantities.
+    <div class="path-row">
+      <div class="path-name">Measurement-side arc</div>
+      <div class="path-seq">
+        <a href="measurement_fallacies.html" class="b">Part B1</a>
+        <span class="arrow">→</span>
+        <a href="psychometrics_teaching_v2.html" class="b">Part B2</a>
+        <span class="arrow">→</span>
+        <a href="reliability_final.html" class="b">Part B3</a>
+        <span class="path-note">The complete Measurement &amp; Psychometrics spine — fallacies, then formal frameworks, then the practical consequences of unreliability.</span>
       </div>
     </div>
-
-    <p>This is exactly what Bayesian inference formalises. Rather than asking only "how likely are these data if nothing is going on?", it combines the evidence with our prior to produce an updated <strong>posterior</strong> belief:</p>
-    <div style="text-align:center;margin:1rem 0;">
-      <span class="formula">Posterior &prop; Likelihood &times; Prior</span>
-    </div>
-    <p>Different priors, same data, legitimately different conclusions. This is not a flaw or subjectivity run amok &mdash; it is a mathematically coherent account of how rational beliefs should update.</p>
-  </section>
-
-  <hr>
-
-  <!-- PART 3 -->
-  <section id="octopus">
-    <div class="section-label">Part 3</div>
-    <h2>The Octopus</h2>
-
-    <div class="octo-block">
-      <div class="ob-tag">Case study &mdash; 2010 FIFA World Cup &mdash; <a href="https://en.wikipedia.org/wiki/Paul_the_Octopus" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none;border-bottom:1px solid var(--blue-border);">Wikipedia</a></div>
-      <p><a href="https://en.wikipedia.org/wiki/Paul_the_Octopus" target="_blank" rel="noopener" style="color:var(--blue);font-weight:500;text-decoration:none;border-bottom:1px solid var(--blue-border);">Paul the Octopus</a> was housed at the Sea Life Centre in Oberhausen, Germany. Before each match, keepers placed food in two boxes labelled with the flags of the competing teams. Paul correctly chose the winning team in all seven of Germany's 2010 World Cup matches, and also correctly predicted Spain as the winner of the final &mdash; <strong>eight correct predictions in a row</strong>. The probability of achieving this by chance is (½)⁸ = <strong>0.0039</strong> &mdash; far below the p &lt; .05 threshold.</p>
-    </div>
-
-    <p>By exactly the same frequentist logic we applied to Pete, we should decisively reject the null hypothesis that Paul was guessing at random. Does that mean we should conclude that Paul the Octopus was genuinely psychic?</p>
-
-    <div class="callout amber">
-      Almost certainly not &mdash; and this is not a failure of logic. It is a demonstration of how our prior beliefs modulate what any given p-value actually means. Most people's prior probability that an octopus possesses genuine precognitive ability is extraordinarily small &mdash; close to zero. When the prior is that extreme, even a p-value of 0.016 barely shifts the posterior. The evidence needed to seriously move our belief would have to be vastly more compelling than six lucky choices.
-    </div>
-
-    <p>Carl Sagan captured this intuition: <em>"Extraordinary claims require extraordinary evidence."</em> Bayesian reasoning makes this precise: the lower your prior probability for a claim, the more decisive the evidence must be to raise the posterior to a credible level.</p>
-
-    <p>The octopus example is particularly instructive because it shows that a "statistically significant" result is not the same as a scientifically meaningful or even plausible one. Statistical significance is a statement about data rarity under a null model &mdash; not a certificate of truth.</p>
-  </section>
-
-  <hr>
-
-  <!-- SUMMARY -->
-  <section id="summary">
-    <div class="section-label">Summary</div>
-    <h2>Three Things to Take Away</h2>
-
-    <div class="key-points">
-      <div class="kp">
-        <div class="kp-num">1</div>
-        <div class="kp-text"><strong>A p-value is a conditional probability.</strong> It tells you how likely your data are <em>if the null hypothesis is true</em> &mdash; not how likely the null hypothesis is given your data. p(data | H₀) &ne; p(H₀ | data). Confusing these two is sometimes called the "inverse probability fallacy." Rejecting H₀ does NOT prove H₁ is true. It only means: The observed data would be unusual if the null were true.</div>
-      </div>
-      <div class="kp">
-        <div class="kp-num">2</div>
-        <div class="kp-text"><strong>The conventional threshold (&alpha; = .05) is arbitrary.</strong> It has historical roots and a certain intuitive feel, but it is not a law of nature. Crossing it does not make a result "true," and falling short of it does not make a result "false." Statistical significance is not the same as practical or theoretical significance.</div>
-      </div>
-      <div class="kp">
-        <div class="kp-num">3</div>
-        <div class="kp-text"><strong>Prior knowledge always plays a role.</strong> Whether you are suspicious of Pete after three heads or five depends on what you already know about him. Making those prior beliefs explicit &mdash; as Bayesian methods require &mdash; is not a weakness; it is intellectual honesty about the reasoning we were doing implicitly all along - how we interpret sequences of observed events often depends on the context and our expectations.</div>
+    <div class="path-row">
+      <div class="path-name">Planning a study</div>
+      <div class="path-seq">
+        <a href="lln_website_v2.html">Part 1</a>
+        <span class="arrow">→</span>
+        <a href="effect_size_power.html">Part 4</a>
+        <span class="arrow">→</span>
+        <a href="reliability_final.html" class="b">Part B3</a>
+        <span class="path-note">Foundations of precision, then power planning, then what reliability does to the effect size you're trying to detect.</span>
       </div>
     </div>
-
-    <div class="callout green" style="margin-top:1.5rem;">
-      <strong>Discussion prompt:</strong> Can you think of a real scientific finding you have come across where the prior probability of the claim should have made people much more sceptical of a significant p-value? What would it take to actually convince you?
+    <div class="path-row">
+      <div class="path-name">Worried about your DV</div>
+      <div class="path-seq">
+        <a href="measurement_fallacies.html" class="b">Part B1</a>
+        <span class="arrow">→</span>
+        <a href="stats_part2_v2.html#s1">Part 2 §01</a>
+        <span class="arrow">→</span>
+        <a href="generativestats.html">Part 3</a>
+        <span class="path-note">From measurement-level concerns through ANOVA's DV requirements to choosing the right likelihood family for binary, count, or ordinal outcomes.</span>
+      </div>
     </div>
-  </section>
+    <div class="path-row">
+      <div class="path-name">Thinking like a psychometrician</div>
+      <div class="path-seq">
+        <a href="psychometrics_teaching_v2.html" class="b">Part B2</a>
+        <span class="arrow">→</span>
+        <a href="reliability_final.html" class="b">Part B3</a>
+        <span class="arrow">→</span>
+        <a href="stats_part2_v2.html">Part 2</a>
+        <span class="arrow">→</span>
+        <a href="effect_size_power.html">Part 4</a>
+        <span class="path-note">Modern psychometric reliability, then the LMM bridge from Track B back into the inferential machinery, then what it implies for power.</span>
+      </div>
+    </div>
+  </div>
 
-</main>
+  <div class="design-note">
+    <div class="design-label">Design note</div>
+    Track A uses a warm <strong>ink/paper/amber</strong> palette with Cormorant Garamond + Epilogue + DM Mono. Track B uses a cooler <strong>navy/cream/teal</strong> palette with Playfair Display + Source Serif 4 + Source Sans 3 + JetBrains Mono. The two visual identities are deliberately distinct so you can tell at a glance which track a page belongs to, while the cross-links between sites keep the learning paths connected.
+  </div>
+</section>
 
+<!-- ════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════ -->
 <footer>
-  Teaching resource &mdash; Inferential Statistics &bull; Swansea University
+  <p><strong>Statistical Foundations &amp; Psychometric Methods</strong> — A Teaching Collection</p>
+  <p style="opacity:0.7;">7 self-contained sites · 4 + 3 across two tracks · all mobile-friendly</p>
+  <p style="margin-top:0.6rem; font-size:0.7rem; letter-spacing:0.08em;">
+    <a href="lln_website_v2.html">Part 1</a>
+    &nbsp;·&nbsp;
+    <a href="stats_part2_v2.html">Part 2</a>
+    &nbsp;·&nbsp;
+    <a href="generativestats.html">Part 3</a>
+    &nbsp;·&nbsp;
+    <a href="effect_size_power.html">Part 4</a>
+    &nbsp;·&nbsp;
+    <a href="measurement_fallacies.html">B1</a>
+    &nbsp;·&nbsp;
+    <a href="psychometrics_teaching_v2.html">B2</a>
+    &nbsp;·&nbsp;
+    <a href="reliability_final.html">B3</a>
+  </p>
 </footer>
 
-<script>
-  var tossCount = 0;
-  var probs = [.5, .25, .125, .0625, .03125];
-  var verdicts = [
-    "One heads. Unusual? Not at all &mdash; it happens half the time with a fair coin. Barely anyone would suspect Pete yet.",
-    "Two in a row. Still not very surprising &mdash; there is a one-in-four chance of this. Most hands would stay down.",
-    "Three in a row. Getting a little eyebrow-raising now &mdash; but one-in-eight is still not rare enough to cause real suspicion.",
-    "Four in a row. One-in-sixteen. A few hands might be going up now. Are you starting to wonder?",
-    "Five in a row. p = 0.031 &mdash; below the conventional 0.05 threshold. By standard null hypothesis logic, you would <em>reject the null</em> that Pete's coin is fair. Five free rounds of drinks: statistically significant."
-  ];
-
-  function nextToss() {
-    if (tossCount >= 5) return;
-    var c = document.getElementById('c' + tossCount);
-    c.textContent = 'H';
-    c.className = 'coin heads flip-anim';
-    setTimeout(function() { c.className = 'coin heads'; }, 400);
-    tossCount++;
-
-    var p = probs[tossCount - 1];
-    var pct = p * 100;
-
-    var fill = document.getElementById('bar-fill');
-    var barW = Math.max(pct * 1.8, 4);
-    fill.style.width = barW + '%';
-    if (tossCount <= 2) fill.style.background = 'var(--blue)';
-    else if (tossCount <= 4) fill.style.background = 'var(--amber)';
-    else fill.style.background = 'var(--red)';
-
-    document.getElementById('prob-pct').textContent = (p * 100).toFixed(1) + '%';
-    document.getElementById('toss-count').textContent = tossCount + ' / 5';
-
-    var pEl = document.getElementById('p-val');
-    pEl.textContent = 'p = ' + p.toFixed(3);
-    pEl.className = 's-val' + (p < .05 ? ' red' : (p < .15 ? ' amber' : ''));
-
-    document.getElementById('verdict').innerHTML = verdicts[tossCount - 1];
-
-    if (tossCount >= 5) document.getElementById('flip-btn').disabled = true;
-  }
-
-  function resetToss() {
-    tossCount = 0;
-    for (var i = 0; i < 5; i++) {
-      var c = document.getElementById('c' + i);
-      c.textContent = '?';
-      c.className = 'coin';
-    }
-    var fill = document.getElementById('bar-fill');
-    fill.style.width = '0%';
-    fill.style.background = 'var(--blue)';
-    document.getElementById('prob-pct').textContent = '\u2014';
-    document.getElementById('toss-count').textContent = '0 / 5';
-    var pEl = document.getElementById('p-val');
-    pEl.textContent = '\u2014';
-    pEl.className = 's-val';
-    document.getElementById('verdict').innerHTML = '';
-    document.getElementById('flip-btn').disabled = false;
-  }
-
-  var priorMessages = {
-    honest: '<div class="callout">Even with five heads &mdash; a statistically significant result &mdash; your strong prior that Pete is honest gives you good reason to remain sceptical. Five consecutive heads is improbable, but so is scrupulously honest Pete deciding to cheat you. The p-value tells you the probability of the data <em>given</em> the null hypothesis; it says nothing about how likely the null hypothesis itself is, given what you already know.</div>',
-    joker: '<div class="callout amber">Pete being a known joker raises the prior probability that something funny is going on. You might have started to suspect the coin as early as toss three &mdash; and that would be perfectly rational. Your stronger prior against a fair game means the evidence tips you over into suspicion sooner. Bayesian updating formalises exactly this intuition.</div>',
-    cheat: '<div class="callout amber">If you already know Pete is a notorious cheat, you might not have accepted the first bet at all &mdash; or you would have watched his hands very carefully from the outset. Your prior is so strongly against a fair game that even one heads feels like confirmation. It would take substantial evidence in the other direction to convince you Pete had gone straight.</div>'
-  };
-
-  function setPrior(type, el) {
-    document.querySelectorAll('.prior-card').forEach(function(c) { c.className = 'prior-card'; });
-    el.className = 'prior-card active';
-    document.getElementById('prior-result').innerHTML = priorMessages[type];
-  }
-
-  document.querySelectorAll('.prior-card').forEach(function(card) {
-    card.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter' || e.key === ' ') { card.click(); }
-    });
-  });
-
-  // Nav active state on scroll
-  var sections = document.querySelectorAll('section[id]');
-  var navLinks = document.querySelectorAll('nav a');
-  window.addEventListener('scroll', function() {
-    var scrollY = window.scrollY + 100;
-    sections.forEach(function(sec) {
-      if (scrollY >= sec.offsetTop && scrollY < sec.offsetTop + sec.offsetHeight) {
-        navLinks.forEach(function(a) {
-          a.className = a.getAttribute('href') === '#' + sec.id ? 'active' : '';
-        });
-      }
-    });
-  }, { passive: true });
-</script>
 </body>
 </html>
