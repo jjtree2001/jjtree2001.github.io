@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Numbers We Don't Earn — Three Fallacies of Psychological Measurement</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=Source+Sans+3:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Track B unified palette — Measurement & Psychometrics */
+    --navy: #1a2540;
+    --navy-light: #2c3d5e;
+    --cream: #f7f4ef;
+    --cream-mid: #ede9e1;
+    --cream-dark: #d8d3ca;
+    --teal: #1D9E75;
+    --teal-mid: #5DCAA5;
+    --teal-pale: #E1F5EE;
+    --coral: #D85A30;
+    --coral-pale: #FAECE7;
+    --amber: #BA7517;
+    --amber-mid: #FAC775;
+    --amber-pale: #FAEEDA;
+    --muted: #5a6070;
+    --border: #d8d3ca;
+    --display: 'Playfair Display', Georgia, serif;
+    --serif: 'Source Serif 4', Georgia, serif;
+    --sans: 'Source Sans 3', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+    /* Legacy aliases */
+    --teal-light: var(--teal-pale);
+    --coral-light: var(--coral-pale);
+    --amber-light: var(--amber-pale);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--navy);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.75;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    background: var(--navy);
+    color: #fff;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    height: 52px;
+    z-index: 100;
+    font-family: 'Source Serif 4', serif;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+  }
+  nav .brand { font-weight: 600; color: var(--teal-mid); font-size: 14px; margin-right: auto; }
+  nav a { color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.2s; white-space: nowrap; }
+  nav a:hover { color: #fff; }
+
+  /* HERO */
+  .hero {
+    background: var(--navy);
+    color: #fff;
+    padding: 5rem 2rem 4rem;
+    text-align: center;
+  }
+  .hero .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--teal-mid);
+    margin-bottom: 1.2rem;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 600;
+    line-height: 1.2;
+    max-width: 760px;
+    margin: 0 auto 1.5rem;
+  }
+  .hero h1 em { font-style: italic; color: var(--teal-mid); }
+  .hero .subtitle {
+    font-size: 17px;
+    color: rgba(255,255,255,0.65);
+    max-width: 620px;
+    margin: 0 auto;
+    font-weight: 300;
+  }
+
+  /* LAYOUT */
+  .container { max-width: 780px; margin: 0 auto; padding: 0 2rem; }
+
+  section { padding: 4rem 0 3rem; border-bottom: 1px solid var(--border); }
+  section:last-child { border-bottom: none; }
+
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 0.6rem;
+    font-weight: 400;
+  }
+
+  h2 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.9rem;
+    font-weight: 600;
+    line-height: 1.25;
+    margin-bottom: 1.5rem;
+    color: var(--navy);
+  }
+  h3 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.25rem;
+    font-weight: 400;
+    font-style: italic;
+    margin: 2rem 0 0.75rem;
+    color: var(--navy);
+  }
+  p { margin-bottom: 1.1rem; color: var(--navy); }
+  p:last-child { margin-bottom: 0; }
+
+  /* CALLOUT BOXES */
+  .callout {
+    border-left: 3px solid var(--teal);
+    background: var(--teal-light);
+    padding: 1rem 1.25rem;
+    margin: 1.75rem 0;
+    border-radius: 0 6px 6px 0;
+  }
+  .callout.amber { border-color: var(--amber); background: var(--amber-light); }
+  .callout.coral { border-color: var(--coral); background: var(--coral-light); }
+  .callout .label {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    color: var(--teal);
+    font-family: 'Source Serif 4', serif;
+  }
+  .callout.amber .label { color: var(--amber); }
+  .callout.coral .label { color: var(--coral); }
+  .callout p { margin-bottom: 0; font-size: 15.5px; }
+
+  /* FALLACY OVERVIEW CARDS */
+  .fallacy-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 1rem;
+    margin: 1.75rem 0;
+  }
+  .fallacy-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.1rem 1.25rem;
+    background: #fff;
+    border-top: 3px solid var(--coral);
+  }
+  .fallacy-card .verdict {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    color: var(--coral);
+  }
+  .fallacy-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+  .fallacy-card p { font-size: 14px; margin: 0; color: var(--muted); line-height: 1.55; }
+
+  /* FORMULA DISPLAY */
+  .formula-block {
+    background: var(--navy);
+    color: #fff;
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+    margin: 1.75rem 0;
+    text-align: center;
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+  .formula-block .formula {
+    font-size: 1.35rem;
+    letter-spacing: 0.02em;
+    color: var(--teal-mid);
+    margin-bottom: 0.6rem;
+  }
+  .formula-block .gloss {
+    font-size: 13px;
+    color: rgba(255,255,255,0.55);
+    font-family: 'Source Serif 4', serif;
+    font-weight: 300;
+  }
+
+  /* PAIN RATING DEMO (Section 2) */
+  .pain-demo {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 2rem;
+    margin: 1.75rem 0;
+  }
+  .pain-demo h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+    color: var(--navy);
+  }
+  .pain-people {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+  .pain-person {
+    background: var(--cream);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+  }
+  .pain-person .who { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+  .pain-person .says {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--navy);
+    font-weight: 600;
+  }
+  .pain-person .says-label { font-size: 12px; color: var(--muted); font-style: italic; }
+  .pain-bar-wrap { margin: 1rem 0 0.3rem; }
+  .pain-bar-track {
+    height: 10px;
+    background: var(--cream-dark);
+    border-radius: 5px;
+    overflow: hidden;
+    position: relative;
+  }
+  .pain-bar-fill {
+    height: 100%;
+    background: linear-gradient(to right, var(--teal), var(--amber), var(--coral));
+    border-radius: 5px;
+    transition: width 0.4s ease;
+  }
+  .pain-scale-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 0.3rem;
+  }
+  .pain-experience-label { font-size: 12px; color: var(--muted); margin-top: 0.5rem; font-style: italic; }
+  .pain-shuffle {
+    text-align: center;
+    margin-top: 1.25rem;
+  }
+  .pain-shuffle button {
+    background: var(--navy);
+    color: #fff;
+    border: none;
+    padding: 0.55rem 1.4rem;
+    border-radius: 6px;
+    font-family: 'Source Serif 4', serif;
+    font-size: 14px;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+    transition: background 0.2s;
+  }
+  .pain-shuffle button:hover { background: var(--navy-light); }
+
+  /* ORDINAL FALLACY INTERACTIVE (Section 3) */
+  .ordinal-box {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 2rem;
+    margin: 1.75rem 0;
+  }
+  .ordinal-box h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--navy);
+  }
+  .ordinal-box .intro-line { font-size: 14px; color: var(--muted); margin-bottom: 1.5rem; }
+  .preset-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+  }
+  .preset-btn {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    color: var(--navy);
+    padding: 0.4rem 0.9rem;
+    border-radius: 5px;
+    font-family: 'Source Serif 4', serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .preset-btn:hover { background: var(--cream-dark); }
+  .preset-btn.active {
+    background: var(--navy);
+    color: #fff;
+    border-color: var(--navy);
+  }
+  .curvature-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .curvature-row label { font-size: 13px; color: var(--muted); min-width: 110px; }
+  .curvature-row input[type=range] { flex: 1; accent-color: var(--teal); cursor: pointer; }
+  .curvature-row .val { font-size: 13px; font-weight: 600; min-width: 50px; text-align: right; color: var(--navy); }
+
+  .scale-canvas-wrap { margin: 1.5rem 0 0.5rem; }
+  #scale-canvas { width: 100%; height: 240px; display: block; }
+
+  .ordinal-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+  .ord-stat {
+    background: var(--cream);
+    border-radius: 6px;
+    padding: 0.75rem;
+    text-align: center;
+  }
+  .ord-stat .ord-label { font-size: 11px; color: var(--muted); letter-spacing: 0.05em; margin-bottom: 0.25rem; text-transform: uppercase; }
+  .ord-stat .ord-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--navy);
+  }
+  .ord-stat .ord-value.teal { color: var(--teal); }
+  .ord-stat .ord-value.coral { color: var(--coral); }
+
+  .effect-readout {
+    background: var(--navy);
+    color: #fff;
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin-top: 1rem;
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  .effect-readout em { color: var(--teal-mid); font-style: italic; }
+  .effect-readout .big {
+    font-size: 2rem;
+    color: var(--teal-mid);
+    display: block;
+    margin-top: 0.25rem;
+    letter-spacing: 0.02em;
+  }
+
+  /* INSTRUMENT DEMO (Section 4) */
+  .instrument-demo {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.75rem;
+    margin: 1.75rem 0;
+  }
+  .instrument-demo h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--navy);
+  }
+  .rulers-wrap { margin: 1rem 0; }
+  #rulers-svg { width: 100%; height: 220px; display: block; }
+
+  .dif-demo {
+    background: var(--cream);
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin-top: 1.25rem;
+  }
+  .dif-demo h5 {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 400;
+    margin-bottom: 0.75rem;
+    font-family: 'Source Serif 4', serif;
+  }
+  #dif-svg { width: 100%; height: 180px; display: block; }
+
+  /* SUMMARY CARDS */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .summary-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.1rem 1.25rem;
+    background: #fff;
+  }
+  .summary-card .s-label {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+  .summary-card h4 { font-family: 'Playfair Display', serif; font-size: 1rem; margin-bottom: 0.4rem; }
+  .summary-card p { font-size: 14px; color: var(--muted); margin: 0; line-height: 1.5; }
+
+  /* INLINE REFS */
+  .ref { font-size: 13px; color: var(--muted); font-style: italic; }
+
+  footer {
+    background: var(--navy);
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    padding: 2rem;
+    font-size: 13px;
+    font-family: 'Source Serif 4', serif;
+  }
+  footer strong { color: rgba(255,255,255,0.7); }
+
+  @media (max-width: 640px) {
+    body { font-size: 16px; line-height: 1.65; }
+    nav { padding: 0 1rem; gap: 1rem; height: 46px; font-size: 11px; }
+    nav .brand { font-size: 12px; }
+    .hero { padding: 3rem 1.2rem 2.5rem; }
+    .hero h1 { font-size: 1.6rem; }
+    .hero .subtitle { font-size: 0.92rem; }
+    .container { padding: 0 1.1rem; max-width: 100%; }
+    section { padding: 2.5rem 0 2rem; }
+    h2 { font-size: 1.4rem; margin-bottom: 1rem; }
+    h3 { font-size: 1.05rem; margin-top: 1.4rem; }
+    .fallacy-grid { grid-template-columns: 1fr; gap: 0.7rem; }
+    .summary-grid { grid-template-columns: 1fr; gap: 0.7rem; }
+    .pain-people { grid-template-columns: 1fr; }
+    .pain-demo, .ordinal-box, .instrument-demo { padding: 1.1rem 1rem; }
+    .ordinal-stats { grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    .ord-stat { padding: 0.6rem 0.4rem; }
+    .ord-stat .ord-value { font-size: 1.1rem; }
+    .effect-readout { padding: 0.85rem 1rem; font-size: 0.88rem; }
+    .effect-readout .big { font-size: 1.4rem; }
+    .preset-row { gap: 0.4rem; }
+    .preset-btn { padding: 0.35rem 0.7rem; font-size: 12px; }
+    .curvature-row { flex-wrap: wrap; gap: 0.5rem; }
+    .curvature-row label { min-width: 0; flex: 1 1 100%; }
+    .formula-block { padding: 1rem 1.1rem; }
+    .formula-block .formula { font-size: 0.95rem; word-break: break-word; }
+    .callout { padding: 0.85rem 1rem; }
+    .callout p { font-size: 0.85rem; }
+    #scale-canvas { height: 200px; }
+    #rulers-svg { height: 180px; }
+    #dif-svg { height: 160px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="brand">Track B · Part 1</span>
+  <a href="#overview">Overview</a>
+  <a href="#opinion">Opinion</a>
+  <a href="#ordinal">Ordinal</a>
+  <a href="#instrument">Instrument</a>
+  <a href="#responses">Responses</a>
+  <a href="psychometrics_teaching_v2.html" style="color:rgba(93,202,165,0.85)">→ B2</a>
+  <a href="reliability_final.html" style="color:rgba(93,202,165,0.65)">B3</a>
+</nav>
+
+<div class="hero">
+  <div class="eyebrow">Measurement &amp; Psychometrics · Part B1 of 3</div>
+  <h1>The numbers we don't <em>earn</em></h1>
+  <p class="subtitle">Three fallacies lurking inside every Likert scale, wellbeing questionnaire, and pain rating in psychology.</p>
+  <p style="font-family:'Source Sans 3',sans-serif; font-size:11px; letter-spacing:0.15em; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-top:1.4rem;">
+    Companion track to the four-part <a href="lln_website_v2.html" style="color:#5DCAA5; text-decoration:none">Statistical Foundations</a> series. Reads naturally after <a href="stats_part2_v2.html#s1" style="color:#5DCAA5; text-decoration:none">Part 2 §01 (How ANOVA actually works)</a>.
+  </p>
+</div>
+
+<!-- SECTION 1: OVERVIEW -->
+<section id="overview">
+<div class="container">
+  <div class="section-label">Section 1</div>
+  <h2>Before the statistics: does the measurement even count?</h2>
+
+  <p>The <a href="stats_part2_v2.html#s1">"What kind of DV does ANOVA need?" prelude in Part 2 §01</a> of the Foundations series spent its time inside ANOVA — showing that the dependent variable has to be measured at interval level or above for group means to be meaningful summaries. But that prelude took interval-level measurement as a given. It didn't ask the more uncomfortable question: <em>do we actually have it?</em></p>
+
+  <p>When a participant circles <strong>7</strong> on a 1–10 pain scale, three separate assumptions ride silently on that number — and almost none of them are ever tested:</p>
+
+  <div class="fallacy-grid">
+    <div class="fallacy-card">
+      <div class="verdict">Fallacy 1</div>
+      <h4>The fallacy of opinion</h4>
+      <p>Your 7 and my 7 refer to the same internal experience. Subjective equivalence across people is assumed, not demonstrated.</p>
+    </div>
+    <div class="fallacy-card">
+      <div class="verdict">Fallacy 2</div>
+      <h4>The ordinal fallacy</h4>
+      <p>The gap from 4 to 5 equals the gap from 6 to 7. Equal spacing between scale points is assumed, not demonstrated.</p>
+    </div>
+    <div class="fallacy-card">
+      <div class="verdict">Fallacy 3</div>
+      <h4>The fallacy of the instrument</h4>
+      <p>My questionnaire and your questionnaire measure the same construct. Instrument equivalence, and invariance across groups, is assumed, not demonstrated.</p>
+    </div>
+  </div>
+
+  <p>These are not fringe complaints. They have occupied philosophers of measurement — Joel Michell, Paul Meehl, and others — for decades. Michell goes as far as calling psychology's unthinking use of numerical scales a <em>pathology</em>: we adopt the machinery of quantitative science (means, variances, correlations, factor loadings) without first establishing that the thing we are measuring has quantitative structure at all. Classical test theory's familiar equation</p>
+
+  <div class="formula-block">
+    <div class="formula">X = T + e</div>
+    <div class="gloss">observed score = true score + error</div>
+  </div>
+
+  <p>encourages exactly this shortcut. Researchers read <em>T</em> as if it were a direct proxy for some latent ability — treating the observed score as a slightly-noisy readout of the underlying construct. CTT itself warns against this, but the warning rarely survives contact with applied research.</p>
+
+  <div class="callout amber">
+    <div class="label">What this page is not</div>
+    <p>This is not the "summed scores lose information" argument from classical test theory — that one sits on a separate page. This page is the deeper layer beneath it: before you worry about whether summing is the right aggregation, you should worry about whether the numbers you are summing are numbers at all.</p>
+  </div>
+</div>
+</section>
+
+<!-- SECTION 2: FALLACY OF OPINION -->
+<section id="opinion">
+<div class="container">
+  <div class="section-label">Section 2</div>
+  <h2>The fallacy of opinion</h2>
+
+  <p>A GP asks two patients to rate their pain on a 0–10 scale. Both say <strong>7</strong>. The clinical note records the same number for both. The subsequent repeated-measures ANOVA treats those two 7s as identical observations, contributing identically to the group mean and the within-subjects error term.</p>
+
+  <p>But are they the same experience? We have no way of knowing. The patient who fractured her wrist last year and remembers that as a 9 has one internal benchmark for what a 7 feels like. The patient whose worst prior experience was a migraine he rated 4 has a different one. Their 7s are anchored in different personal histories, different tolerance thresholds, and — quite possibly — different underlying nociceptive responses.</p>
+
+  <div class="pain-demo">
+    <h4>Two people, both say "7"</h4>
+    <div class="pain-people" id="pain-people">
+      <!-- filled by JS -->
+    </div>
+    <div class="pain-shuffle">
+      <button id="shuffle-pain">Show a different possibility</button>
+    </div>
+    <p style="font-size:13px; color: var(--muted); margin-top:1rem; text-align:center; font-style:italic;">
+      The reported number is the same. The underlying experience could be anywhere along the scale — and we have no instrument that can tell us.
+    </p>
+  </div>
+
+  <p>This is what makes self-report measurement uniquely difficult. In physics, if you and I measure the length of a table and both get 52 inches, we are appealing to an external, shared, operationally-defined reference: the inch. The scale is <em>outside</em> the observer. With a pain rating, the scale is <em>inside</em> the observer — calibrated privately, with no mechanism for cross-person alignment. The number travels from a private reference frame into a public dataset, where it is then treated as though it came from a shared one.</p>
+
+  <p>This is the backbone of essentially every survey-based subfield: wellbeing research, personality psychology, attitudinal research, quality-of-life studies in medicine. The entire inferential apparatus assumes that subjective scale anchors are, on average, shared across the population — an assumption that is rarely tested and, where tested (through anchoring-vignette studies, differential item functioning, or qualitative follow-ups), is often violated.</p>
+
+  <div class="callout coral">
+    <div class="label">The uncomfortable point</div>
+    <p>Averaging subjective ratings from 300 participants does not eliminate this problem. If individuals' personal scales are miscalibrated in systematic ways — tied to culture, gender, age, clinical history — then the "noise" is structured bias, not random error. No amount of N solves structured bias.</p>
+  </div>
+</div>
+</section>
+
+<!-- SECTION 3: ORDINAL FALLACY -->
+<section id="ordinal">
+<div class="container">
+  <div class="section-label">Section 3</div>
+  <h2>The ordinal fallacy</h2>
+
+  <p>Suppose — charitably — that we solve the first problem. Everyone's subjective scale is perfectly calibrated. My 7 and your 7 reliably refer to the same underlying amount of whatever the construct is. We still have a second, equally serious problem: the <em>spacing</em> between the numbers on the scale.</p>
+
+  <p>When we compute a group mean from a set of Likert responses, we treat the scale as <em>interval-level</em>. That is, we assume the distance from 1 to 2 equals the distance from 2 to 3, which equals the distance from 6 to 7. Only under this assumption does arithmetic — summing, averaging, computing variances — correspond to anything meaningful on the underlying construct.</p>
+
+  <p>There is no a priori reason to believe this assumption holds. Consider a pain scale where 1 = "none," 4 = "moderate," 7 = "worst imaginable." Is the jump from 1 to 4 really the same distance as the jump from 4 to 7? Almost certainly not: the ceiling is a hard, qualitative threshold that compresses the upper end. Or consider a wellbeing item anchored at "strongly disagree" through "strongly agree." The jump from neutral to "agree" may be psychologically enormous, while "agree" to "strongly agree" may be trivial.</p>
+
+  <p>What Joel Michell calls the <em>ordinal fallacy</em> is the slide from ordered response categories to the assumption of quantitative structure. Scales like Likert give us ranks — an ordering — but the numbers themselves are a convenience. Michell's deeper point (1999, 2008) is that standard psychometric techniques — factor analysis, IRT, coefficient alpha — <em>assume</em> quantitative structure in order to run. They do not independently test for it. A factor loading is a correlation between an item and a latent score; it says nothing about whether the latent variable has the additive structure required for interval measurement.</p>
+
+  <h3>See the fallacy at work</h3>
+
+  <p>Here is a small trial dataset: 60 participants, randomly assigned to a drug or placebo arm, rating their pain relief on a 7-point scale. Under the standard analytic assumption — that the 7 scale points are equally spaced on the underlying construct — the drug arm reports a moderate benefit over placebo. Drag the slider to change only the assumption about scale spacing. The data never change.</p>
+
+  <div class="ordinal-box">
+    <h4>Bend the scale, watch the effect size move</h4>
+    <p class="intro-line">The response distributions are fixed. Only the assumed spacing of the 7 scale points on the underlying interval continuum is changing.</p>
+
+    <div class="preset-row">
+      <button class="preset-btn active" data-curve="1.0">Equal spacing (Likert default)</button>
+      <button class="preset-btn" data-curve="0.22">Upper end compressed</button>
+      <button class="preset-btn" data-curve="4.5">Upper end stretched</button>
+    </div>
+
+    <div class="curvature-row">
+      <label>Upper / lower slope</label>
+      <input type="range" min="-1.6" max="1.6" value="0" step="0.02" id="curve-slider">
+      <span class="val" id="curve-val">1.00</span>
+    </div>
+
+    <div class="scale-canvas-wrap">
+      <canvas id="scale-canvas"></canvas>
+    </div>
+
+    <div class="ordinal-stats">
+      <div class="ord-stat">
+        <div class="ord-label">Drug mean</div>
+        <div class="ord-value teal" id="mean-drug">—</div>
+      </div>
+      <div class="ord-stat">
+        <div class="ord-label">Placebo mean</div>
+        <div class="ord-value coral" id="mean-placebo">—</div>
+      </div>
+      <div class="ord-stat">
+        <div class="ord-label">Mean difference</div>
+        <div class="ord-value" id="mean-diff">—</div>
+      </div>
+    </div>
+
+    <div class="effect-readout">
+      Cohen's <em>d</em><span class="big" id="cohens-d">—</span>
+      <span style="font-size:13px; color: rgba(255,255,255,0.6); font-family: 'Source Serif 4', serif;" id="d-interp">—</span>
+    </div>
+  </div>
+
+  <p>Under equal spacing the effect is moderate — the kind of result that would appear in a published trial with a clean p-value and a plausible clinical story. Compress the top of the scale (the "ceiling" interpretation) and the same raw data produces a smaller effect. Stretch the top (the "catastrophic pain is qualitatively different" interpretation) and the same raw data produces a considerably larger one. Nothing about the underlying responses changed. The only thing that changed was an assumption we never tested in the first place.</p>
+
+  <div class="callout coral">
+    <div class="label">Michell's pathology</div>
+    <p>Michell argues that psychology has, for most of its history, treated the quantitative structure of its constructs as a methodological convenience rather than an empirical claim. Stevens's (1946) taxonomy of nominal / ordinal / interval / ratio was meant as a warning — a classification of what inference each scale type supports. In practice it became a licence: if a scale has more than a handful of points and looks vaguely symmetric, researchers proceed with interval-level statistics and move on.</p>
+  </div>
+
+  <h3>The formal escape — and why it's hard</h3>
+
+  <p>There is a formal condition under which ordinal data can be promoted to interval status: <em>additive conjoint measurement</em>, developed by Luce and Tukey (1964). The idea is that if two variables combine additively to produce an outcome in a way that satisfies certain axioms (cancellation, solvability, Archimedean), then you have demonstrated — not assumed — quantitative structure. Almost no psychological measurement instrument has ever been shown to satisfy these axioms. Michell's verdict: we quantify without proof, and then act as though the proof had been supplied.</p>
+
+  <p>The practical response from within psychometrics has been to treat this as a nuisance best handled statistically. Item response theory (IRT), for example, estimates item difficulties and person abilities on a latent logit scale that <em>is</em> interval by construction — but the "interval-ness" comes from the model, not from an independent demonstration that the construct has that structure. The numbers are still earned by assumption, just a more principled-looking one.</p>
+</div>
+</section>
+
+<!-- SECTION 4: FALLACY OF THE INSTRUMENT -->
+<section id="instrument">
+<div class="container">
+  <div class="section-label">Section 4</div>
+  <h2>The fallacy of the instrument</h2>
+
+  <p>The third fallacy is the one that bites hardest in applied research. Suppose we solve fallacy 1 (subjective scales are calibrated) and fallacy 2 (the spacing is genuinely interval). We still haven't answered: <em>does my questionnaire measure the same thing as yours?</em></p>
+
+  <p>In the physical sciences, this is trivial. If I measure your height with my ruler and you measure it with yours, we should get the same number — because "length" has a shared, well-defined operational reference. In psychology, two instruments both claiming to measure "wellbeing" frequently disagree substantially. Why?</p>
+
+  <div class="instrument-demo">
+    <h4>Two rulers, one "construct"?</h4>
+    <svg id="rulers-svg" viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg">
+      <!-- Construct A: hedonic -->
+      <circle cx="180" cy="55" r="30" fill="#E1F5EE" stroke="#1D9E75" stroke-width="2"/>
+      <text x="180" y="52" text-anchor="middle" font-family="Playfair Display" font-size="13" fill="#1D9E75" font-weight="600">Hedonic</text>
+      <text x="180" y="68" text-anchor="middle" font-family="Source Serif 4" font-size="11" fill="#1D9E75">affect</text>
+
+      <!-- Construct B: eudaimonic -->
+      <circle cx="520" cy="55" r="30" fill="#FAEEDA" stroke="#BA7517" stroke-width="2"/>
+      <text x="520" y="52" text-anchor="middle" font-family="Playfair Display" font-size="13" fill="#BA7517" font-weight="600">Meaning</text>
+      <text x="520" y="68" text-anchor="middle" font-family="Source Serif 4" font-size="11" fill="#BA7517">&amp; purpose</text>
+
+      <!-- Questionnaire A box -->
+      <rect x="60" y="130" width="240" height="60" rx="6" fill="#fff" stroke="#d8d3ca"/>
+      <text x="180" y="152" text-anchor="middle" font-family="Playfair Display" font-size="13" fill="#1a2540" font-weight="600">Questionnaire A</text>
+      <text x="180" y="170" text-anchor="middle" font-family="Source Serif 4" font-size="11" fill="#5a6070" font-style="italic">"Overall wellbeing scale"</text>
+
+      <!-- Questionnaire B box -->
+      <rect x="400" y="130" width="240" height="60" rx="6" fill="#fff" stroke="#d8d3ca"/>
+      <text x="520" y="152" text-anchor="middle" font-family="Playfair Display" font-size="13" fill="#1a2540" font-weight="600">Questionnaire B</text>
+      <text x="520" y="170" text-anchor="middle" font-family="Source Serif 4" font-size="11" fill="#5a6070" font-style="italic">"Overall wellbeing scale"</text>
+
+      <!-- Loading lines -->
+      <line x1="180" y1="85" x2="165" y2="130" stroke="#1D9E75" stroke-width="3"/>
+      <line x1="180" y1="85" x2="220" y2="130" stroke="#BA7517" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+      <line x1="520" y1="85" x2="480" y2="130" stroke="#1D9E75" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <line x1="520" y1="85" x2="540" y2="130" stroke="#BA7517" stroke-width="3"/>
+
+      <!-- Labels on lines -->
+      <text x="145" y="112" font-family="Source Serif 4" font-size="10" fill="#1D9E75" font-weight="600">λ = .75</text>
+      <text x="222" y="112" font-family="Source Serif 4" font-size="10" fill="#BA7517">λ = .30</text>
+      <text x="460" y="112" font-family="Source Serif 4" font-size="10" fill="#1D9E75">λ = .35</text>
+      <text x="540" y="112" font-family="Source Serif 4" font-size="10" fill="#BA7517" font-weight="600">λ = .70</text>
+    </svg>
+    <p style="font-size:13px; color: var(--muted); margin-top:0.25rem; font-style:italic;">Both questionnaires claim to measure "wellbeing." Questionnaire A is mostly loaded on hedonic affect, with a side of meaning. Questionnaire B is mostly loaded on meaning, with a side of affect. They are <em>congeneric</em> — measuring related but distinct latent blends — not parallel.</p>
+  </div>
+
+  <p>This is the problem of <em>congeneric</em> measurement. Two instruments can both load on the same general construct while also loading, differentially, on distinct sub-constructs. They are not interchangeable readouts of the same latent variable. A participant scoring high on questionnaire A may score only moderately on questionnaire B — not because they are inconsistent, but because the instruments are tapping different weighted blends of the same underlying landscape. Treating them as equivalent, or combining them in meta-analysis as if they were, produces the conceptual equivalent of averaging temperatures measured in Celsius with temperatures measured in decibels.</p>
+
+  <p>Psychometrics offers formal tools to diagnose this: tests of <em>tau-equivalence</em> ask whether items within a single instrument load equally on their common factor (a necessary condition for Cronbach's α to be valid as a reliability estimate). <em>Congeneric models</em> allow loadings to vary. Comparisons across instruments require either explicit multi-trait multi-method designs or structural-equation-model-based linking. Most applied papers use none of these (Graham, 2006; Peterson &amp; Kim, 2013).</p>
+
+  <h3>Measurement invariance: the same ruler for everyone?</h3>
+
+  <p>A second and closely related issue: even within a single instrument, does the scale work the same way for all groups? If an item on a depression inventory functions differently for men versus women — say, men are less likely to endorse the item "I feel tearful" at the same underlying depression level — then group comparisons using total scores are systematically distorted. This is <em>differential item functioning</em> (DIF), and its detection requires measurement-invariance testing: a hierarchy of model comparisons that asks whether factor loadings, intercepts, and residuals are equivalent across groups.</p>
+
+  <div class="dif-demo">
+    <h5>Differential item functioning: one item, two response curves</h5>
+    <svg id="dif-svg" viewBox="0 0 700 180" xmlns="http://www.w3.org/2000/svg">
+      <!-- Axes -->
+      <line x1="60" y1="20" x2="60" y2="150" stroke="#5a6070" stroke-width="1"/>
+      <line x1="60" y1="150" x2="640" y2="150" stroke="#5a6070" stroke-width="1"/>
+
+      <!-- Y axis label -->
+      <text x="15" y="85" font-family="Source Serif 4" font-size="10" fill="#5a6070" transform="rotate(-90, 15, 85)">P(endorse)</text>
+      <text x="350" y="175" text-anchor="middle" font-family="Source Serif 4" font-size="10" fill="#5a6070">Latent depression level (θ)</text>
+
+      <!-- Tick marks -->
+      <text x="55" y="155" text-anchor="end" font-family="Source Serif 4" font-size="9" fill="#5a6070">0</text>
+      <text x="55" y="25" text-anchor="end" font-family="Source Serif 4" font-size="9" fill="#5a6070">1</text>
+
+      <!-- Female curve (shifted left - lower threshold) -->
+      <path d="M 60 148 C 200 148, 260 25, 640 22" stroke="#D85A30" stroke-width="2.5" fill="none"/>
+      <text x="500" y="38" font-family="Source Serif 4" font-size="11" fill="#D85A30" font-weight="600" font-style="italic">Women</text>
+
+      <!-- Male curve (shifted right - higher threshold) -->
+      <path d="M 60 148 C 380 148, 440 25, 640 22" stroke="#1D9E75" stroke-width="2.5" fill="none"/>
+      <text x="500" y="58" font-family="Source Serif 4" font-size="11" fill="#1D9E75" font-weight="600" font-style="italic">Men</text>
+
+      <!-- Reference line at 0.5 -->
+      <line x1="60" y1="85" x2="640" y2="85" stroke="#d8d3ca" stroke-dasharray="3,3" stroke-width="1"/>
+      <text x="648" y="89" font-family="Source Serif 4" font-size="9" fill="#5a6070">.50</text>
+    </svg>
+    <p style="font-size:13px; color: var(--muted); margin-top:0.5rem; font-style:italic;">
+      The item "I feel tearful" crosses the 50% endorsement probability at a lower depression level for women than for men. At the same true depression level, a woman is more likely to endorse the item. A summed total score will therefore overestimate women's depression (or underestimate men's) — not because either group is misrepresenting, but because the item's difficulty is group-dependent.
+    </p>
+  </div>
+
+  <p>Measurement invariance is the formal name for the property we implicitly require whenever we compare groups on a psychological scale. Testing it requires multi-group confirmatory factor analysis or its IRT equivalent. These tests are standard in large-scale educational testing (PISA, TIMSS) — the field will not report cross-country comparisons without them — but remain rare in clinical, social, and health psychology, where group comparisons on raw summed scores dominate the literature.</p>
+
+  <div class="callout amber">
+    <div class="label">What psychometrics can and cannot do</div>
+    <p>Psychometrics can detect congeneric structure, DIF, and invariance failures when they exist. It cannot rescue an instrument whose underlying construct has no quantitative structure in the first place — the ordinal fallacy is upstream. Measurement invariance testing presupposes a measurement model, and the measurement model presupposes that "more" of the construct is a meaningful quantity at all.</p>
+  </div>
+</div>
+</section>
+
+<!-- SECTION 5: RESPONSES -->
+<section id="responses">
+<div class="container">
+  <div class="section-label">Section 5</div>
+  <h2>What the field does about all this</h2>
+
+  <p>The honest answer is: usually nothing. The bulk of applied psychology proceeds as if these fallacies did not exist, because the tools for addressing them are either unfamiliar, computationally demanding, or philosophically uncomfortable. But three broad responses are available, and each trades off rigour against tractability in a different way.</p>
+
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="s-label">Response 1</div>
+      <h4>Operationalism</h4>
+      <p>Pragmatic retreat: if a measure predicts behaviour, occupational outcomes, treatment response — its validity is demonstrated by use. The philosophical question of whether it captures a "real" quantitative construct is shelved. Most of working psychology is implicitly operationalist.</p>
+    </div>
+    <div class="summary-card">
+      <div class="s-label">Response 2</div>
+      <h4>Bayesian &amp; probabilistic modelling</h4>
+      <p>Don't assume exact measurement — model the uncertainty. Represent the latent construct with a posterior distribution rather than a point estimate. Propagate measurement error through downstream inferences. Hierarchical Bayesian models formalise what CTT only gestures at.</p>
+    </div>
+    <div class="summary-card">
+      <div class="s-label">Response 3</div>
+      <h4>IRT with explicit assumptions</h4>
+      <p>Abandon the pretence that raw Likert numbers are interval data. Estimate person abilities and item characteristics on a logit scale, and report the assumptions (unidimensionality, monotonicity, invariance) as testable claims. Imperfect but auditable.</p>
+    </div>
+  </div>
+
+  <p>The deeper response is philosophical. Michell and Meehl would both argue that the discipline needs to decide, explicitly, whether a given construct is genuinely quantitative — and if the answer is no, or unknown, to use methods appropriate to ordered categorical data rather than methods that silently presuppose a metric that was never earned. That means ordinal regression, nonparametric analogues of familiar tests, and probabilistic modelling approaches — not ANOVA on Likert sums.</p>
+
+  <p>For the student encountering this the first time, the practical upshot is not paralysis. It is <em>awareness</em>: when you read a paper that computes a mean Likert score, a paired-sample t-test on wellbeing, or a Cronbach's α on a seven-item depression scale, you now know what assumptions are riding underneath. You can ask whether the authors tested them — most won't have — and whether their conclusions would survive if those assumptions were weakened. Often they would; sometimes they wouldn't. The fact that the question is askable at all is the beginning of a more honest measurement culture.</p>
+
+  <div class="callout">
+    <div class="label">The one-line summary</div>
+    <p>Psychology's statistics are a sophisticated edifice built on a foundation that is rarely inspected. The fallacies of opinion, ordinal structure, and the instrument are cracks in that foundation — not necessarily fatal, but worth knowing about before you trust the building with too much weight.</p>
+  </div>
+</div>
+</section>
+
+<footer>
+  <strong>Measurement &amp; Psychometrics · Part B1 of 3</strong> — Three Fallacies of Psychological Measurement<br>
+  <span style="display:inline-block; margin-top:0.6rem; font-size:11px; letter-spacing:0.1em;">
+    <strong style="color:#5DCAA5">B1</strong>
+    &nbsp;·&nbsp;
+    <a href="psychometrics_teaching_v2.html" style="color:#5DCAA5; text-decoration:none">B2 — Measuring What We Cannot See</a>
+    &nbsp;·&nbsp;
+    <a href="reliability_final.html" style="color:#5DCAA5; text-decoration:none">B3 — The Reliability Problem</a>
+  </span>
+  <br>
+  <span style="display:inline-block; margin-top:0.5rem; font-size:11px; letter-spacing:0.1em;">
+    Foundations series:
+    <a href="lln_website_v2.html" style="color:rgba(255,255,255,0.65); text-decoration:none">Part 1</a>
+    &nbsp;·&nbsp;
+    <a href="stats_part2_v2.html" style="color:rgba(255,255,255,0.65); text-decoration:none">Part 2</a>
+    &nbsp;·&nbsp;
+    <a href="generativestats.html" style="color:rgba(255,255,255,0.65); text-decoration:none">Part 3</a>
+    &nbsp;·&nbsp;
+    <a href="effect_size_power.html" style="color:rgba(255,255,255,0.65); text-decoration:none">Part 4</a>
+  </span>
+</footer>
+
+<script>
+// =============================================================
+// SECTION 2: PAIN DEMO — two people, same number, different experience
+// =============================================================
+const painContainer = document.getElementById('pain-people');
+const shuffleBtn = document.getElementById('shuffle-pain');
+
+const painScenarios = [
+  {
+    a: { who: "Patient A", trueExp: 72, says: 7, desc: "severe but manageable" },
+    b: { who: "Patient B", trueExp: 45, says: 7, desc: "uncomfortable, unfamiliar" }
+  },
+  {
+    a: { who: "Patient A", trueExp: 85, says: 7, desc: "worst they've ever felt" },
+    b: { who: "Patient B", trueExp: 60, says: 7, desc: "middle of their usual range" }
+  },
+  {
+    a: { who: "Patient A", trueExp: 55, says: 7, desc: "moderate, slightly alarmed" },
+    b: { who: "Patient B", trueExp: 78, says: 7, desc: "severe, stoic by nature" }
+  },
+  {
+    a: { who: "Patient A", trueExp: 40, says: 7, desc: "mild, but they're anxious" },
+    b: { who: "Patient B", trueExp: 80, says: 7, desc: "severe, high pain tolerance" }
+  }
+];
+let painIdx = 0;
+
+function renderPain(scenario) {
+  painContainer.innerHTML = '';
+  ['a', 'b'].forEach(key => {
+    const p = scenario[key];
+    const div = document.createElement('div');
+    div.className = 'pain-person';
+    div.innerHTML = `
+      <div class="who">${p.who}</div>
+      <div class="says">${p.says}</div>
+      <div class="says-label">"my pain is a seven"</div>
+      <div class="pain-bar-wrap">
+        <div class="pain-bar-track">
+          <div class="pain-bar-fill" style="width:${p.trueExp}%"></div>
+        </div>
+        <div class="pain-scale-labels"><span>0</span><span>10</span></div>
+      </div>
+      <div class="pain-experience-label">true experience: ${p.desc}</div>
+    `;
+    painContainer.appendChild(div);
+  });
+}
+renderPain(painScenarios[0]);
+shuffleBtn.addEventListener('click', () => {
+  painIdx = (painIdx + 1) % painScenarios.length;
+  renderPain(painScenarios[painIdx]);
+});
+
+// =============================================================
+// SECTION 3: ORDINAL FALLACY INTERACTIVE
+// =============================================================
+
+// Fixed distributions: counts of responses 1..7 in each arm (N = 30 each)
+// Drug pushes patients toward the upper end; placebo centred in the middle.
+const drugCounts    = [0, 1, 2, 4, 8, 10, 5];
+const placeboCounts = [1, 3, 6, 10, 7, 2, 1];
+
+// Piecewise-linear transform with breakpoint at the scale midpoint (x = 0.5).
+// r is the ratio of slope_upper / slope_lower.
+//   r = 1  -> uniform (equal spacing)
+//   r < 1  -> upper slope shallow -> upper end COMPRESSED (ceiling-effect reading)
+//   r > 1  -> upper slope steep  -> upper end STRETCHED (catastrophic reading)
+function transformPosition(i, r) {
+  const x = (i - 1) / 6;
+  const bp = 0.5;
+  const slope_low = 1 / (bp + r * (1 - bp));
+  const slope_high = r * slope_low;
+  const y = (x <= bp) ? slope_low * x : slope_low * bp + slope_high * (x - bp);
+  return 1 + y * 6;
+}
+
+function computeStats(counts, k) {
+  const positions = [1,2,3,4,5,6,7].map(i => transformPosition(i, k));
+  const n = counts.reduce((a,b)=>a+b, 0);
+  const mean = counts.reduce((acc, c, i) => acc + c * positions[i], 0) / n;
+  const variance = counts.reduce((acc, c, i) => acc + c * Math.pow(positions[i] - mean, 2), 0) / (n - 1);
+  return { mean, sd: Math.sqrt(variance), n, positions };
+}
+
+function computeCohensD(k) {
+  const d = computeStats(drugCounts, k);
+  const p = computeStats(placeboCounts, k);
+  // pooled SD
+  const pooledVar = ((d.n - 1) * d.sd * d.sd + (p.n - 1) * p.sd * p.sd) / (d.n + p.n - 2);
+  const pooledSD = Math.sqrt(pooledVar);
+  const mdiff = d.mean - p.mean;
+  return { drugMean: d.mean, placeboMean: p.mean, diff: mdiff, d: mdiff / pooledSD, positions: d.positions };
+}
+
+function interpretD(d) {
+  const ad = Math.abs(d);
+  if (ad < 0.15) return "negligible effect";
+  if (ad < 0.35) return "small effect";
+  if (ad < 0.65) return "moderate effect";
+  if (ad < 0.95) return "large effect";
+  return "very large effect";
+}
+
+// Canvas rendering
+const canvas = document.getElementById('scale-canvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+}
+
+function drawScale(k) {
+  const rect = canvas.getBoundingClientRect();
+  const W = rect.width;
+  const H = rect.height;
+  ctx.clearRect(0, 0, W, H);
+
+  const padL = 40, padR = 40;
+  const axisY_top = 55; // drug histogram axis
+  const axisY_scale = 130; // scale point line
+  const axisY_bot = 200; // placebo histogram axis
+  const plotW = W - padL - padR;
+
+  const positions = [1,2,3,4,5,6,7].map(i => transformPosition(i, k));
+
+  // x pixel for a position (positions are always in 1..7)
+  function xFor(pos) {
+    return padL + ((pos - 1) / 6) * plotW;
+  }
+
+  // --- Draw main horizontal axis (the interval continuum) ---
+  ctx.strokeStyle = '#5a6070';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(padL, axisY_scale);
+  ctx.lineTo(W - padR, axisY_scale);
+  ctx.stroke();
+
+  // axis label
+  ctx.font = "11px 'Source Serif 4'";
+  ctx.fillStyle = '#5a6070';
+  ctx.textAlign = 'center';
+  ctx.fillText("Underlying interval continuum", W / 2, H - 8);
+
+  // --- Draw scale points ---
+  positions.forEach((pos, i) => {
+    const x = xFor(pos);
+    // tick
+    ctx.strokeStyle = '#1a2540';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(x, axisY_scale - 5);
+    ctx.lineTo(x, axisY_scale + 5);
+    ctx.stroke();
+
+    // circle with label
+    ctx.fillStyle = '#1a2540';
+    ctx.beginPath();
+    ctx.arc(x, axisY_scale, 12, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#fff';
+    ctx.font = "bold 12px 'Playfair Display'";
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText((i + 1), x, axisY_scale);
+  });
+  ctx.textBaseline = 'alphabetic';
+
+  // --- Draw histograms ---
+  const maxCount = Math.max(...drugCounts, ...placeboCounts);
+  const barW = 20;
+
+  function drawHist(counts, baselineY, direction, colour, label) {
+    const scaleFactor = 40 / maxCount; // max bar height 40px
+    counts.forEach((c, i) => {
+      if (c === 0) return;
+      const x = xFor(positions[i]);
+      const h = c * scaleFactor;
+      ctx.fillStyle = colour;
+      if (direction === 'up') {
+        ctx.fillRect(x - barW/2, baselineY - h, barW, h);
+      } else {
+        ctx.fillRect(x - barW/2, baselineY, barW, h);
+      }
+    });
+
+    // group label
+    ctx.fillStyle = colour;
+    ctx.font = "italic 12px 'Playfair Display'";
+    ctx.textAlign = 'left';
+    ctx.fillText(label, padL, direction === 'up' ? baselineY + 14 : baselineY - 6);
+  }
+
+  drawHist(drugCounts, axisY_top + 45, 'up', '#1D9E75', 'Drug arm');
+  drawHist(placeboCounts, axisY_bot - 45, 'down', '#D85A30', 'Placebo arm');
+
+  // --- Draw group means as vertical markers on the axis ---
+  const stats = computeCohensD(k);
+  ctx.strokeStyle = '#1D9E75';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([4, 3]);
+  ctx.beginPath();
+  ctx.moveTo(xFor(stats.drugMean), axisY_top - 5);
+  ctx.lineTo(xFor(stats.drugMean), axisY_bot + 5);
+  ctx.stroke();
+
+  ctx.strokeStyle = '#D85A30';
+  ctx.beginPath();
+  ctx.moveTo(xFor(stats.placeboMean), axisY_top - 5);
+  ctx.lineTo(xFor(stats.placeboMean), axisY_bot + 5);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // labels for the means
+  ctx.fillStyle = '#1D9E75';
+  ctx.font = "bold 11px 'Source Serif 4'";
+  ctx.textAlign = 'center';
+  ctx.fillText("M̄", xFor(stats.drugMean), axisY_top - 10);
+
+  ctx.fillStyle = '#D85A30';
+  ctx.fillText("M̄", xFor(stats.placeboMean), axisY_bot + 18);
+}
+
+// Updating readouts
+const curveSlider = document.getElementById('curve-slider');
+const curveVal = document.getElementById('curve-val');
+const meanDrugEl = document.getElementById('mean-drug');
+const meanPlaceboEl = document.getElementById('mean-placebo');
+const meanDiffEl = document.getElementById('mean-diff');
+const dEl = document.getElementById('cohens-d');
+const dInterp = document.getElementById('d-interp');
+const presetBtns = document.querySelectorAll('.preset-btn');
+
+// Slider uses log scale: slider value s maps to r = exp(s).
+// Range s in [-1.6, 1.6] -> r in approx [0.20, 4.95].
+function sliderToR(s) { return Math.exp(parseFloat(s)); }
+function rToSlider(r) { return Math.log(r); }
+
+function updateOrdinal() {
+  const r = sliderToR(curveSlider.value);
+  curveVal.textContent = r.toFixed(2);
+  const stats = computeCohensD(r);
+  meanDrugEl.textContent = stats.drugMean.toFixed(2);
+  meanPlaceboEl.textContent = stats.placeboMean.toFixed(2);
+  meanDiffEl.textContent = stats.diff.toFixed(2);
+  dEl.textContent = stats.d.toFixed(2);
+  dInterp.textContent = interpretD(stats.d);
+  drawScale(r);
+
+  // Update preset button active state (compare in r-space)
+  presetBtns.forEach(btn => {
+    const br = parseFloat(btn.dataset.curve);
+    btn.classList.toggle('active', Math.abs(Math.log(br) - parseFloat(curveSlider.value)) < 0.08);
+  });
+}
+
+curveSlider.addEventListener('input', updateOrdinal);
+
+presetBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const targetR = parseFloat(btn.dataset.curve);
+    const targetS = rToSlider(targetR);
+    const startS = parseFloat(curveSlider.value);
+    const duration = 420;
+    const t0 = performance.now();
+    function step(t) {
+      const p = Math.min(1, (t - t0) / duration);
+      const e = 1 - Math.pow(1 - p, 3);
+      curveSlider.value = (startS + (targetS - startS) * e).toFixed(3);
+      updateOrdinal();
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  });
+});
+
+// Init
+resizeCanvas();
+updateOrdinal();
+window.addEventListener('resize', () => {
+  resizeCanvas();
+  updateOrdinal();
+});
+</script>
+</body>
+</html>
