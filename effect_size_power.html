@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Effect Size & Power Analysis — A Student Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&family=Epilogue:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1714;
+  --paper: #f7f3ee;
+  --paper-mid: #ede8e1;
+  --paper-dark: #ddd6cb;
+  --amber: #c07c2a;
+  --amber-light: #e8a44a;
+  --amber-pale: #f5e8d0;
+  --teal: #2a6b6e;
+  --teal-light: #4a9b9e;
+  --teal-pale: #eaf4f4;
+  --red: #b84040;
+  --red-pale: #f5eaea;
+  --violet: #6b4a8e;
+  --violet-light: #9b7abf;
+  --violet-pale: #f0eaf8;
+  --muted: #7a7068;
+  --ink-mid: #4a4540;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Epilogue', sans-serif;
+  --mono: 'DM Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--serif); font-size: 19px; line-height: 1.75; color: var(--ink); background: var(--paper); }
+h1 { font-family: var(--serif); font-weight: 300; line-height: 1.1; letter-spacing: -0.01em; }
+h2 { font-family: var(--serif); font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 600; line-height: 1.15; margin-bottom: 1.4rem; letter-spacing: -0.01em; color: var(--ink); }
+h3 { font-family: var(--serif); font-size: 1.35rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--teal); }
+p { margin-bottom: 1.1rem; }
+p:last-child { margin-bottom: 0; }
+em { font-style: italic; }
+strong { font-weight: 600; }
+.container { max-width: 900px; margin: 0 auto; padding: 0 2rem; }
+
+/* Header */
+header { background: var(--ink); color: white; padding: 4.5rem 0 3.5rem; position: relative; overflow: hidden; }
+header::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--violet), var(--teal-light), var(--amber)); }
+.header-tag { font-family: var(--sans); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--amber-light); margin-bottom: 1rem; font-weight: 700; }
+header h1 { color: white; margin-bottom: 0.7rem; font-size: clamp(2rem, 4vw, 2.9rem); }
+header h1 em { font-style: italic; color: var(--amber-light); }
+header .subtitle { color: rgba(255,255,255,0.7); font-size: 1.05rem; margin-bottom: 0; font-style: italic; font-weight: 300; }
+header .part-link { font-family: var(--sans); font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-top: 1.4rem; }
+header .part-link a { color: var(--teal-light); text-decoration: none; }
+header .part-link a:hover { color: var(--amber-light); }
+
+/* Nav */
+nav { background: var(--ink); border-bottom: 1px solid #2a2520; position: sticky; top: 0; z-index: 100; }
+nav .container { display: flex; overflow-x: auto; scrollbar-width: none; }
+nav .container::-webkit-scrollbar { display: none; }
+nav a { display: block; padding: 0.85rem 1rem; font-family: var(--sans); font-size: 0.65rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.6); text-decoration: none; white-space: nowrap; border-bottom: 2.5px solid transparent; transition: all 0.18s; }
+nav a:hover { color: var(--amber-light); border-bottom-color: var(--amber); }
+nav a.active { color: var(--amber-light); border-bottom-color: var(--amber); font-weight: 700; }
+
+/* Sections */
+section { padding: 3.5rem 0; border-bottom: 1px solid var(--paper-dark); }
+section:last-child { border-bottom: none; }
+.section-num { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.1em; color: var(--amber); margin-bottom: 0.6rem; display: block; }
+
+/* Family cards */
+.family-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 1.5rem 0; }
+.family-card { background: var(--paper-mid); border: 1px solid var(--paper-dark); border-radius: 6px; padding: 1.2rem; }
+.family-card.focus { border-color: var(--amber); background: var(--amber-pale); }
+.family-badge { font-family: var(--sans); font-size: 0.6rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.4rem; }
+.family-card.focus .family-badge { color: var(--amber); }
+.family-card h3 { font-family: var(--serif); font-size: 1.05rem; color: var(--ink); margin-bottom: 0.4rem; }
+.family-examples { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); margin: 0.2rem 0 0.5rem; }
+.family-question { font-size: 0.92rem; color: var(--ink-mid); font-style: italic; margin-bottom: 0.4rem; }
+.family-used { font-size: 0.82rem; color: var(--muted); }
+
+/* Widgets */
+.widget { background: var(--paper-mid); border: 1px solid var(--paper-dark); border-radius: 6px; padding: 1.75rem; margin: 1.75rem 0; }
+.widget-title { font-family: var(--sans); font-size: 0.65rem; font-weight: 700; color: var(--amber); text-transform: uppercase; letter-spacing: 0.18em; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--paper-dark); }
+
+/* Sliders */
+.slider-row { display: flex; align-items: center; gap: 12px; margin-bottom: 0.85rem; }
+.slider-row label { font-family: var(--sans); font-size: 0.7rem; color: var(--muted); min-width: 160px; flex-shrink: 0; font-weight: 500; }
+.slider-row input[type=range] { flex: 1; accent-color: var(--amber); cursor: pointer; }
+.slider-val { font-family: var(--mono); font-size: 0.85rem; font-weight: 500; color: var(--ink); min-width: 55px; text-align: right; }
+
+/* Stat pills */
+.stat-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 1.2rem 0; }
+.stat-pill { background: var(--paper); border: 1px solid var(--paper-dark); border-radius: 4px; padding: 0.65rem 1rem; text-align: center; min-width: 100px; }
+.pill-val { font-family: var(--mono); font-size: 1.15rem; font-weight: 500; color: var(--ink); line-height: 1.2; }
+.pill-lbl { font-family: var(--sans); font-size: 0.6rem; color: var(--muted); margin-top: 4px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700; }
+
+/* Badges */
+.sig-badge { display: inline-block; padding: 4px 12px; border-radius: 3px; font-family: var(--sans); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em; }
+.sig { background: var(--teal-pale); color: var(--teal); border: 1px solid #b0d8da; }
+.nonsig { background: var(--red-pale); color: var(--red); border: 1px solid #e0b0b0; }
+.d-badge { font-family: var(--sans); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.08em; padding: 3px 10px; border-radius: 3px; display: inline-block; margin-left: 6px; vertical-align: middle; text-transform: uppercase; }
+.d-negligible { background: var(--paper-dark); color: var(--muted); }
+.d-small { background: var(--amber-pale); color: var(--amber); }
+.d-medium { background: var(--amber-pale); color: var(--amber); border: 1px solid #ddc89a; }
+.d-large { background: var(--teal-pale); color: var(--teal); }
+.d-verylarge { background: var(--violet-pale); color: var(--violet); }
+
+/* Formula */
+.formula-box { background: var(--ink); color: var(--amber-light); border-left: 4px solid var(--amber); padding: 0.95rem 1.3rem; margin: 1rem 0; font-family: var(--mono); font-size: 0.88rem; border-radius: 4px; line-height: 1.6; }
+.formula-box sub { font-size: 0.85em; }
+
+/* Toggle buttons */
+.toggle-group { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.2rem; }
+.toggle-btn { padding: 6px 16px; border: 1.5px solid var(--ink); border-radius: 3px; background: white; color: var(--ink); font-family: var(--sans); font-size: 0.7rem; font-weight: 500; cursor: pointer; transition: all 0.15s; letter-spacing: 0.04em; }
+.toggle-btn.active { background: var(--ink); color: white; }
+.toggle-btn:hover:not(.active) { background: var(--paper-dark); }
+
+/* Select */
+select { padding: 7px 11px; border: 1px solid var(--paper-dark); border-radius: 4px; font-family: var(--sans); font-size: 0.78rem; background: white; color: var(--ink); cursor: pointer; }
+
+/* Key messages */
+.key-msg { background: var(--amber-pale); border: 1px solid #ddc89a; border-radius: 4px; padding: 1rem 1.3rem; margin: 1.2rem 0; font-size: 0.95rem; color: var(--ink); }
+.key-msg strong { display: block; margin-bottom: 0.4rem; font-family: var(--sans); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.18em; color: var(--amber); font-weight: 700; }
+.info-note { font-size: 0.85rem; color: var(--ink-mid); background: var(--paper); border: 1px solid var(--paper-dark); border-radius: 4px; padding: 0.7rem 0.95rem; margin-top: 0.75rem; line-height: 1.55; }
+
+/* Power result */
+.power-result { background: var(--ink); border-radius: 4px; padding: 1.5rem; margin: 1.2rem 0; text-align: center; }
+.big-n { font-family: var(--serif); font-size: 3.8rem; font-weight: 600; line-height: 1; color: var(--amber-light); }
+.big-n-lbl { font-family: var(--sans); font-size: 0.78rem; color: rgba(247,243,238,0.7); margin-top: 6px; letter-spacing: 0.06em; }
+.big-n-total { font-family: var(--mono); font-size: 0.78rem; color: rgba(247,243,238,0.5); margin-top: 4px; }
+
+/* Chart wrappers */
+.chart-wrap { position: relative; width: 100%; }
+
+/* Highlights */
+.hl { color: var(--teal); font-weight: 600; }
+.hl-a { color: var(--amber); font-weight: 600; }
+.hl-g { color: var(--teal); font-weight: 600; }
+
+/* Grid layouts */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+
+/* Legend */
+.legend { display: flex; gap: 18px; flex-wrap: wrap; font-family: var(--sans); font-size: 0.7rem; color: var(--muted); margin-bottom: 10px; font-weight: 500; }
+.legend span { display: flex; align-items: center; gap: 5px; }
+.leg-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+/* Footer */
+footer { background: var(--ink); color: rgba(247,243,238,0.5); padding: 2.5rem 0; text-align: center; font-family: var(--sans); font-size: 0.78rem; }
+footer p { color: rgba(247,243,238,0.5); margin-bottom: 0.4rem; }
+footer p:last-child { margin-bottom: 0; }
+footer a { color: var(--teal-light); text-decoration: none; }
+footer a:hover { color: var(--amber-light); }
+footer strong { color: rgba(247,243,238,0.85); }
+
+/* Responsive */
+@media (max-width: 640px) {
+  body { font-size: 17px; line-height: 1.65; }
+  .container { padding: 0 1.1rem; }
+  h2 { font-size: 1.5rem; }
+  h3 { font-size: 1.15rem; }
+  header { padding: 3rem 0 2.5rem; }
+  header h1 { font-size: 1.6rem; }
+  header .subtitle { font-size: 0.95rem; }
+  nav .container { padding: 0 1rem; }
+  nav a { padding: 0.75rem 0.7rem; font-size: 0.6rem; }
+  section { padding: 2.5rem 0; }
+  .family-grid, .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .widget { padding: 1.2rem 1rem; }
+  .slider-row { flex-wrap: wrap; gap: 8px; }
+  .slider-row label { min-width: 0; flex: 1 1 100%; }
+  .slider-row input[type=range] { flex: 1 1 70%; }
+  .slider-val { flex-shrink: 0; }
+  .stat-pill { min-width: 0; flex: 1 1 calc(50% - 5px); padding: 0.55rem 0.7rem; }
+  .pill-val { font-size: 1rem; }
+  .formula-box { padding: 0.85rem 1rem; font-size: 0.78rem; word-break: break-word; }
+  .toggle-btn { padding: 5px 11px; font-size: 0.65rem; }
+  .toggle-group { gap: 6px; }
+  .key-msg { padding: 0.9rem 1rem; font-size: 0.88rem; }
+  .info-note { padding: 0.6rem 0.8rem; font-size: 0.8rem; }
+  .power-result { padding: 1.2rem; }
+  .big-n { font-size: 2.6rem; }
+  table { font-size: 0.8rem; }
+  table th, table td { padding: 0.5rem 0.5rem !important; }
+  .legend { font-size: 0.65rem; gap: 10px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="header-tag">Statistical Foundations · Part 4 of 4</div>
+    <h1>Effect Size &amp; <em>Power Analysis</em></h1>
+    <p class="subtitle">Moving beyond p &lt; .05 — how big is your effect, and how many participants do you actually need?</p>
+    <div class="part-link">Continues from <a href="generativestats.html">Part 3 — Where does your data come from?</a></div>
+  </div>
+</header>
+
+<nav>
+  <div class="container">
+    <a href="#overview">Overview</a>
+    <a href="#why">Why effect size?</a>
+    <a href="#computing">Computing d</a>
+    <a href="#denominator">The denominator</a>
+    <a href="#bridge">Replication</a>
+    <a href="#power">Power analysis</a>
+    <a href="#ancred" style="color:#c07c2a; font-weight:600;">Advanced: AnCred</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════
+     OVERVIEW
+═══════════════════════════════════════════════ -->
+<section id="overview">
+  <div class="container">
+    <div class="section-num">Overview</div>
+    <h2>What is an effect size?</h2>
+
+    <p>An effect size is a standardised, unit-free measure of <em>how big</em> an effect is — independent of how many participants you collected. It answers the question that a p-value cannot: not just <em>is there an effect?</em>, but <em>how meaningful is it?</em></p>
+
+    <p>There is no single effect size statistic. Which one you use depends on the kind of research question you are asking. There are three main families, each asking the "how big?" question in a different way:</p>
+
+    <div class="family-grid">
+      <div class="family-card focus">
+        <div class="family-badge">Our focus today</div>
+        <h3>Mean difference</h3>
+        <div class="family-examples">Cohen's d, Hedges' g, Glass's Δ</div>
+        <div class="family-question">"How far apart are these two group means?"</div>
+        <div class="family-used">Used in: t-tests, experimental designs, clinical trials, lab replication studies</div>
+      </div>
+      <div class="family-card">
+        <div class="family-badge">Also important</div>
+        <h3>Variance explained</h3>
+        <div class="family-examples">r², η², ω², f²</div>
+        <div class="family-question">"How much of the outcome does my predictor account for?"</div>
+        <div class="family-used">Used in: correlation, regression, ANOVA, factor analysis</div>
+      </div>
+      <div class="family-card">
+        <div class="family-badge">Also important</div>
+        <h3>Categorical / risk</h3>
+        <div class="family-examples">Odds ratio, risk ratio, NNT</div>
+        <div class="family-question">"How does group membership change the odds of an outcome?"</div>
+        <div class="family-used">Used in: clinical trials, epidemiology, public health research</div>
+      </div>
+    </div>
+
+    <p>Today we focus on <strong>mean difference effect sizes</strong> — specifically Cohen's d and its variants — because this is what you need for the experimental two-group designs at the heart of most lab studies. When you read a study and want to replicate it, d is typically what you are working from.</p>
+
+    <div class="key-msg">
+      <strong>Why not just use p-values?</strong>
+      A p-value tells you whether an effect is likely to be real (rather than a sampling fluke). An effect size tells you whether it is worth caring about. You need both. A tiny, trivial effect can generate p &lt; .001 with a large enough sample. Effect sizes are not dependent on N — they are a property of the phenomenon itself.
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 1: WHY EFFECT SIZE?
+═══════════════════════════════════════════════ -->
+<section id="why">
+  <div class="container">
+    <div class="section-num">Section 1</div>
+    <h2>Why effect size? The problem with p &lt; .05</h2>
+
+    <p>The p-value tells you the probability of observing a result as extreme as yours, assuming the null hypothesis is true. Cross the threshold of .05 and researchers declare "significance" — but this threshold is partly just a function of how many participants you collected.</p>
+
+    <p>The widget below fixes the true effect at d = 0.2 (a small effect by conventional standards). Watch what happens to the p-value as you increase the sample size. The underlying effect does not change at all.</p>
+
+    <div class="widget">
+      <div class="widget-title">The p-value problem — same effect, different N</div>
+
+      <div class="slider-row">
+        <label>Sample size per group (N)</label>
+        <input type="range" min="10" max="500" step="5" value="40" id="pval-n" oninput="updatePval(+this.value)">
+        <span class="slider-val" id="pval-n-out">40</span>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-pill">
+          <div class="pill-val">0.20</div>
+          <div class="pill-lbl">Cohen's d (fixed)</div>
+        </div>
+        <div class="stat-pill">
+          <div class="pill-val" id="pval-t-out">—</div>
+          <div class="pill-lbl">t-statistic</div>
+        </div>
+        <div class="stat-pill">
+          <div class="pill-val" id="pval-p-out">—</div>
+          <div class="pill-lbl">p-value (two-tailed)</div>
+        </div>
+        <div class="stat-pill" style="min-width: 130px;">
+          <div id="pval-sig-out" style="font-size:13px; font-weight:600; margin-top:4px;">—</div>
+          <div class="pill-lbl">verdict</div>
+        </div>
+      </div>
+
+      <div class="chart-wrap" style="height: 190px;">
+        <canvas id="pvalChart"></canvas>
+      </div>
+
+      <div class="info-note" id="pval-msg"></div>
+    </div>
+
+    <p>At small N, p is large and the effect is "non-significant." At large N, p is tiny and the effect is "highly significant." Yet the thing being measured — the true effect — is the same d = 0.2 throughout. Significance is about <em>precision of estimation</em>, not about the size of the phenomenon.</p>
+
+    <div class="key-msg">
+      <strong>Cohen's benchmarks — use with caution</strong>
+      Jacob Cohen (1988) offered rough labels: d = 0.2 (small), d = 0.5 (medium), d = 0.8 (large). These are starting points for intuition, not universal standards. A d of 0.2 might be negligible in a lab reaction time study but clinically important in a drug trial where the outcome is mortality. Always interpret effect size in context.
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 2: COMPUTING d
+═══════════════════════════════════════════════ -->
+<section id="computing">
+  <div class="container">
+    <div class="section-num">Section 2</div>
+    <h2>Computing Cohen's d</h2>
+
+    <p>Cohen's d expresses the mean difference between two groups in standard deviation units. It is structurally identical to a z-score — instead of asking "how many SDs above the mean is this single observation?", we ask "how many SDs apart are these two group means?"</p>
+
+    <div class="formula-box">d = (M₁ − M₂) / SD<sub>pooled</sub></div>
+
+    <p>The result is unit-free. Whether you measured reaction times in milliseconds or exam scores as percentages, d = 0.5 means the same thing: the two group means are half a standard deviation apart. This makes effects comparable across different studies and different measurement scales.</p>
+
+    <p>A natural way to visualise d is as two overlapping distributions. When d = 0 the groups are completely indistinguishable. As d increases, the distributions separate and the overlap shrinks.</p>
+
+    <div class="widget">
+      <div class="widget-title">Cohen's d calculator — overlapping distributions</div>
+
+      <div class="slider-row">
+        <label>Group 1 mean (M₁)</label>
+        <input type="range" min="40" max="80" step="1" value="50" id="d-m1" oninput="updateDWidget()">
+        <span class="slider-val" id="d-m1-out">50</span>
+      </div>
+      <div class="slider-row">
+        <label>Group 2 mean (M₂)</label>
+        <input type="range" min="40" max="80" step="1" value="65" id="d-m2" oninput="updateDWidget()">
+        <span class="slider-val" id="d-m2-out">65</span>
+      </div>
+      <div class="slider-row">
+        <label>Pooled SD</label>
+        <input type="range" min="5" max="25" step="1" value="15" id="d-sd" oninput="updateDWidget()">
+        <span class="slider-val" id="d-sd-out">15</span>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-pill">
+          <div class="pill-val">
+            <span id="d-val-out">1.00</span>
+            <span class="d-badge d-large" id="d-badge">large</span>
+          </div>
+          <div class="pill-lbl">Cohen's d</div>
+        </div>
+        <div class="stat-pill">
+          <div class="pill-val" id="d-u3-out">84%</div>
+          <div class="pill-lbl">Cohen's U3</div>
+        </div>
+        <div class="stat-pill">
+          <div class="pill-val" id="d-ov-out">45%</div>
+          <div class="pill-lbl">Distribution overlap</div>
+        </div>
+      </div>
+
+      <div class="legend">
+        <span><span class="leg-dot" style="background:#2a6b6e;"></span> Group 1</span>
+        <span><span class="leg-dot" style="background:#b84040;"></span> Group 2</span>
+      </div>
+
+      <div class="chart-wrap" style="height: 240px;">
+        <canvas id="dChart"></canvas>
+      </div>
+
+      <div class="info-note" id="d-interp"></div>
+    </div>
+
+    <p>Cohen's U3 is a useful way to explain d to non-statisticians: it is the percentage of Group 1 scores that fall below the mean of Group 2. At d = 1.0, 84% of one group scores below the average of the other — a substantial separation. At d = 0.2, only 58% do — barely better than chance.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 3: THE DENOMINATOR PROBLEM
+═══════════════════════════════════════════════ -->
+<section id="denominator">
+  <div class="container">
+    <div class="section-num">Section 3</div>
+    <h2>The denominator problem — all are compromises</h2>
+
+    <p>Cohen's d divides the raw mean difference by a standard deviation. But <em>which</em> standard deviation? This turns out to be a genuine methodological question with no single correct answer. Different choices produce different variants of d, each making different assumptions about what the "reference" variability in your population should be.</p>
+
+    <p>The honest conclusion: <strong>all are defensible compromises</strong>. The right choice depends on your data and your assumptions — and the differences between them are smallest when the two group SDs are similar.</p>
+
+    <div class="widget">
+      <div class="widget-title">Denominator comparison — same data, three answers</div>
+
+      <p style="font-size:13.5px; color:#555; margin-bottom:1rem; background:#f7f3ee; padding:0.6rem 0.9rem; border-radius:6px;">
+        Scenario: Control group M = 50, SD = 10, n = 20 &nbsp;·&nbsp; Treatment group M = 62, SD = 16, n = 20
+      </p>
+
+      <div class="toggle-group">
+        <button class="toggle-btn active" onclick="setDenom('cohen', this)">Cohen's d (pooled SD)</button>
+        <button class="toggle-btn" onclick="setDenom('glass', this)">Glass's Δ (control SD only)</button>
+        <button class="toggle-btn" onclick="setDenom('hedges', this)">Hedges' g (bias-corrected)</button>
+      </div>
+
+      <div id="denom-panel" style="min-height: 200px;"></div>
+    </div>
+
+    <div class="key-msg">
+      <strong>Practical guidance</strong>
+      For most lab replication studies with random assignment, Cohen's d (pooled SD) is the standard default and what you will typically see reported. Glass's Δ is justified when you have a genuine untreated baseline group and believe the treatment may have altered score variability. Hedges' g is preferred with small samples (n &lt; 20 per group) because it corrects for the slight upward bias in small-sample SD estimates. With reasonable sample sizes all three converge.
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 4: THE REPLICATION BRIDGE
+═══════════════════════════════════════════════ -->
+<section id="bridge">
+  <div class="container">
+    <div class="section-num">Section 4</div>
+    <h2>The replication bridge — from effect size to sample size</h2>
+
+    <p>You have read a published study. It reports Cohen's d = 0.5 for a two-group comparison. Your task is to replicate it. The critical question: <strong>how many participants do you need?</strong></p>
+
+    <p>To answer this, we need to be clear about the difference between two related but very different things: the <span class="hl">standard deviation (SD)</span> and the <span class="hl-a">standard error (SE)</span>.</p>
+
+    <div class="grid-2" style="margin: 1.2rem 0; gap: 14px;">
+      <div style="background: #eaf4f4; border-radius:8px; padding:1rem; border-left: 3px solid #2a6b6e;">
+        <strong style="color:#1a1714;">Standard deviation (SD)</strong>
+        <p style="font-size:14px; color:#444; margin-top:0.4rem; margin-bottom:0;">A property of the <em>population</em>. Describes how much individual scores vary around the mean. Does not change as you collect more participants — it is a stable characteristic of what you are measuring.</p>
+      </div>
+      <div style="background: #f5e8d0; border-radius:8px; padding:1rem; border-left: 3px solid #b84040;">
+        <strong style="color:#c07c2a;">Standard error (SE)</strong>
+        <p style="font-size:14px; color:#444; margin-top:0.4rem; margin-bottom:0;">A property of your <em>estimate</em>. Describes how precisely your sample mean estimates the true population mean. Shrinks as N increases — larger samples produce more stable mean estimates.</p>
+      </div>
+    </div>
+
+    <p>The key relationship is: <strong>SE = SD / √N</strong></p>
+
+    <p>The SD gives you the raw material — the inherent variability in what you are measuring. The SE is what happens to that variability when you estimate a mean from a sample of size N. A population can have enormous spread, yet your estimate of the mean can be very precise if N is large enough. This is exactly the σ/√N machinery developed in <a href="lln_website_v2.html">Part 1</a> — repurposed here as the engine that determines whether a true effect of size d is detectable at a given sample size.</p>
+
+    <div class="widget">
+      <div class="widget-title">SD vs SE — population spread vs. precision of your mean estimate</div>
+
+      <div class="slider-row">
+        <label>Sample size per group (N)</label>
+        <input type="range" min="2" max="200" step="1" value="20" id="se-n" oninput="updateSE(+this.value)">
+        <span class="slider-val" id="se-n-out">20</span>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-pill">
+          <div class="pill-val">15.00</div>
+          <div class="pill-lbl">Population SD (fixed)</div>
+        </div>
+        <div class="stat-pill">
+          <div class="pill-val" id="se-se-out">—</div>
+          <div class="pill-lbl">Standard error (SE)</div>
+        </div>
+        <div class="stat-pill">
+          <div class="pill-val" id="se-ratio-out">—</div>
+          <div class="pill-lbl">Precision gain vs. SD</div>
+        </div>
+      </div>
+
+      <div class="legend">
+        <span><span class="leg-dot" style="background:#2a6b6e;"></span> Population distribution (SD — fixed)</span>
+        <span><span class="leg-dot" style="background:#b84040;"></span> Sampling distribution of mean (SE — shrinks with N)</span>
+      </div>
+
+      <div class="chart-wrap" style="height: 240px;">
+        <canvas id="seChart"></canvas>
+      </div>
+
+      <div class="info-note" id="se-note"></div>
+    </div>
+
+    <p>This distinction matters for power analysis because it is the SE that determines how detectable your effect is. Your test statistic (t or z) divides the raw mean difference by the SE. As N increases, SE shrinks, so the same true effect d produces a larger and larger test statistic — eventually reliably clearing the significance threshold.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 5: POWER ANALYSIS
+═══════════════════════════════════════════════ -->
+<section id="power">
+  <div class="container">
+    <div class="section-num">Section 5</div>
+    <h2>Power analysis — reverse engineering your sample size</h2>
+
+    <p>Power analysis works backwards from the question: <em>given the effect I expect to find, how many participants do I need to detect it reliably?</em> You supply three inputs and the analysis outputs the required N.</p>
+
+    <div class="grid-3" style="margin: 1.2rem 0;">
+      <div style="background:#ede8e1; border-radius:8px; padding:0.9rem; text-align:center;">
+        <div style="font-size:1.5rem; font-weight:700; color:#1a1714;">d</div>
+        <div style="font-size:12px; color:#888; margin-top:3px;">Expected effect size (from the study you are replicating)</div>
+      </div>
+      <div style="background:#ede8e1; border-radius:8px; padding:0.9rem; text-align:center;">
+        <div style="font-size:1.5rem; font-weight:700; color:#1a1714;">α</div>
+        <div style="font-size:12px; color:#888; margin-top:3px;">Acceptable false positive rate (typically .05)</div>
+      </div>
+      <div style="background:#ede8e1; border-radius:8px; padding:0.9rem; text-align:center;">
+        <div style="font-size:1.5rem; font-weight:700; color:#1a1714;">1−β</div>
+        <div style="font-size:12px; color:#888; margin-top:3px;">Desired power — probability of detecting the effect if real (typically .80)</div>
+      </div>
+    </div>
+
+    <p>The underlying logic is geometric. You have two overlapping distributions of your test statistic. The <span class="hl">null distribution</span> (blue) is centred on zero — the "no effect" world. The <span class="hl-a">alternative distribution</span> (orange) is shifted by the true effect. Power (green shaded area) is the proportion of the alternative distribution that clears your critical value. Increasing N squeezes both distributions tighter, separating them. Power analysis finds the N at which the overlap drops to your acceptable threshold.</p>
+
+    <div class="widget">
+      <div class="widget-title">Power analysis calculator</div>
+
+      <div class="grid-3" style="margin-bottom:1.25rem; align-items:end;">
+        <div>
+          <div style="font-size:13px; color:#555; margin-bottom:6px;">Effect size (d) — from the study you're replicating</div>
+          <div class="slider-row" style="margin-bottom:0;">
+            <input type="range" min="0.1" max="2.0" step="0.05" value="0.50" id="pow-d" oninput="updatePower()" style="flex:1; accent-color:#1a1714;">
+            <span class="slider-val" id="pow-d-out">0.50</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:13px; color:#555; margin-bottom:6px;">Alpha level (α)</div>
+          <select id="pow-alpha" onchange="updatePower()">
+            <option value="0.05" selected>α = .05 (conventional)</option>
+            <option value="0.01">α = .01 (stricter)</option>
+            <option value="0.10">α = .10 (more lenient)</option>
+          </select>
+        </div>
+        <div>
+          <div style="font-size:13px; color:#555; margin-bottom:6px;">Desired power</div>
+          <select id="pow-power" onchange="updatePower()">
+            <option value="0.70">70% power</option>
+            <option value="0.80" selected>80% power (conventional)</option>
+            <option value="0.90">90% power</option>
+            <option value="0.95">95% power</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="power-result">
+        <div class="big-n" id="pow-n-out">64</div>
+        <div class="big-n-lbl">participants needed per group</div>
+        <div class="big-n-total" id="pow-total-out">128 total</div>
+      </div>
+
+      <div class="legend" style="margin-top:1.25rem;">
+        <span><span class="leg-dot" style="background:#2a6b6e;"></span> Null distribution (H₀ true)</span>
+        <span><span class="leg-dot" style="background:#b84040;"></span> Alternative distribution (H₁ true)</span>
+        <span><span class="leg-dot" style="background:rgba(22,163,74,0.6);"></span> Power (area beyond critical value under H₁)</span>
+        <span><span class="leg-dot" style="background:rgba(220,38,38,0.4);"></span> α (area beyond critical value under H₀)</span>
+      </div>
+
+      <div class="chart-wrap" style="height: 270px;">
+        <canvas id="powChart"></canvas>
+      </div>
+
+      <div class="info-note" id="pow-note"></div>
+    </div>
+
+    <div class="key-msg">
+      <strong>The N-scaling rule — commit this to memory</strong>
+      Required N scales with the <em>square</em> of the effect size. Halve d → roughly quadruple N. This is why overestimating the effect size from a small pilot study is dangerous: the original estimate may be inflated by sampling error, and your replication will be designed for an effect that was over-optimistic. When replicating, consider using 90% power rather than 80%, or apply a modest downward correction to the published effect size to account for publication bias.
+    </div>
+
+    <p>Try the calculator: set d = 0.8 (large) and compare the N to d = 0.4 (medium). Then compare d = 0.4 to d = 0.2 (small). The quadrupling effect is dramatic — and explains why so many underpowered studies in the literature have failed to replicate.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 6: ANCRED — REVERSE BAYES
+═══════════════════════════════════════════════ -->
+<section id="ancred" style="background:#f4f2ee;">
+  <div class="container">
+    <div class="section-num">Advanced Section</div>
+    <h2>The AnCred framework — credibility beyond p &lt; .05</h2>
+
+    <!-- ─── THE CORE DIAGNOSIS ─── -->
+    <div style="background:#1a1714; color:white; border-radius:12px; padding:1.5rem 1.75rem; margin-bottom:1.75rem;">
+      <div style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#c07c2a; font-weight:700; margin-bottom:0.6rem;">The central problem</div>
+      <p style="color:#e8edf5; margin-bottom:0.75rem; font-size:1.05rem; line-height:1.7;">With a point null hypothesis — the conventional assumption that the true effect is <em>exactly</em> zero — statistical significance is ultimately just a function of how long you are willing to collect data. Because SE shrinks with N, the null and alternative distributions will always eventually separate, for any true effect however trivial. Run enough participants and even a meaningless difference becomes "statistically significant."</p>
+      <p style="color:#c8b8a4; margin-bottom:0; font-size:0.95rem;">The solution is to <strong style="color:white;">stretch the null</strong> — to replace the fictional point at zero with an honest region around zero that reflects what genuine scepticism or practical meaningfulness actually requires. Two frameworks do this in different ways: <strong style="color:#c07c2a;">Reverse Bayes / AnCred</strong> does it retrospectively from the data; <strong style="color:#c07c2a;">ROPE and Meehl's crud threshold</strong> do it prospectively before the study. Both address the same structural flaw.</p>
+    </div>
+
+    <!-- ─── THE POINT NULL PROBLEM EXPANDED ─── -->
+    <h3 style="font-size:1.15rem; color:#1a1714;">Why the point null is a straw man</h3>
+
+    <p>The point null says: "the true effect is precisely zero." But in the real world, no two groups are ever <em>exactly</em> identical. Any manipulation, any group difference, any intervention will move the mean by some amount — if only by a fraction. The question is never really <em>is the effect zero?</em> It is <em>is the effect large enough to matter?</em></p>
+
+    <p>Because SE = SD / √N, increasing N always shrinks the SE, which always squeezes the null and alternative distributions further apart. This means any true effect — even one too small to care about — will produce p &lt; .05 with a sufficiently large sample. Significance becomes a measure of your patience, not the importance of your finding.</p>
+
+    <p>Psychologist Paul Meehl identified this concretely with his concept of the <strong>crud factor</strong>: in psychology, almost any two groups you compare will differ on almost any measure you take, typically producing Cohen's d values around 0.2, purely because of the accumulated background correlation between all measured variables. A d of 0.2 is ambient noise — routinely observable, rarely meaningful. Yet with N = 200 per group it will produce p &lt; .001. The point null has nothing useful to say about this.</p>
+
+    <div class="key-msg">
+      <strong>The null-stretching solution</strong>
+      Instead of asking "does the effect differ from precisely zero?", ask "does the effect clear a region around zero that represents either (a) what a reasonable sceptic should be willing to concede is plausible, or (b) the minimum size we'd consider practically meaningful?" Both reframings force significance to mean something real rather than just reflecting accumulated N.
+    </div>
+
+    <!-- ─── WHY DOES SE SHRINK? ─── -->
+    <h3 style="font-size:1.15rem; color:#1a1714;">Why does this happen? The mathematics of averaging</h3>
+
+    <p>The root cause is not a flaw in how statisticians set up the test — it is a mathematical property of what a mean actually is. Understanding it removes the mystery.</p>
+
+    <p>When you compute a sample mean, you are adding up N scores and dividing by N. If each score is an independent observation from the same population, each one carries a fresh, non-redundant piece of information about the true mean. Because the information is independent, it accumulates — each new participant makes your estimate a little more stable. This is not a convention or a design choice; it is what happens algebraically when you average independent quantities. The formal result is that the variance of your mean estimate equals σ²/N, which gives a standard error of σ/√N.</p>
+
+    <p>So the SE shrinks by the square root of N not because of anything NHST is doing, but because <strong>averaging is inherently a precision-gaining operation</strong> whenever observations are independent. More independent observations → more stable mean → smaller SE. This would be equally true if you built a Bayesian model or a likelihood ratio test instead. It is a property of the estimator, not the inference framework built on top of it.</p>
+
+    <div style="background:white; border-radius:10px; border:1px solid #ddd6cb; padding:1.25rem 1.5rem; margin:1.25rem 0;">
+      <div style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#1a1714; margin-bottom:0.75rem;">A simple way to see it</div>
+      <p style="font-size:14.5px; color:#444; margin-bottom:0.75rem;">Imagine estimating the true weight of a coin by flipping it and counting heads. With 4 flips you might get 3 heads just by luck — your estimate of P(heads) = 0.75 is unstable. With 400 flips, extreme runs of luck get "outvoted" by the mass of typical outcomes — your estimate converges reliably on 0.5. Your estimate didn't get better because of the statistical test you chose. It got better because you averaged more independent coin flips. That is SE shrinking with N, in its simplest form.</p>
+      <p style="font-size:14.5px; color:#444; margin-bottom:0;">The key word throughout is <strong>independent</strong>. If your observations are not independent — say, you measured the same participant ten times and counted each measurement separately — the SE does not shrink at 1/√N, because repeat measurements from the same person share information rather than adding fresh information. This is why clustered data and repeated measures designs require more sophisticated models that account for the dependency structure: the Linear Mixed Models we built up in <a href="stats_part2_v2.html">Part 2</a>.</p>
+    </div>
+
+    <p>Now here is where the problem enters. The t-statistic that NHST computes is simply:</p>
+
+    <div class="formula-box">t = mean difference / SE &nbsp;&nbsp;=&nbsp;&nbsp; mean difference / (SD / √N)</div>
+
+    <p>Because SE appears in the <em>denominator</em>, and SE shrinks toward zero as N grows, the t-statistic grows toward infinity for <em>any</em> nonzero true effect — no matter how small that effect is. And because p is a function of t, p must eventually cross .05 for any true effect whatsoever, given a large enough sample. There is no escaping this: it is built into the algebra of averaging.</p>
+
+    <p>This is not a bug in the statistics — the estimator is doing exactly what it should, becoming more and more precise. The bug is in the interpretation: treating "the t-statistic cleared the threshold" as equivalent to "the effect is meaningfully large." Those are completely different claims, and the mathematics guarantees they will eventually come apart for any small but nonzero true effect collected with sufficient patience.</p>
+
+    <div class="key-msg">
+      <strong>The punchline for your studies</strong>
+      When you read a study with a tiny effect size and a very low p-value, ask: is this significant because the effect is large, or because the sample was enormous? The p-value cannot tell you. Effect size partially helps — but as the AnCred framework below shows, effect size alone is not enough either, because a large effect from a small noisy study can be just as misleading. What you need is a way to evaluate both the size of the effect <em>and</em> the precision with which it was estimated — simultaneously. That is exactly what the Scepticism Limit does.
+    </div>
+
+    <!-- ─── TWO ROUTES ─── -->
+    <div class="grid-2" style="margin:1.5rem 0; gap:14px;">
+      <div style="background:white; border:1.5px solid #1a1714; border-radius:10px; padding:1.1rem;">
+        <div style="font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#1a1714; margin-bottom:0.5rem;">Route 1 — Retrospective (data-driven)</div>
+        <strong style="font-size:1rem; color:#1a1714;">Reverse Bayes / AnCred (Matthews)</strong>
+        <p style="font-size:14px; color:#555; margin-top:0.4rem; margin-bottom:0;">Compute from the observed CI what the null region <em>must</em> be to make the result credible. Then ask whether that region is defensible given your domain knowledge. The Scepticism Limit (SL) is the boundary of that region.</p>
+      </div>
+      <div style="background:white; border:1.5px solid #c07c2a; border-radius:10px; padding:1.1rem;">
+        <div style="font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#c07c2a; margin-bottom:0.5rem;">Route 2 — Prospective (theory-driven)</div>
+        <strong style="font-size:1rem; color:#1a1714;">ROPE / Meehl's crud threshold</strong>
+        <p style="font-size:14px; color:#555; margin-top:0.4rem; margin-bottom:0;">Define the null region <em>before</em> the study based on subject-matter knowledge — e.g., "anything below d = 0.2 is crud and doesn't count." Then require significance to clear that expanded target. Forces a more honest answer without seeing the data first.</p>
+      </div>
+    </div>
+
+    <!-- ─── SL ─── -->
+    <h3 style="margin-top:1.75rem; font-size:1.15rem; color:#1a1714;">The Scepticism Limit (SL) — how Reverse Bayes works</h3>
+
+    <p>AnCred (Anlysis of Credibility), developed by statistician Robert Matthews, computes the SL directly from your confidence interval. The sceptic maintains a prior distribution centred on zero — they are specifically doubtful that any effect exists. The SL answers: <em>how wide does that distribution need to be before your data can overcome their scepticism?</em></p>
+
+    <p>A wide sceptical prior is actually a <em>weak</em> form of scepticism — a sceptic who concedes that effects up to 40 points are possible is easy to convince. The genuinely demanding sceptic has a <em>tight</em> prior around zero. A low SL means your data defeated even that hard opponent.</p>
+
+    <div class="formula-box">SL = (U − L)² / (4 × √(U × L))
+<span style="font-size:12px; color:#888;">where U and L are the upper and lower CI bounds — both must be positive, i.e. the result must be significant with both bounds on the same side of zero</span></div>
+
+    <p>The SL is expressed in your outcome's own units — points, milliseconds, whatever you measured — so you can immediately judge whether the implied sceptical region is defensible in your field. This is the key advantage over a p-value, which tells you nothing about the scale of doubt involved.</p>
+
+    <p style="margin-bottom:0.5rem;">The verdict rule is simple:</p>
+    <div class="grid-2" style="margin-bottom:1.25rem; gap:12px;">
+      <div style="background:rgba(22,163,74,0.08); border:1px solid rgba(22,163,74,0.3); border-radius:8px; padding:0.85rem 1rem; font-size:14px;">
+        <strong style="color:#4a7028; display:block; margin-bottom:4px;">Observed effect &gt; SL → Credible</strong>
+        Your effect sits outside the sceptic's zone. They cannot accommodate your result without widening their prior to an indefensible degree.
+      </div>
+      <div style="background:rgba(220,38,38,0.07); border:1px solid rgba(220,38,38,0.25); border-radius:8px; padding:0.85rem 1rem; font-size:14px;">
+        <strong style="color:#b84040; display:block; margin-bottom:4px;">Observed effect &lt; SL → Fragile</strong>
+        Your effect sits inside the sceptic's zone. Even a sceptic centred on zero can comfortably absorb your result as "essentially no effect" — regardless of the p-value.
+      </div>
+    </div>
+
+    <div class="widget">
+      <div class="widget-title">Scepticism Limit calculator</div>
+
+      <p style="font-size:13.5px; color:#555; margin-bottom:1rem;">These three scenarios all use reading accuracy (0–100 points) as the outcome. Load a preset or enter your own CI bounds.</p>
+
+      <div class="toggle-group">
+        <button class="toggle-btn active" onclick="loadSLPreset('A',this)">Scenario A — large effect, wide CI</button>
+        <button class="toggle-btn" onclick="loadSLPreset('B',this)">Scenario B — modest effect, tight CI</button>
+        <button class="toggle-btn" onclick="loadSLPreset('C',this)">Scenario C — large effect, tight CI</button>
+      </div>
+
+      <div class="grid-3" style="margin-bottom:1.25rem;">
+        <div>
+          <div style="font-size:13px; color:#555; margin-bottom:5px;">Lower CI bound (L) — must be &gt; 0</div>
+          <input type="number" id="sl-L" value="0.16" step="0.01" min="0.01"
+            style="width:100%; padding:8px 10px; border:1px solid #ddd; border-radius:8px; font-size:15px; font-weight:600; color:#1a1714;"
+            oninput="updateSL()">
+        </div>
+        <div>
+          <div style="font-size:13px; color:#555; margin-bottom:5px;">Upper CI bound (U)</div>
+          <input type="number" id="sl-U" value="15.84" step="0.01" min="0.01"
+            style="width:100%; padding:8px 10px; border:1px solid #ddd; border-radius:8px; font-size:15px; font-weight:600; color:#1a1714;"
+            oninput="updateSL()">
+        </div>
+        <div>
+          <div style="font-size:13px; color:#555; margin-bottom:5px;">Observed mean difference</div>
+          <input type="number" id="sl-obs" value="8" step="0.1"
+            style="width:100%; padding:8px 10px; border:1px solid #ddd; border-radius:8px; font-size:15px; font-weight:600; color:#1a1714;"
+            oninput="updateSL()">
+        </div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-pill">
+          <div class="pill-val" id="sl-ci-out">—</div>
+          <div class="pill-lbl">CI width (U−L)</div>
+        </div>
+        <div class="stat-pill">
+          <div class="pill-val" id="sl-val-out">—</div>
+          <div class="pill-lbl">Scepticism Limit (SL)</div>
+        </div>
+        <div class="stat-pill">
+          <div class="pill-val" id="sl-ratio-out">—</div>
+          <div class="pill-lbl">SL / observed effect</div>
+        </div>
+        <div class="stat-pill" style="min-width:140px;">
+          <div id="sl-verdict" style="font-size:13px; font-weight:600; margin-top:4px;">—</div>
+          <div class="pill-lbl">verdict</div>
+        </div>
+      </div>
+
+      <!-- Visual: sceptical zone vs observed effect -->
+      <div style="margin:1.25rem 0 0.5rem;">
+        <div style="font-size:12px; color:#888; margin-bottom:6px;">Sceptical prior zone (shaded) vs. observed mean difference (vertical line)</div>
+        <div style="position:relative; height:80px; background:#f7f3ee; border-radius:8px; border:1px solid #ddd6cb; overflow:hidden;">
+          <canvas id="slVisual" style="position:absolute; top:0; left:0; width:100%; height:100%;"></canvas>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:11px; color:#999; margin-top:4px; padding:0 4px;">
+          <span>0</span>
+          <span id="sl-axis-label">scale in outcome units</span>
+        </div>
+      </div>
+
+      <div class="info-note" id="sl-interp"></div>
+    </div>
+
+    <!-- ─── AL ─── -->
+    <h3 style="margin-top:2rem; font-size:1.15rem; color:#1a1714;">The Advocacy Limit (AL) — for non-significant results</h3>
+
+    <p>When your result is non-significant — the CI straddles zero — the SL cannot be computed. But there is an equally important question for that situation: just because you didn't reach significance, does that mean the effect is absent?</p>
+
+    <p>The Advocacy Limit answers: <em>what is the maximum effect size that even a committed advocate of the hypothesis can claim the data supports?</em> A large AL means the study was simply too weak to say much either way — the absence of significance is not evidence of absence.</p>
+
+    <p>The most instructive example is the ORBITA trial, which tested whether stenting improved exercise duration in patients with stable angina. The result was non-significant (p ≈ .2), and many commentators concluded that stents don't work. But the AL was approximately 115 seconds — meaning the data were perfectly consistent with a clinically meaningful positive effect. The trial was underpowered, not decisive. The appropriate conclusion was "we don't yet know," not "no effect." This maps directly onto the small-N paradox in power analysis: a non-significant result from an underpowered study is an uninformative result, not evidence of zero effect. The AL makes that explicit and quantitative.</p>
+
+    <div class="key-msg" style="margin-top:1.25rem;">
+      <strong>AL in plain language</strong>
+      When your study is non-significant, ask: is the upper bound of my CI clinically or practically meaningful? If the CI runs from −2 to +40 points, you have not shown the effect is zero — you have shown the data are consistent with effects from trivial to substantial. A large AL is a call for a better-powered study, not a declaration of null results.
+    </div>
+
+    <!-- ─── Prior distinction ─── -->
+    <h3 style="margin-top:2rem; font-size:1.15rem; color:#1a1714;">A note on what "prior" means here</h3>
+
+    <p>The SL framework uses the word <em>prior</em> differently from classical Bayesian analysis.</p>
+
+    <div class="grid-2" style="margin:1rem 0; gap:14px;">
+      <div style="background:#eaf4f4; border-radius:8px; padding:1rem; font-size:14px; border-left:3px solid #2a6b6e;">
+        <strong style="display:block; margin-bottom:6px; color:#1a1714;">Bayesian epistemic prior</strong>
+        Encodes your genuine belief state before seeing the data. A flat prior expresses ignorance — "I have no idea what to expect." Appropriate when you genuinely lack prior knowledge. A statement about your knowledge state.
+      </div>
+      <div style="background:#f5e8d0; border-radius:8px; padding:1rem; font-size:14px; border-left:3px solid #c07c2a;">
+        <strong style="display:block; margin-bottom:6px; color:#c07c2a;">SL sceptical prior</strong>
+        Models a specific argumentative position: "I doubt an effect exists." A tight prior around zero is not ignorance — it is an informative claim. The SL asks what the sceptic must concede as possible, even while remaining doubtful. A dialectical tool, not an epistemic one.
+      </div>
+    </div>
+
+    <p>Counterintuitively, a <em>flat</em> prior is easy to defeat — it already spreads probability across large effects. The genuinely hard sceptic holds a <em>tight</em> prior around zero. A low SL means your data defeated that hard opponent. And this clarifies why NHST's point null is a false form of scepticism: it looks maximally demanding (all mass at exactly zero) but is trivially defeated with large N. The SL models scepticism as a <em>region</em> — which is how real scientific doubt actually operates.</p>
+
+    <div class="key-msg">
+      <strong>Connecting the two routes: ROPE, Meehl, and SL used together</strong>
+      ROPE (Region of Practical Equivalence, Kruschke) and Meehl's crud threshold both stretch the null <em>prospectively</em> — you decide in advance what "negligible" means (e.g., d &lt; 0.2 is just crud), then require significance to clear that expanded target. SL stretches it <em>retrospectively</em> — you let the data reveal what level of scepticism it can overcome, then judge that level. Used together, they give two independent evaluations: does your effect clear the region you pre-specified as meaningful (ROPE/Meehl), and is your data precise enough to defeat a reasonable sceptic (SL)? A result that clears both is genuinely robust. A result that clears only one deserves scrutiny.
+    </div>
+
+    <!-- ─── Summary table ─── -->
+    <div style="margin-top:1.75rem; background:white; border:1px solid #ddd6cb; border-radius:10px; overflow:hidden;">
+      <div style="background:#1a1714; color:white; padding:0.75rem 1.25rem; font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase;">The three scenarios — comparing p-value, effect size, and credibility</div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; font-size:14px;">
+          <thead>
+            <tr style="background:#ede8e1;">
+              <th style="padding:0.65rem 1rem; text-align:left; font-weight:600; color:#1a1714; border-bottom:1px solid #ddd6cb;">Scenario</th>
+              <th style="padding:0.65rem 1rem; text-align:center; font-weight:600; color:#1a1714; border-bottom:1px solid #ddd6cb;">N/group</th>
+              <th style="padding:0.65rem 1rem; text-align:center; font-weight:600; color:#1a1714; border-bottom:1px solid #ddd6cb;">Mean diff</th>
+              <th style="padding:0.65rem 1rem; text-align:center; font-weight:600; color:#1a1714; border-bottom:1px solid #ddd6cb;">95% CI</th>
+              <th style="padding:0.65rem 1rem; text-align:center; font-weight:600; color:#1a1714; border-bottom:1px solid #ddd6cb;">p-value</th>
+              <th style="padding:0.65rem 1rem; text-align:center; font-weight:600; color:#1a1714; border-bottom:1px solid #ddd6cb;">SL</th>
+              <th style="padding:0.65rem 1rem; text-align:center; font-weight:600; color:#1a1714; border-bottom:1px solid #ddd6cb;">Verdict</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #ddd6cb;">
+              <td style="padding:0.65rem 1rem; color:#555;">A — large effect, small N</td>
+              <td style="padding:0.65rem 1rem; text-align:center;">18</td>
+              <td style="padding:0.65rem 1rem; text-align:center;">8 pts</td>
+              <td style="padding:0.65rem 1rem; text-align:center; font-family:monospace; font-size:13px;">(0.16, 15.84)</td>
+              <td style="padding:0.65rem 1rem; text-align:center;">.048</td>
+              <td style="padding:0.65rem 1rem; text-align:center; font-weight:700; color:#b84040;">38.5 pts</td>
+              <td style="padding:0.65rem 1rem; text-align:center;"><span class="sig-badge nonsig">Fragile</span></td>
+            </tr>
+            <tr style="border-bottom:1px solid #ddd6cb; background:#ede8e1;">
+              <td style="padding:0.65rem 1rem; color:#555;">B — modest effect, large N</td>
+              <td style="padding:0.65rem 1rem; text-align:center;">150</td>
+              <td style="padding:0.65rem 1rem; text-align:center;">4 pts</td>
+              <td style="padding:0.65rem 1rem; text-align:center; font-family:monospace; font-size:13px;">(1.28, 6.72)</td>
+              <td style="padding:0.65rem 1rem; text-align:center;">.004</td>
+              <td style="padding:0.65rem 1rem; text-align:center; font-weight:700; color:#2a6b6e;">2.5 pts</td>
+              <td style="padding:0.65rem 1rem; text-align:center;"><span class="sig-badge sig">Credible</span></td>
+            </tr>
+            <tr>
+              <td style="padding:0.65rem 1rem; color:#555;">C — large effect, adequate N</td>
+              <td style="padding:0.65rem 1rem; text-align:center;">60</td>
+              <td style="padding:0.65rem 1rem; text-align:center;">8 pts</td>
+              <td style="padding:0.65rem 1rem; text-align:center; font-family:monospace; font-size:13px;">(3.71, 12.29)</td>
+              <td style="padding:0.65rem 1rem; text-align:center;">.0003</td>
+              <td style="padding:0.65rem 1rem; text-align:center; font-weight:700; color:#2a6b6e;">2.7 pts</td>
+              <td style="padding:0.65rem 1rem; text-align:center;"><span class="sig-badge sig">Credible</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="padding:0.75rem 1.25rem; font-size:13px; color:#666; background:#f7f3ee; border-top:1px solid #ddd6cb;">
+        Scenarios A and C have the same observed effect (8 pts) and the same p-value threshold classification — yet their SLs are 38.5 vs 2.7. The SL reveals what the p-value hides: Scenario A's CI barely cleared zero and the width did the heavy lifting. Scenario C's narrower CI means the same effect is genuinely credible.
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p><strong>Statistical Foundations · Part 4 of 4</strong> — Effect Size &amp; Power Analysis</p>
+    <p>
+      <a href="lln_website_v2.html">Part 1 — LLN &amp; CLT</a>
+      &nbsp;·&nbsp;
+      <a href="stats_part2_v2.html">Part 2 — When the Chain Breaks</a>
+      &nbsp;·&nbsp;
+      <a href="generativestats.html">Part 3 — Where does your data come from?</a>
+      &nbsp;·&nbsp;
+      <strong>Part 4</strong>
+    </p>
+    <p style="font-size:0.7rem; opacity:0.7;">
+      Companion track on <em>Measurement &amp; Psychometrics</em>:
+      <a href="measurement_fallacies.html" style="color:#5DCAA5;">B1 — Fallacies</a>
+      &nbsp;·&nbsp;
+      <a href="psychometrics_teaching_v2.html" style="color:#5DCAA5;">B2 — Measuring What We Cannot See</a>
+      &nbsp;·&nbsp;
+      <a href="reliability_final.html" style="color:#5DCAA5;">B3 — Reliability</a>
+    </p>
+    <p style="font-size:0.65rem; opacity:0.5; margin-top:0.5rem;">Based on Cohen (1988), Cumming (2014), Lakens (2013), and Matthews (AnCred).</p>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════════════ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// ────────────────────────────────────────────
+// UTILITIES
+// ────────────────────────────────────────────
+function normalCDF(z) {
+  const az = Math.abs(z);
+  const t = 1 / (1 + 0.2316419 * az);
+  const poly = t*(0.31938153 + t*(-0.356563782 + t*(1.781477937 + t*(-1.821255978 + t*1.330274429))));
+  const pdf = Math.exp(-0.5*az*az) / Math.sqrt(2*Math.PI);
+  const p = 1 - pdf*poly;
+  return z >= 0 ? p : 1 - p;
+}
+
+function gauss(x, mu, sigma) {
+  return (1/(sigma*Math.sqrt(2*Math.PI)))*Math.exp(-0.5*((x-mu)/sigma)**2);
+}
+
+function makeXs(lo, hi, n) {
+  const step = (hi-lo)/n, xs = [];
+  for (let x = lo; x <= hi; x += step) xs.push(x);
+  return xs;
+}
+
+function dLabel(d) {
+  d = Math.abs(d);
+  if (d < 0.1) return {text:'negligible', cls:'d-negligible'};
+  if (d < 0.5) return {text:'small', cls:'d-small'};
+  if (d < 0.8) return {text:'medium', cls:'d-medium'};
+  if (d < 1.2) return {text:'large', cls:'d-large'};
+  return {text:'very large', cls:'d-verylarge'};
+}
+
+function overlapPct(d) { return 2*normalCDF(-Math.abs(d)/2); }
+
+const defaultChartOpts = {
+  responsive: true,
+  maintainAspectRatio: false,
+  animation: { duration: 200 },
+  plugins: { legend: { display:false }, tooltip: { enabled:false } }
+};
+
+// ────────────────────────────────────────────
+// WIDGET 1 — P-VALUE SLIDER
+// ────────────────────────────────────────────
+const pNs=[], pPs=[];
+for (let n=10; n<=500; n+=5) {
+  const t = 0.2*Math.sqrt(n/2);
+  pNs.push(n);
+  pPs.push(+(2*(1-normalCDF(t))).toFixed(4));
+}
+
+const pvalChart = new Chart(document.getElementById('pvalChart'), {
+  type:'line',
+  data:{
+    labels: pNs,
+    datasets:[
+      { data:pPs, borderColor:'#1a1714', backgroundColor:'rgba(26,23,20,0.08)', fill:true, borderWidth:2, pointRadius:0, tension:0.3 },
+      { data:pNs.map(()=>0.05), borderColor:'#b84040', borderWidth:1.5, borderDash:[5,4], pointRadius:0, fill:false }
+    ]
+  },
+  options:{
+    ...defaultChartOpts,
+    animation:false,
+    scales:{
+      x:{ title:{display:true,text:'sample size per group (N)',color:'#888',font:{size:11}}, ticks:{maxTicksLimit:10,font:{size:11},color:'#888'}, grid:{color:'rgba(0,0,0,0.05)'} },
+      y:{ min:0, max:0.8, title:{display:true,text:'p-value',color:'#888',font:{size:11}}, ticks:{font:{size:11},color:'#888'}, grid:{color:'rgba(0,0,0,0.05)'} }
+    }
+  }
+});
+
+function updatePval(n) {
+  const t = 0.2*Math.sqrt(n/2);
+  const p = 2*(1-normalCDF(t));
+  document.getElementById('pval-n-out').textContent = n;
+  document.getElementById('pval-t-out').textContent = t.toFixed(2);
+  document.getElementById('pval-p-out').textContent = p < 0.001 ? '< .001' : p.toFixed(3);
+  const sigEl = document.getElementById('pval-sig-out');
+  const msgEl = document.getElementById('pval-msg');
+  if (p < 0.05) {
+    sigEl.innerHTML = '<span class="sig-badge sig">p &lt; .05 ✓</span>';
+    msgEl.innerHTML = `<strong>Significant</strong> — but d is still 0.2, a small effect by Cohen's benchmarks. The effect size has not grown. You simply now have enough participants to estimate it precisely enough that the p-value falls below the threshold.`;
+  } else {
+    sigEl.innerHTML = '<span class="sig-badge nonsig">p ≥ .05</span>';
+    msgEl.innerHTML = `<strong>Not significant</strong> — but the true effect is still d = 0.2. It has not disappeared. You just do not yet have enough participants for the test to reliably detect it. This is a Type II error: a false negative.`;
+  }
+  // Highlight current point
+  const roundN = Math.round(n/5)*5;
+  const idx = pNs.indexOf(roundN);
+  pvalChart.data.datasets[0].pointRadius = pNs.map((_,i)=>i===idx?5:0);
+  pvalChart.data.datasets[0].pointBackgroundColor = '#c07c2a';
+  pvalChart.update('none');
+}
+updatePval(40);
+
+// ────────────────────────────────────────────
+// WIDGET 2 — COHEN'S D CALCULATOR
+// ────────────────────────────────────────────
+const dChart = new Chart(document.getElementById('dChart'), {
+  type:'line',
+  data:{ datasets:[] },
+  options:{
+    ...defaultChartOpts,
+    scales:{
+      x:{ type:'linear', ticks:{font:{size:11},color:'#888'}, grid:{color:'rgba(0,0,0,0.05)'} },
+      y:{ display:false }
+    }
+  }
+});
+
+function updateDWidget() {
+  const m1=+document.getElementById('d-m1').value;
+  const m2=+document.getElementById('d-m2').value;
+  const sd=+document.getElementById('d-sd').value;
+  document.getElementById('d-m1-out').textContent=m1;
+  document.getElementById('d-m2-out').textContent=m2;
+  document.getElementById('d-sd-out').textContent=sd;
+
+  const d = Math.abs(m2-m1)/sd;
+  const u3 = normalCDF(d)*100;
+  const ov = overlapPct(d)*100;
+
+  document.getElementById('d-val-out').textContent = d.toFixed(2);
+  document.getElementById('d-u3-out').textContent = u3.toFixed(0)+'%';
+  document.getElementById('d-ov-out').textContent = ov.toFixed(0)+'%';
+
+  const lbl = dLabel(d);
+  const badge = document.getElementById('d-badge');
+  badge.textContent = lbl.text;
+  badge.className = 'd-badge '+lbl.cls;
+
+  const lo = Math.min(m1,m2)-3.5*sd, hi = Math.max(m1,m2)+3.5*sd;
+  const xs = makeXs(lo, hi, 250);
+
+  dChart.data.datasets = [
+    { data:xs.map(x=>({x,y:gauss(x,m1,sd)})), borderColor:'#2a6b6e', backgroundColor:'rgba(37,99,235,0.14)', fill:true, borderWidth:2, pointRadius:0, tension:0.4 },
+    { data:xs.map(x=>({x,y:gauss(x,m2,sd)})), borderColor:'#b84040', backgroundColor:'rgba(220,74,45,0.14)', fill:true, borderWidth:2, pointRadius:0, tension:0.4 }
+  ];
+  dChart.options.scales.x.min = lo;
+  dChart.options.scales.x.max = hi;
+  dChart.options.scales.y = { display:false, min:0 };
+  dChart.update();
+
+  const bigGrp = m1>m2?'Group 1':'Group 2';
+  const smlGrp = m1>m2?'Group 2':'Group 1';
+  document.getElementById('d-interp').innerHTML =
+    `<strong>Cohen's U3:</strong> ${u3.toFixed(0)}% of ${smlGrp}'s scores fall below the average ${bigGrp} score. &nbsp;·&nbsp; <strong>Overlap:</strong> ${ov.toFixed(0)}% of the total combined area is shared between the two distributions.`;
+}
+updateDWidget();
+
+// ────────────────────────────────────────────
+// WIDGET 3 — DENOMINATOR PROBLEM
+// ────────────────────────────────────────────
+const C = { m:50, sd:10, n:20 };
+const T = { m:62, sd:16, n:20 };
+
+const denomInfo = {
+  cohen: {
+    name: "Cohen's d — pooled standard deviation",
+    formula: "d = (M_treatment − M_control) / SD_pooled",
+    sub: "SD_pooled = √[((n₁−1)·SD₁² + (n₂−1)·SD₂²) / (n₁+n₂−2)]",
+    assumption: "Assumes both groups are sampled from populations with equal variance. The pooled SD is a weighted average of both group SDs, giving a single estimate of the common within-group spread.",
+    compromise: "When the two group SDs differ substantially (as here, 10 vs 16), you are averaging across meaningfully different variabilities. The result sits between the two, representing neither group's true population SD perfectly.",
+    compute() {
+      const sp = Math.sqrt(((C.n-1)*C.sd**2+(T.n-1)*T.sd**2)/(C.n+T.n-2));
+      return { val:(T.m-C.m)/sp, note:`Pooled SD = ${sp.toFixed(2)} (weighted average of SD₁ = ${C.sd} and SD₂ = ${T.sd})` };
+    }
+  },
+  glass: {
+    name: "Glass's Δ — control group SD only",
+    formula: "Δ = (M_treatment − M_control) / SD_control",
+    sub: "Uses only the control group's standard deviation as the denominator",
+    assumption: "Assumes the control group represents an undisturbed reference population. The treatment may have altered score variability in the treated group, so using the control SD gives a baseline-relative effect.",
+    compromise: "Relies on the control group being a clean, untreated reference — a judgement call. If the treatment inflates or compresses variability in the treated group, this choice changes the interpretation considerably.",
+    compute() {
+      return { val:(T.m-C.m)/C.sd, note:`Uses only the control group SD = ${C.sd}` };
+    }
+  },
+  hedges: {
+    name: "Hedges' g — bias-corrected estimate",
+    formula: "g = d_pooled × J(df)",
+    sub: "J(df) = 1 − 3/(4·df − 1), where df = n₁+n₂−2. J is a small-sample correction factor.",
+    assumption: "Uses the pooled SD like Cohen's d, but applies a correction J < 1 that accounts for the slight upward bias in sample SD estimates when samples are small.",
+    compromise: "At reasonable sample sizes (n > 20), J ≈ 1 and g ≈ d. The correction matters most at small N. It does not address the fundamental question of which SD to pool — it only corrects for sampling bias.",
+    compute() {
+      const sp = Math.sqrt(((C.n-1)*C.sd**2+(T.n-1)*T.sd**2)/(C.n+T.n-2));
+      const rawD = (T.m-C.m)/sp;
+      const df = C.n+T.n-2;
+      const J = 1-3/(4*df-1);
+      return { val:rawD*J, note:`Raw Cohen's d = ${rawD.toFixed(3)}, correction factor J(df=${df}) = ${J.toFixed(4)}, g = d × J` };
+    }
+  }
+};
+
+function setDenom(type, btn) {
+  document.querySelectorAll('.toggle-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const info = denomInfo[type];
+  const r = info.compute();
+  const lbl = dLabel(r.val);
+  document.getElementById('denom-panel').innerHTML = `
+    <div style="margin-bottom:0.75rem;">
+      <strong style="font-size:15px; color:#1a1714;">${info.name}</strong>
+    </div>
+    <div class="formula-box">${info.formula}<br><span style="font-size:12px; color:#888;">${info.sub}</span></div>
+    <div class="stat-row">
+      <div class="stat-pill">
+        <div class="pill-val">${r.val.toFixed(3)} <span class="d-badge ${lbl.cls}">${lbl.text}</span></div>
+        <div class="pill-lbl">computed effect size</div>
+      </div>
+    </div>
+    <div style="font-size:13px; color:#666; margin-bottom:0.75rem;">${r.note}</div>
+    <div class="grid-2">
+      <div style="background:#eaf4f4; border-radius:8px; padding:0.85rem; font-size:13px;">
+        <strong style="display:block; margin-bottom:4px; color:#1a1714;">Assumption</strong>
+        ${info.assumption}
+      </div>
+      <div style="background:#f5e8d0; border-radius:8px; padding:0.85rem; font-size:13px; border-left:3px solid #c07c2a;">
+        <strong style="display:block; margin-bottom:4px; color:#c07c2a;">The compromise</strong>
+        ${info.compromise}
+      </div>
+    </div>`;
+}
+setDenom('cohen', document.querySelector('.toggle-btn'));
+
+// ────────────────────────────────────────────
+// WIDGET 4 — SD VS SE
+// ────────────────────────────────────────────
+const SD_POP = 15, MU = 70;
+
+const seChart = new Chart(document.getElementById('seChart'), {
+  type:'line',
+  data:{ datasets:[] },
+  options:{
+    ...defaultChartOpts,
+    scales:{
+      x:{ type:'linear', title:{display:true,text:'score',color:'#888',font:{size:11}}, ticks:{font:{size:11},color:'#888'}, grid:{color:'rgba(0,0,0,0.05)'} },
+      y:{ display:false, min:0 }
+    }
+  }
+});
+
+function updateSE(n) {
+  const se = SD_POP/Math.sqrt(n);
+  document.getElementById('se-n-out').textContent=n;
+  document.getElementById('se-se-out').textContent=se.toFixed(2);
+  document.getElementById('se-ratio-out').textContent=(SD_POP/se).toFixed(1)+'×';
+
+  const lo=MU-4.2*SD_POP, hi=MU+4.2*SD_POP;
+  const xs=makeXs(lo,hi,300);
+  const peak=Math.max(gauss(MU,MU,SD_POP),gauss(MU,MU,se));
+
+  seChart.data.datasets=[
+    { data:xs.map(x=>({x,y:gauss(x,MU,SD_POP)})), borderColor:'#2a6b6e', backgroundColor:'rgba(37,99,235,0.12)', fill:true, borderWidth:2.5, pointRadius:0, tension:0.4 },
+    { data:xs.map(x=>({x,y:gauss(x,MU,se)})), borderColor:'#b84040', backgroundColor:'rgba(220,74,45,0.12)', fill:true, borderWidth:2.5, pointRadius:0, tension:0.4 }
+  ];
+  seChart.options.scales.x.min=lo;
+  seChart.options.scales.x.max=hi;
+  seChart.options.scales.y={display:false,min:0,max:peak*1.18};
+  seChart.update();
+  document.getElementById('se-note').textContent=
+    `At N = ${n}: SE = ${se.toFixed(2)}. Your sample mean is ${(SD_POP/se).toFixed(1)}× more precisely estimated than any individual observation — yet the underlying population spread (SD = ${SD_POP}) is completely unchanged.`;
+}
+updateSE(20);
+
+// ────────────────────────────────────────────
+// WIDGET 5 — POWER ANALYSIS
+// ────────────────────────────────────────────
+const ZA = { '0.05':1.960, '0.01':2.576, '0.10':1.645 };
+const ZB = { '0.70':0.524, '0.80':0.842, '0.90':1.282, '0.95':1.645 };
+
+const powChart = new Chart(document.getElementById('powChart'), {
+  type:'line',
+  data:{ datasets:[] },
+  options:{
+    ...defaultChartOpts,
+    scales:{
+      x:{ type:'linear', title:{display:true,text:'test statistic (z)',color:'#888',font:{size:11}}, ticks:{font:{size:11},color:'#888'}, grid:{color:'rgba(0,0,0,0.05)'} },
+      y:{ display:false, min:0 }
+    }
+  }
+});
+
+function updatePower() {
+  const d  = +document.getElementById('pow-d').value;
+  const al = document.getElementById('pow-alpha').value;
+  const pw = document.getElementById('pow-power').value;
+  document.getElementById('pow-d-out').textContent = d.toFixed(2);
+
+  const za = ZA[al];
+  const zb = ZB[pw];
+  const n = Math.ceil(2*((za+zb)/d)**2);
+  const lam = d*Math.sqrt(n/2);
+  const actualPow = 1-normalCDF(za-lam);
+
+  document.getElementById('pow-n-out').textContent = n;
+  document.getElementById('pow-total-out').textContent = (n*2)+' total participants';
+
+  const xLo=-4.2, xHi=Math.max(8,lam+4.5);
+  const xs=makeXs(xLo,xHi,500);
+
+  powChart.data.datasets=[
+    // Null distribution
+    { data:xs.map(x=>({x,y:gauss(x,0,1)})), borderColor:'#2a6b6e', backgroundColor:'rgba(37,99,235,0.10)', fill:true, borderWidth:2, pointRadius:0, tension:0.4 },
+    // Alternative distribution
+    { data:xs.map(x=>({x,y:gauss(x,lam,1)})), borderColor:'#b84040', backgroundColor:'rgba(220,74,45,0.08)', fill:true, borderWidth:2, pointRadius:0, tension:0.4 },
+    // Power region
+    { data:xs.map(x=>({x,y:x>=za?gauss(x,lam,1):null})), borderColor:'transparent', backgroundColor:'rgba(22,163,74,0.40)', fill:true, borderWidth:0, pointRadius:0, tension:0.4, spanGaps:false },
+    // Alpha region
+    { data:xs.map(x=>({x,y:x>=za?gauss(x,0,1):null})), borderColor:'transparent', backgroundColor:'rgba(220,38,38,0.30)', fill:true, borderWidth:0, pointRadius:0, tension:0.4, spanGaps:false },
+    // Critical value vertical line
+    { data:[{x:za,y:0},{x:za,y:0.42}], borderColor:'#555', borderWidth:1.5, borderDash:[5,3], pointRadius:0, fill:false, tension:0 }
+  ];
+  powChart.options.scales.x.min=xLo;
+  powChart.options.scales.x.max=xHi;
+  powChart.update();
+
+  document.getElementById('pow-note').innerHTML =
+    `Non-centrality parameter λ = <strong>${lam.toFixed(2)}</strong> &nbsp;·&nbsp; ` +
+    `Critical value z = <strong>${za.toFixed(3)}</strong> (dashed line) &nbsp;·&nbsp; ` +
+    `Actual power achieved = <strong style="color:#4a7028">${(actualPow*100).toFixed(0)}%</strong> &nbsp;·&nbsp; ` +
+    `Formula: N per group = 2 × [(z<sub>α/2</sub> + z<sub>β</sub>) / d]²`;
+}
+updatePower();
+
+// ────────────────────────────────────────────
+// WIDGET 6 — SCEPTICISM LIMIT (AnCred)
+// ────────────────────────────────────────────
+
+const SL_PRESETS = {
+  A: { L:0.16, U:15.84, obs:8 },
+  B: { L:1.28, U:6.72,  obs:4 },
+  C: { L:3.71, U:12.29, obs:8 }
+};
+
+function loadSLPreset(key, btn) {
+  document.querySelectorAll('.toggle-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const p = SL_PRESETS[key];
+  document.getElementById('sl-L').value = p.L;
+  document.getElementById('sl-U').value = p.U;
+  document.getElementById('sl-obs').value = p.obs;
+  updateSL();
+}
+
+function computeSL(U, L) {
+  if (L <= 0 || U <= 0 || U <= L) return null;
+  return Math.pow(U - L, 2) / (4 * Math.sqrt(U * L));
+}
+
+function drawSLCanvas(canvas, sl, observed) {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width  = rect.width  * dpr;
+  canvas.height = rect.height * dpr;
+  canvas.style.width  = rect.width  + 'px';
+  canvas.style.height = rect.height + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  const W = rect.width, H = rect.height;
+
+  const maxVal = Math.max(sl, observed) * 1.35;
+  const PAD_L = 20, PAD_R = 20;
+  const plotW = W - PAD_L - PAD_R;
+  const toX = v => PAD_L + (v / maxVal) * plotW;
+  const midY = H * 0.52;
+  const barH = H * 0.42;
+
+  // Sceptical zone (0 → SL)
+  const slX = toX(sl);
+  ctx.fillStyle = 'rgba(220,38,38,0.12)';
+  ctx.fillRect(PAD_L, midY - barH/2, slX - PAD_L, barH);
+  ctx.strokeStyle = '#b84040';
+  ctx.setLineDash([5,3]);
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(slX, midY - barH*0.7); ctx.lineTo(slX, midY + barH*0.7); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // SL label
+  ctx.fillStyle = '#b84040';
+  ctx.font = '11px system-ui';
+  ctx.textAlign = 'center';
+  ctx.fillText('SL = ' + sl.toFixed(1), slX, midY - barH*0.7 - 4);
+
+  // Axis line
+  ctx.strokeStyle = '#ccc';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(PAD_L, midY + barH/2 + 6); ctx.lineTo(W - PAD_R, midY + barH/2 + 6); ctx.stroke();
+
+  // Zero tick
+  ctx.fillStyle = '#888';
+  ctx.font = '11px system-ui';
+  ctx.textAlign = 'center';
+  ctx.fillText('0', PAD_L, midY + barH/2 + 18);
+
+  // Observed effect marker
+  const isCredible = observed > sl;
+  const obsX = toX(observed);
+  ctx.strokeStyle = isCredible ? '#4a7028' : '#b84040';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath(); ctx.moveTo(obsX, midY - barH*0.85); ctx.lineTo(obsX, midY + barH*0.85); ctx.stroke();
+
+  // Observed label
+  ctx.fillStyle = isCredible ? '#4a7028' : '#b84040';
+  ctx.font = 'bold 11px system-ui';
+  ctx.textAlign = obsX > slX ? 'left' : 'right';
+  ctx.fillText('observed = ' + observed, obsX + (obsX > slX ? 5 : -5), midY - barH*0.85 - 4);
+
+  // Zone label
+  ctx.fillStyle = 'rgba(220,38,38,0.6)';
+  ctx.font = '11px system-ui';
+  ctx.textAlign = 'center';
+  const zoneMid = PAD_L + (slX - PAD_L)/2;
+  ctx.fillText("sceptic's zone", zoneMid, midY + 4);
+}
+
+function updateSL() {
+  const L   = parseFloat(document.getElementById('sl-L').value);
+  const U   = parseFloat(document.getElementById('sl-U').value);
+  const obs = parseFloat(document.getElementById('sl-obs').value);
+
+  if (isNaN(L) || isNaN(U) || isNaN(obs) || L <= 0 || U <= L) {
+    document.getElementById('sl-val-out').textContent = '—';
+    document.getElementById('sl-interp').textContent = 'Please enter valid CI bounds (both positive, L < U).';
+    return;
+  }
+
+  const sl = computeSL(U, L);
+  const width = U - L;
+  const ratio = sl / obs;
+  const isCredible = obs > sl;
+
+  document.getElementById('sl-ci-out').textContent  = width.toFixed(2) + ' pts';
+  document.getElementById('sl-val-out').textContent = sl.toFixed(2) + ' pts';
+  document.getElementById('sl-ratio-out').textContent = ratio.toFixed(2) + '×';
+  document.getElementById('sl-axis-label').textContent = `scale in outcome units (max shown: ${(Math.max(sl,obs)*1.35).toFixed(1)} pts)`;
+
+  const verdictEl = document.getElementById('sl-verdict');
+  if (isCredible) {
+    verdictEl.innerHTML = '<span class="sig-badge sig">Credible ✓</span>';
+    document.getElementById('sl-interp').innerHTML =
+      `<strong>Credible result.</strong> The observed effect (${obs} pts) exceeds the SL (${sl.toFixed(2)} pts). For a sceptic centred on zero to accommodate your result, they would need a prior that reaches out to ${sl.toFixed(1)} pts — a very modest concession in the context of your outcome scale. Your data overcome reasonable scepticism.`;
+  } else {
+    verdictEl.innerHTML = '<span class="sig-badge nonsig">Fragile</span>';
+    document.getElementById('sl-interp').innerHTML =
+      `<strong>Fragile result.</strong> The observed effect (${obs} pts) falls inside the SL boundary (${sl.toFixed(2)} pts). A sceptic centred on zero, with a prior that reaches only to ${sl.toFixed(1)} pts, can comfortably absorb your result as consistent with "essentially no effect." The CI was wide relative to the distance from zero — the result is statistically significant but evidentially weak.`;
+  }
+
+  const canvas = document.getElementById('slVisual');
+  setTimeout(() => drawSLCanvas(canvas, sl, obs), 0);
+}
+
+// Initialise with Scenario A
+updateSL();
+
+
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('nav a');
+window.addEventListener('scroll', () => {
+  let cur='';
+  sections.forEach(s=>{ if (window.scrollY >= s.offsetTop-100) cur=s.id; });
+  navLinks.forEach(a=>a.classList.toggle('active', a.getAttribute('href')==='#'+cur));
+}, { passive:true });
+</script>
+</body>
+</html>
